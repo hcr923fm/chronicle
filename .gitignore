@@ -27,3 +27,6 @@
 *.exe
 *.out
 *.app
+
+#rtaudio
+*rtaudio-4.1.2
