@@ -1,9 +1,0 @@
-﻿  chronicle.cpp
-chronicle.cpp(12): warning C4018: '<': signed/unsigned mismatch
-chronicle.cpp(20): warning C4018: '<': signed/unsigned mismatch
-chronicle.obj : error LNK2028: unresolved token (0A000667) "public: __thiscall RtAudio::RtAudio(enum RtAudio::Api)" (??0RtAudio@@$$FQAE@W4Api@0@@Z) referenced in function "int __cdecl main(void)" (?main@@$$HYAHXZ)
-chronicle.obj : error LNK2028: unresolved token (0A000668) "public: __thiscall RtAudio::~RtAudio(void)" (??1RtAudio@@$$FQAE@XZ) referenced in function "int __cdecl main(void)" (?main@@$$HYAHXZ)
-chronicle.obj : error LNK2019: unresolved external symbol "public: __thiscall RtAudio::RtAudio(enum RtAudio::Api)" (??0RtAudio@@$$FQAE@W4Api@0@@Z) referenced in function "int __cdecl main(void)" (?main@@$$HYAHXZ)
-chronicle.obj : error LNK2019: unresolved external symbol "public: __thiscall RtAudio::~RtAudio(void)" (??1RtAudio@@$$FQAE@XZ) referenced in function "int __cdecl main(void)" (?main@@$$HYAHXZ)
-MSVCRTD.lib(exe_winmain.obj) : error LNK2019: unresolved external symbol _WinMain@16 referenced in function "int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ)
-D:\Projects\chronicle\Debug\chronicle.exe : fatal error LNK1120: 5 unresolved externals
