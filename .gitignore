@@ -32,3 +32,9 @@
 *rtaudio-4.1.2
 Debug
 includertaudio
+.vscode
+.vs
+chronicle.VC.*
+
+# Don't upload the libs in the directory, use the /libs instead
+libsndfile-1*
