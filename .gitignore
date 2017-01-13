@@ -35,6 +35,7 @@ includertaudio
 .vscode
 .vs
 chronicle.VC.*
+chronicle.vcx*
 
 # Don't upload the libs in the directory, use the /libs instead
 libsndfile-1*
