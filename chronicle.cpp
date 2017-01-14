@@ -3,15 +3,16 @@
 using namespace std;
 
 SNDFILE* mySnd;
+RtAudio audio;
 
 int main(int argc, char* argv[])
 {
+	cout << SOFTWARE_NAME << " v" << VERSION << " (" << AUTHOR << ")" << endl;
 	doRecord(argv[1]);
 	return 0;
 }
 
 void doRecord(char* directory) {
-	RtAudio audio;
 
 	// How many devices are available?
 	unsigned int devices = audio.getDeviceCount();
@@ -90,6 +91,10 @@ void doRecord(char* directory) {
 		exit(0);
 	}
 
+	// Set up signal handling;
+	signal(SIGINT, signalHandler);
+	signal(SIGABRT, signalHandler);
+
 	/* The time to finish recording is at the end of the hour.
 	We can't assume that the recording starting from the top of the current hour,
 	as the first recording probably won't be.
@@ -97,7 +102,7 @@ void doRecord(char* directory) {
 	seconds from that time.
 	*/
 
-	while (true){
+	while (true) {
 
 		chrono::time_point<chrono::system_clock> nowChrono, endChronoInaccurate, endChronoAccurate;
 		nowChrono = chrono::system_clock::now();
@@ -109,10 +114,8 @@ void doRecord(char* directory) {
 		// And remove any extraneous hours/minutes so the time is at the top of hour
 		end_tm->tm_min = 0;
 		end_tm->tm_sec = 0;
-		cout << "endtime adj " << put_time(end_tm, "%F %H%M%S") << endl;
 
 		// Now convert back to a chrono
-
 		end_tt = mktime(end_tm);
 		endChronoAccurate = chrono::system_clock::from_time_t(end_tt);
 		// Now we can pass that to sleepUntil to finish the recording at the correct time!
@@ -127,19 +130,19 @@ void doRecord(char* directory) {
 #ifdef unix
 		if (audioFileFullPath.back() != '/') {
 			audioFileFullPath += '/';
-	}
-#endif
-		
-		char* audioFileName;
+		}
+#endif 
+
+		char audioFileName[81];
 		time_t now_tt = chrono::system_clock::to_time_t(nowChrono);
 		strftime(audioFileName, 80, "%F %H%M%S.wav", localtime(&now_tt));
-		
+
 		audioFileFullPath += audioFileName;
 
 		mySnd = sf_open(audioFileFullPath.c_str(), SFM_WRITE, &sfInfo);
 
 		try {
-			cout << "Recording to " << audioFileName <<endl;
+			cout << "Recording to " << audioFileFullPath.c_str() << endl;
 			audio.openStream(NULL, &params, RTAUDIO_SINT16, sampleRate, &bufferFrames, &cb_record);
 			audio.startStream();
 		}
@@ -151,16 +154,7 @@ void doRecord(char* directory) {
 		this_thread::sleep_until(endChronoAccurate);
 		cout << "Recording completed." << endl;
 
-		try {
-			audio.stopStream();
-		}
-		catch (RtAudioError &e) {
-			cout << "Could not stop stream: " << e.getMessage() << endl;
-		}
-
-		sf_write_sync(mySnd);
-		if (audio.isStreamOpen()) { audio.closeStream(); }
-		sf_close(mySnd);
+		stopRecord();
 	}
 }
 
@@ -170,4 +164,24 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 	sf_writef_short(mySnd, data, nFrames);
 
 	return 0;
+}
+
+void stopRecord() {
+
+	try {
+		audio.stopStream();
+	}
+	catch (RtAudioError &e) {
+		cout << "Could not stop stream: " << e.getMessage() << endl;
+	}
+
+	if (audio.isStreamOpen()) { audio.closeStream(); }
+	sf_write_sync(mySnd);
+	sf_close(mySnd);
+}
+
+void signalHandler(int sigNum) {
+	cout << "Received signal " << sigNum << "; shutting down...";
+	stopRecord();
+	exit(sigNum);
 }
