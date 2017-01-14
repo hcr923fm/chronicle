@@ -8,7 +8,12 @@ RtAudio audio;
 int main(int argc, char* argv[])
 {
 	cout << SOFTWARE_NAME << " v" << VERSION << " (" << AUTHOR << ")" << endl;
-	doRecord(argv[1]);
+	if (argc < 2) {
+		doRecord(".");
+	}
+	else {
+		doRecord(argv[1]);
+	}
 	return 0;
 }
 
@@ -91,7 +96,7 @@ void doRecord(char* directory) {
 		exit(0);
 	}
 
-	// Set up signal handling;
+	// Set up signal handling; fixes #1
 	signal(SIGINT, signalHandler);
 	signal(SIGABRT, signalHandler);
 
