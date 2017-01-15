@@ -1,3 +1,28 @@
+/*
+MIT License
+
+Chronicle: an audio logger.
+Copyright (c) 2016-2017 Callum McLean
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 #include "chronicle.h"
 
 using namespace std;
@@ -7,17 +32,30 @@ RtAudio audio;
 
 int main(int argc, char* argv[])
 {
-	cout << SOFTWARE_NAME << " v" << VERSION << " (" << AUTHOR << ")" << endl;
-	if (argc < 2) {
-		doRecord(".");
+	cout << SOFTWARE_NAME << " v" << VERSION << " Copyright (c) 2016-2017 Callum McLean" << endl;
+	
+	string directory = "."; // Default directory to save files to
+
+	for (int i = 0; i<argc; i++) {
+	
+		if (!strcmp(argv[i], "--licence")) {
+			printLicence();
+			exit(0);
+		} else if(!strcmp(argv[i], "-h") || !strcmp(argv[i],"--help")) {
+			printHelp();
+			exit(0);
+		}
+		else if (!strcmp(argv[i], "-d") || !strcmp(argv[i], "--directory")) {
+			directory = argv[i + 1];
+			i++; // Skip parsing the next argument
+		}
 	}
-	else {
-		doRecord(argv[1]);
-	}
+	
+	doRecord(directory.c_str());
 	return 0;
 }
 
-void doRecord(char* directory) {
+void doRecord(const char* directory) {
 
 	// How many devices are available?
 	unsigned int devices = audio.getDeviceCount();
@@ -189,4 +227,28 @@ void signalHandler(int sigNum) {
 	cout << "Received signal " << sigNum << "; shutting down...";
 	stopRecord();
 	exit(sigNum);
+}
+
+void printLicence() {
+	cout << "Chronicle is distributed under the MIT Licence." << endl;
+	cout << "See LICENCE for details of the licences used." << endl;
+	cout << "Chronicle uses the following libraries internally:" << endl;
+
+	cout << "\tlibsndfile" << endl;
+	cout << "\t\tCopyright (C) 1999-2016 Erik de Castro Lopo <erikd@mega-nerd.com>" << endl;
+	cout << "\t\tLicenced under the LGPL as a dynamically linked library." << endl;
+	cout << "\t\tThe version of libsndfile that is distributed with this software has not been modified from the version available at http ://www.mega-nerd.com/libsndfile/" << endl;
+	
+	cout << "\tRtAudio" << endl;
+	cout << "\t\tLicenced under the the RtAudio licence." << endl;
+	cout << "\t\tCopyright (c) Gary P. Scavone, McGill University; https://www.music.mcgill.ca/~gary/rtaudio/" << endl;
+}
+
+void printHelp() {
+	cout << "Usage:" << endl;
+	cout << "chronicle [-h | --help] [--licence] [-d | --directory LOGGING_DIRECTORY]" << endl;
+	cout << "Where:" << endl;
+	cout << "-h | --help\tPrints this help message." << endl;
+	cout << "--licence\tPrints the licence information for this software and libraries that it uses." << endl;
+	cout << "-d | --directory\tSets the directory to save the logged audio to. A trailing slash is not required, but may be added. On Windows, if using a trailing slash, use a trailing double-slash." << endl;
 }
