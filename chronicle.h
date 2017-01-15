@@ -19,7 +19,7 @@ using namespace std;
 // So, you've decided to make some logger software...
 
 int main(int argc, char* argv[]);
-void doRecord(const char* directory);
+void doRecord(string directory, string fileNameFormat);
 int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, double streamTime, RtAudioStreamStatus status, void *userData);
 void stopRecord();
 void signalHandler(int sigNum);
