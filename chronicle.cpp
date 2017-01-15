@@ -35,32 +35,38 @@ int main(int argc, char* argv[])
 	cout << SOFTWARE_NAME << " v" << VERSION << " Copyright (c) 2016-2017 Callum McLean" << endl;
 	
 	string directory = "."; // Default directory to save files to
-	string fileNameFormat = "%F %H%M%S.wav";
-
-	for (int i = 0; i<argc; i++) {
+	string fileNameFormat = "%F %H%M%S.wav"; // Default strftime format for audio files
 	
-		if (!strcmp(argv[i], "--licence")) {
+	for (int i = 0; i < argc; i++)
+	{
+		if (!strcmp(argv[i], "--licence"))
+		{
+			cout << "licence?" << endl;
 			printLicence();
 			exit(0);
-		} else if(!strcmp(argv[i], "-h") || !strcmp(argv[i],"--help")) {
+		}
+		else if(!strcmp(argv[i], "-h") || !strcmp(argv[i],"--help"))
+		{
 			printHelp();
 			exit(0);
 		}
-		else if (!strcmp(argv[i], "-d") || !strcmp(argv[i], "--directory")) {
+		else if (!strcmp(argv[i], "-d") || !strcmp(argv[i], "--directory"))
+		{
 			directory = argv[i + 1];
 			i++; // Skip parsing the next argument
 		}
-		else if (!strcmp(argv[i], "-f") || strcmp(argv[i], "--filename")) {
+		else if (!strcmp(argv[i], "-f") || !strcmp(argv[i], "--filename"))
+		{
 			fileNameFormat = argv[i + 1];
 			i++;
 		}
 	}
 	
-	doRecord(directory.c_str());
+	doRecord(directory, fileNameFormat);
 	return 0;
 }
 
-void doRecord(const char* directory) {
+void doRecord(string directory, string fileNameFormat) {
 
 	// How many devices are available?
 	unsigned int devices = audio.getDeviceCount();
@@ -168,23 +174,23 @@ void doRecord(const char* directory) {
 		endChronoAccurate = chrono::system_clock::from_time_t(end_tt);
 		// Now we can pass that to sleepUntil to finish the recording at the correct time!
 
-		string audioFileFullPath;
-		audioFileFullPath = directory;
+		
 #ifdef _WIN32
-		if (audioFileFullPath.back() != '\\') {
-			audioFileFullPath += '\\';
+		if (directory.back() != '\\') {
+			directory += '\\';
 		}
 #endif
 #ifdef unix
-		if (audioFileFullPath.back() != '/') {
-			audioFileFullPath += '/';
+		if (directory.back() != '/') {
+			directory += '/';
 		}
 #endif 
 
 		char audioFileName[81];
 		time_t now_tt = chrono::system_clock::to_time_t(nowChrono);
-		strftime(audioFileName, 80, "%F %H%M%S.wav", localtime(&now_tt));
+		strftime(audioFileName, 80, fileNameFormat.c_str(), localtime(&now_tt));
 
+		string audioFileFullPath = directory;
 		audioFileFullPath += audioFileName;
 
 		mySnd = sf_open(audioFileFullPath.c_str(), SFM_WRITE, &sfInfo);
