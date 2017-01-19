@@ -1,4 +1,10 @@
+#include <cinttypes>
+#ifdef __unix__
+typedef int64_t __int64;
+#endif
+
 #include "RtAudio.h"
+
 extern "C"{
 	#include "sndfile.h"
 }
@@ -9,6 +15,7 @@ extern "C"{
 #include <thread>
 #include <iomanip>
 #include <csignal>
+#include <cstring>
 
 
 std::string const SOFTWARE_NAME = "chronicle";

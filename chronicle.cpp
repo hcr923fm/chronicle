@@ -180,7 +180,7 @@ void doRecord(string directory, string fileNameFormat) {
 			directory += '\\';
 		}
 #endif
-#ifdef unix
+#ifdef __unix__
 		if (directory.back() != '/') {
 			directory += '/';
 		}
