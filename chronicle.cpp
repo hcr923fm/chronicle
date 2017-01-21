@@ -256,11 +256,21 @@ void printLicence() {
 }
 
 void printHelp() {
-	cout << "Usage:" << endl;
-	cout << "chronicle [ -h | --help ] [ --licence ] [ -d | --directory LOGGING_DIRECTORY ] [ -f | --filename FORMAT ]" << endl;
-	cout << "Where:" << endl;
-	cout << "-h | --help\tPrints this help message." << endl;
-	cout << "--licence\tPrints the licence information for this software and libraries that it uses." << endl;
-	cout << "-d | --directory\tSets the directory to save the logged audio to. A trailing slash is not required, but may be added. On Windows, if using a trailing slash, use a trailing double-slash. Defaults to current directory." << endl;
-	cout << "-f | --format\tstrftime-compatible format to use when naming the audio files. Defaults to %F %H%M%S.wav ." << endl;
+
+	const char USAGE[] =
+		R"(
+Usage:
+    chronicle [-h | --help] [--licence] [-d | --directory LOGGING_DIRECTORY] [-f | --filename FORMAT]
+
+    Where:
+        -h | --help         Prints this help message.
+        --licence           Prints the licence information for this software and libraries that it uses.
+        -d | --directory    Sets the directory to save the logged audio to. A trailing slash is not required, but may
+                            be added. On Windows, if using a trailing slash, use a trailing double-slash. Defaults to
+                            current directory.
+        -f | --format       strftime-compatible format to use when naming the audio files. Defaults to %F %H%M%S.wav .
+)";
+
+	cout << USAGE << endl;
+
 }
