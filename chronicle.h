@@ -1,6 +1,6 @@
+#ifdef __unix__
 /* libsndfile uses __int64 type, which isn't available on Linux... */
 #include <cinttypes>
-#ifdef __unix__
 typedef int64_t __int64;
 #endif
 
