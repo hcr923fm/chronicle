@@ -30,7 +30,7 @@ using namespace std;
 
 int main(int argc, char* argv[]);
 void doRecord(string directory, string fileNameFormat);
-int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, double streamTime, RtAudioStreamStatus status, void *userData);
+int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, double    me, RtAudioStreamStatus status, void *userData);
 void stopRecord();
 void signalHandler(int sigNum);
 
