@@ -23,7 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "chronicle.h"
+#include "chronicle.h"  
 
 using namespace std;
 
@@ -41,7 +41,6 @@ int main(int argc, char* argv[])
 	{
 		if (!strcmp(argv[i], "--licence"))
 		{
-			cout << "licence?" << endl;
 			printLicence();
 			exit(0);
 		}
@@ -241,18 +240,26 @@ void signalHandler(int sigNum) {
 }
 
 void printLicence() {
-	cout << "Chronicle is distributed under the MIT Licence." << endl;
-	cout << "See LICENCE for details of the licences used." << endl;
-	cout << "Chronicle uses the following libraries internally:" << endl;
+    const char LICENCE[] = 
+        R"(
+Chronicle is distributed under the MIT Licence.
+See LICENCE for details of the licences used.
+Chronicle uses the following libraries internally:
 
-	cout << "\tlibsndfile" << endl;
-	cout << "\t\tCopyright (C) 1999-2016 Erik de Castro Lopo <erikd@mega-nerd.com>" << endl;
-	cout << "\t\tLicenced under the LGPL as a dynamically linked library." << endl;
-	cout << "\t\tThe version of libsndfile that is distributed with this software has not been modified from the version available at http://www.mega-nerd.com/libsndfile/" << endl;
-	
-	cout << "\tRtAudio" << endl;
-	cout << "\t\tLicenced under the the RtAudio licence." << endl;
-	cout << "\t\tCopyright (c) Gary P. Scavone, McGill University; https://www.music.mcgill.ca/~gary/rtaudio/" << endl;
+    libsndfile
+        Copyright (C) 1999-2016 Erik de Castro Lopo <erikd@mega-nerd.com>
+        Licenced under the LGPL as a dynamically linked library.
+        The version of libsndfile that is distributed with this software has not
+        been modified from the version available at
+        http://www.mega-nerd.com/libsndfile/
+        
+    RtAudio
+        Licenced under the the RtAudio licence.
+        Copyright (c) Gary P. Scavone, McGill University
+        https://www.music.mcgill.ca/~gary/rtaudio/
+)";
+    
+    cout << LICENCE << endl;
 }
 
 void printHelp() {
