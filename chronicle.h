@@ -34,5 +34,7 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 void stopRecord();
 void signalHandler(int sigNum);
 
+void removeOldAudioFiles(chrono::duration<chrono::system_clock> age);
+
 void printLicence();
 void printHelp();

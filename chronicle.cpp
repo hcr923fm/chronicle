@@ -30,11 +30,13 @@ using namespace std;
 SNDFILE* mySnd;
 RtAudio audio;
 
+string output_directory;
+
 int main(int argc, char* argv[])
 {
 	cout << SOFTWARE_NAME << " v" << VERSION << " Copyright (c) 2016-2017 Callum McLean" << endl;
 	
-	string directory = "."; // Default directory to save files to
+	string output_directory = "."; // Default directory to save files to
 	string fileNameFormat = "%F %H%M%S.wav"; // Default strftime format for audio files
 	
 	for (int i = 0; i < argc; i++)
@@ -51,7 +53,7 @@ int main(int argc, char* argv[])
 		}
 		else if (!strcmp(argv[i], "-d") || !strcmp(argv[i], "--directory"))
 		{
-			directory = argv[i + 1];
+			output_directory = argv[i + 1];
 			i++; // Skip parsing the next argument
 		}
 		else if (!strcmp(argv[i], "-f") || !strcmp(argv[i], "--filename"))
@@ -61,7 +63,7 @@ int main(int argc, char* argv[])
 		}
 	}
 	
-	doRecord(directory, fileNameFormat);
+	doRecord(output_directory, fileNameFormat);
 	return 0;
 }
 
@@ -231,6 +233,10 @@ void stopRecord() {
 	if (audio.isStreamOpen()) { audio.closeStream(); }
 	sf_write_sync(mySnd);
 	sf_close(mySnd);
+}
+
+void removeOldAudioFiles(chrono::duration<chrono::system_clock> age) {
+	/* Bugger. */
 }
 
 void signalHandler(int sigNum) {
