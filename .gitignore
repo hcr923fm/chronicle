@@ -34,8 +34,6 @@ Debug
 includertaudio
 .vscode
 .vs
-chronicle.VC.*
-chronicle.vcx*
 
 *.wav
 
