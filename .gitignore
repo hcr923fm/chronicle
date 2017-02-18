@@ -34,6 +34,7 @@ Debug
 includertaudio
 .vscode
 .vs
+*.db
 
 *.wav
 
