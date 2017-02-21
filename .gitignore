@@ -35,6 +35,7 @@ includertaudio
 .vscode
 .vs
 *.db
+*.opendb
 
 *.wav
 build/*
