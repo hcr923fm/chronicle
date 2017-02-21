@@ -134,7 +134,7 @@ void doRecord(string directory, string fileNameFormat) {
 	params.nChannels = 2;
 	params.firstChannel = 0;
 	unsigned int sampleRate = 44100;
-	unsigned int bufferFrames = 512;
+	unsigned int bufferFrames = 1024;
 
 	SF_INFO sfInfo;
 	sfInfo.channels = 2;
@@ -213,6 +213,7 @@ void doRecord(string directory, string fileNameFormat) {
 
 		this_thread::sleep_until(endChronoAccurate);
 		cout << "Recording completed." << endl;
+		cout << endl;
 
 		stopRecord();
 	}
@@ -254,14 +255,22 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 	};
 
 	framesAvg = framesSum / nFrames;
-	float level = log10(framesAvg / 65535) * 10;
-	cout << "Level: " << level << "dB" << endl;
-	if (framesAvg < threshold) { cout << "silence at "<<streamTime << " (" << framesAvg << ")"<< endl; }
+	/*float level = log10(framesAvg / 65535) * 10;
+	cout << "\rLevel: " << level << "dB";
+	if (framesAvg < threshold) { cout << "silence at "<<streamTime << " (" << framesAvg << ")"; }
+	cout << flush;*/
 
+	float numberOfEquals = (framesAvg / 65535) * 76;
+	cout << "\r| ";
+	cout << string(numberOfEquals,'=');
+	cout << string(76 - numberOfEquals, ' ');
+	cout << "]" << flush;
 	return 0;
 }
 
 void stopRecord() {
+
+	cout << "\r" << endl;
 
 	try {
 		audio.stopStream();
