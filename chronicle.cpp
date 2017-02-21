@@ -23,21 +23,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "chronicle.h"  
+#include "chronicle.h"
 
 using namespace std;
 
 SNDFILE* mySnd;
 RtAudio audio;
 
-string output_directory;
+bool silent_flag = 0;
 
 int main(int argc, char* argv[])
 {
 	cout << SOFTWARE_NAME << " v" << VERSION << " Copyright (c) 2016-2017 Callum McLean" << endl;
 	
 	string output_directory = "."; // Default directory to save files to
-	string fileNameFormat = "%F %H%M%S.wav"; // Default strftime format for audio files
+	string fileNameFormat = "%Y-%m-%d %H%M%S.wav"; // Default strftime format for audio files. MinGW doesn't like %F...
 	
 	for (int i = 0; i < argc; i++)
 	{
@@ -147,8 +147,10 @@ void doRecord(string directory, string fileNameFormat) {
 	}
 
 	// Set up signal handling; fixes #1
-	signal(SIGINT, signalHandler);
-	signal(SIGABRT, signalHandler);
+	{
+		signal(SIGINT, signalHandler);
+		signal(SIGABRT, signalHandler);
+	}
 
 	/* The time to finish recording is at the end of the hour.
 	We can't assume that the recording starting from the top of the current hour,
@@ -189,7 +191,10 @@ void doRecord(string directory, string fileNameFormat) {
 
 		char audioFileName[81];
 		time_t now_tt = chrono::system_clock::to_time_t(nowChrono);
-		strftime(audioFileName, 80, fileNameFormat.c_str(), localtime(&now_tt));
+		tm now_tm;
+		localtime_s(&now_tm, &now_tt);
+
+		strftime(audioFileName, 80, fileNameFormat.c_str(), &now_tm);
 
 		string audioFileFullPath = directory;
 		audioFileFullPath += audioFileName;
@@ -215,8 +220,43 @@ void doRecord(string directory, string fileNameFormat) {
 
 int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, double streamTime, RtAudioStreamStatus status, void *userData)
 {
-	short* data = (short *)inputBuffer;
+	short* data = (short*)inputBuffer;
 	sf_writef_short(mySnd, data, nFrames);
+
+	/* To figure out if a buffer is silent, we need to check the content of the buffer.
+	The buffer is just the (number of frames) * (the number of channels); in our case,
+	nFrames*2. Each buffer is then just a number, representing the amplitude of the audio.
+	Therefore, if the buffer is empty, the audio is silent.
+
+	The data is cast to a short. sizeof(short) = 2 (bytes) = 16 bits.
+	Max value in a short is therefore 2^16 -1 = 65535.
+	It is appropriate to assume that a -60dB is sufficient for silence detection. Anything
+	lower than this is negligible, especially for analogue broadcast.
+
+	We can use this to figure out our silence detection.
+	Assuming 65535 is max volume (0dB).
+
+	I_db = 10 * log10(I / I_0)
+	-> I_db / 10 = log10(I / I_0)
+	-> 10^(I_db / 10) = I / I_0
+	-> I = 10^(I_db / 10) * I_0
+	-> I = 10^(-60 / 10) * 65535
+	-> I = 10^(-6) * 65535
+	-> I = 0.065535
+	*/
+
+	float threshold = 0.065535;
+
+	unsigned int framesSum;
+	float framesAvg;
+	for (int i = 0; i < nFrames*2; i++) {
+		framesSum += abs((*(data + i)));
+	};
+
+	framesAvg = framesSum / nFrames;
+	float level = log10(framesAvg / 65535) * 10;
+	cout << "Level: " << level << "dB" << endl;
+	if (framesAvg < threshold) { cout << "silence at "<<streamTime << " (" << framesAvg << ")"<< endl; }
 
 	return 0;
 }
@@ -235,8 +275,14 @@ void stopRecord() {
 	sf_close(mySnd);
 }
 
-void removeOldAudioFiles(chrono::duration<chrono::system_clock> age) {
-	/* Bugger. */
+void removeOldAudioFiles(chrono::seconds age, string directory) {
+	/* Iterate over the files in a directory (presumably the output directory) and delete
+	audio files older than a certain age
+	*/
+
+	chrono::time_point<chrono::system_clock> nowChrono, oldestTimeChrono;
+	nowChrono = chrono::system_clock::now();
+	oldestTimeChrono = nowChrono - age;
 }
 
 void signalHandler(int sigNum) {
@@ -273,7 +319,7 @@ void printHelp() {
 	const char USAGE[] =
 		R"(
 Usage:
-    chronicle [-h | --help] [--licence] [-d | --directory LOGGING_DIRECTORY] [-f | --filename FORMAT]
+    chronicle [-h | --help] [--licence] [-d | --directory OUTPUT_DIRECTORY] [-f | --filename FORMAT]
 
     Where:
         -h | --help         Prints this help message.

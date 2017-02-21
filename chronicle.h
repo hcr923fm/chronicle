@@ -11,6 +11,8 @@ extern "C"{
 	#include "sndfile.h"
 }
 
+#include <boost/filesystem.hpp>
+
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -22,7 +24,7 @@ extern "C"{
 
 
 std::string const SOFTWARE_NAME = "chronicle";
-std::string const VERSION = "0.1.1";
+std::string const VERSION = "0.1.1a1";
 
 using namespace std;
 
@@ -34,7 +36,7 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 void stopRecord();
 void signalHandler(int sigNum);
 
-void removeOldAudioFiles(chrono::duration<chrono::system_clock> age);
+void removeOldAudioFiles(chrono::seconds age, string directory);
 
 void printLicence();
 void printHelp();
