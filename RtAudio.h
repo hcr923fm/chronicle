@@ -51,6 +51,7 @@
 #include <vector>
 #include <exception>
 #include <iostream>
+#include <math.h>
 
 /*! \typedef typedef unsigned long RtAudioFormat;
     \brief RtAudio data format type.
