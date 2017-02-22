@@ -245,26 +245,29 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 	-> I = 10^(-6) * 65535
 	-> I = 0.065535
 	*/
+	//cout << streamTime << endl;
+	//if ((long)round(streamTime) % 2 == 0) {
+		//cout << (long)round(streamTime) << endl;
+		float threshold = 0.065535;
 
-	float threshold = 0.065535;
+		unsigned int framesSum;
+		float framesAvg;
+		for (int i = 0; i < nFrames * 2; i++) {
+			framesSum += abs((*(data + i)));
+		};
 
-	unsigned int framesSum;
-	float framesAvg;
-	for (int i = 0; i < nFrames*2; i++) {
-		framesSum += abs((*(data + i)));
-	};
+		framesAvg = framesSum / nFrames;
+		float level = log10(framesAvg / 65535) * 10;
+		/*cout << "\rLevel: " << level << "dB";
+		if (framesAvg < threshold) { cout << "silence at "<<streamTime << " (" << framesAvg << ")"; }
+		cout << flush;*/
 
-	framesAvg = framesSum / nFrames;
-	/*float level = log10(framesAvg / 65535) * 10;
-	cout << "\rLevel: " << level << "dB";
-	if (framesAvg < threshold) { cout << "silence at "<<streamTime << " (" << framesAvg << ")"; }
-	cout << flush;*/
-
-	float numberOfEquals = (framesAvg / 65535) * 76;
-	cout << "\r| ";
-	cout << string(numberOfEquals,'=');
-	cout << string(76 - numberOfEquals, ' ');
-	cout << "]" << flush;
+		float numberOfEquals = (framesAvg / 65535) * 76;
+		cout << "\r| ";
+		cout << string(numberOfEquals, '=');
+		cout << string(76 - numberOfEquals, ' ');
+		cout << "]  " << level << " dB" << flush;
+	//}
 	return 0;
 }
 
