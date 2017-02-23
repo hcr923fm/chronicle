@@ -36,7 +36,9 @@ int main(int argc, char* argv[])
 {
 	cout << SOFTWARE_NAME << " v" << VERSION << " Copyright (c) 2016-2017 Callum McLean" << endl;
 	
-	string output_directory = "."; // Default directory to save files to
+	boost::filesystem::path output_directory;
+	output_directory = boost::filesystem::current_path();
+
 	string fileNameFormat = "%Y-%m-%d %H%M%S.wav"; // Default strftime format for audio files. MinGW doesn't like %F...
 	
 	for (int i = 0; i < argc; i++)
@@ -53,13 +55,21 @@ int main(int argc, char* argv[])
 		}
 		else if (!strcmp(argv[i], "-d") || !strcmp(argv[i], "--directory"))
 		{
-			output_directory = argv[i + 1];
-			i++; // Skip parsing the next argument
+			if (boost::filesystem::exists(argv[i + 1])) {
+				/* TODO: CHECK THIS BIT, ENSURE DIRECTORY NOT FILE */
+				output_directory = argv[i + 1];
+				i++; // Skip parsing the next argument
+			}
+			else {
+				cout << "The specified output folder does not exist!" << endl;
+				exit(1);
+			}
+			
 		}
 		else if (!strcmp(argv[i], "-f") || !strcmp(argv[i], "--filename"))
 		{
 			fileNameFormat = argv[i + 1];
-			i++;
+			i++; // Skip parsing the next argument
 		}
 	}
 	
@@ -67,7 +77,7 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-void doRecord(string directory, string fileNameFormat) {
+void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 
 	// How many devices are available?
 	unsigned int devices = audio.getDeviceCount();
@@ -177,18 +187,6 @@ void doRecord(string directory, string fileNameFormat) {
 		endChronoAccurate = chrono::system_clock::from_time_t(end_tt);
 		// Now we can pass that to sleepUntil to finish the recording at the correct time!
 
-		
-#ifdef _WIN32
-		if (directory.back() != '\\') {
-			directory += '\\';
-		}
-#endif
-#ifdef __unix__
-		if (directory.back() != '/') {
-			directory += '/';
-		}
-#endif 
-
 		char audioFileName[81];
 		time_t now_tt = chrono::system_clock::to_time_t(nowChrono);
 		tm now_tm;
@@ -196,13 +194,14 @@ void doRecord(string directory, string fileNameFormat) {
 
 		strftime(audioFileName, 80, fileNameFormat.c_str(), &now_tm);
 
-		string audioFileFullPath = directory;
-		audioFileFullPath += audioFileName;
+		boost::filesystem::path audioFileFullPath;
+		audioFileFullPath = directory;
+		audioFileFullPath /= audioFileName;
 
-		mySnd = sf_open(audioFileFullPath.c_str(), SFM_WRITE, &sfInfo);
+		mySnd = sf_open(audioFileFullPath.generic_string().c_str(), SFM_WRITE, &sfInfo);
 
 		try {
-			cout << "Recording to " << audioFileFullPath.c_str() << endl;
+			cout << "Recording to " << audioFileFullPath << endl;
 			audio.openStream(NULL, &params, RTAUDIO_SINT16, sampleRate, &bufferFrames, &cb_record);
 			audio.startStream();
 		}
@@ -307,6 +306,7 @@ void signalHandler(int sigNum) {
 }
 
 void printLicence() {
+	/* TODO: ADD BOOST WEBSITE + COPYRIGHT */
     const char LICENCE[] = 
         R"(
 Chronicle is distributed under the MIT Licence.
@@ -321,9 +321,12 @@ Chronicle uses the following libraries internally:
         http://www.mega-nerd.com/libsndfile/
         
     RtAudio
-        Licenced under the the RtAudio licence.
         Copyright (c) Gary P. Scavone, McGill University
+        Licenced under the the RtAudio licence.
         https://www.music.mcgill.ca/~gary/rtaudio/
+
+	Boost
+		Licenced under the Boost Software Licence.
 )";
     
     cout << LICENCE << endl;
