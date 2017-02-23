@@ -24,14 +24,14 @@ extern "C"{
 
 
 std::string const SOFTWARE_NAME = "chronicle";
-std::string const VERSION = "0.1.1a1";
+std::string const VERSION = "0.1.1a2";
 
 using namespace std;
 
 // So, you've decided to make some logger software...
 
 int main(int argc, char* argv[]);
-void doRecord(string directory, string fileNameFormat);
+void doRecord(boost::filesystem::path directory, string fileNameFormat);
 int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, double    me, RtAudioStreamStatus status, void *userData);
 void stopRecord();
 void signalHandler(int sigNum);
