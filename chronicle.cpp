@@ -404,7 +404,8 @@ void printHelp() {
 	const char USAGE[] =
 		R"(
 Usage:
-    chronicle [-h | --help] [--licence] [-d | --directory OUTPUT_DIRECTORY] [-f | --filename FORMAT] [-a | --max-age MAX_FILE_AGE] [-s | --audio-format [WAV | OGG]]
+    chronicle [-h | --help] [--licence] [-d | --directory OUTPUT_DIRECTORY] [-f | --filename FORMAT]
+        [-a | --max-age MAX_FILE_AGE] [-s | --audio-format [WAV | OGG]]
 
     Where:
         -h | --help          Prints this help message.
