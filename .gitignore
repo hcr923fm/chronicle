@@ -38,6 +38,7 @@ includertaudio
 *.opendb
 
 *.wav
+*.ogg
 build/*
 
 # Don't upload the libs in the directory, use the /libs instead
