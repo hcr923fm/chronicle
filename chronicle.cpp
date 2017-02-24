@@ -30,6 +30,8 @@ using namespace std;
 SNDFILE* mySnd;
 RtAudio audio;
 
+int ageThresholdSeconds = 1000 * 60 * 60 * 60;
+
 bool silent_flag = 0;
 
 int main(int argc, char* argv[])
@@ -78,7 +80,6 @@ int main(int argc, char* argv[])
 }
 
 void doRecord(boost::filesystem::path directory, string fileNameFormat) {
-
 	// How many devices are available?
 	unsigned int devices = audio.getDeviceCount();
 	if (devices < 1) {
@@ -170,6 +171,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 	*/
 
 	while (true) {
+		removeOldAudioFiles(chrono::seconds(ageThresholdSeconds), directory);
 
 		chrono::time_point<chrono::system_clock> nowChrono, endChronoInaccurate, endChronoAccurate;
 		nowChrono = chrono::system_clock::now();
@@ -267,7 +269,7 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 	float numberOfEquals = (framesAvg / maxAudioVal) * 76;
 	cout << "\r| ";
 	cout << string(numberOfEquals, '=');
-	cout << string(76 - numberOfEquals, ' ');
+	cout << string(77 - numberOfEquals, ' ');
 	cout << "]  " << level << " dB" << flush;
 	//}
 	return 0;
@@ -289,14 +291,30 @@ void stopRecord() {
 	sf_close(mySnd);
 }
 
-void removeOldAudioFiles(chrono::seconds age, string directory) {
+void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory) {
 	/* Iterate over the files in a directory (presumably the output directory) and delete
 	audio files older than a certain age
 	*/
 
-	chrono::time_point<chrono::system_clock> nowChrono, oldestTimeChrono;
+	chrono::time_point<chrono::system_clock> nowChrono, oldestTimeChrono, fileMTime;
 	nowChrono = chrono::system_clock::now();
 	oldestTimeChrono = nowChrono - age;
+
+	boost::filesystem::directory_iterator dirIterEnd = boost::filesystem::directory_iterator();
+	boost::filesystem::directory_iterator dirIter = boost::filesystem::directory_iterator(directory);
+
+	while (dirIter != dirIterEnd) {
+		boost::filesystem::directory_entry dirEntry;
+		dirEntry = *dirIter;
+		
+		chrono::time_point<chrono::system_clock> fileMTime = chrono::system_clock::from_time_t(last_write_time(dirEntry.path()));
+		if (fileMTime < oldestTimeChrono & dirEntry.path().extension() == ".wav") {
+			cout << "Removing old audio file: " << dirEntry.path().filename() << endl;
+			boost::filesystem::remove(dirEntry.path());
+		}
+
+		dirIter++;
+	}
 }
 
 void signalHandler(int sigNum) {

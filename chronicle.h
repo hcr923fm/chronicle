@@ -36,7 +36,7 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 void stopRecord();
 void signalHandler(int sigNum);
 
-void removeOldAudioFiles(chrono::seconds age, string directory);
+void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory);
 
 void printLicence();
 void printHelp();
