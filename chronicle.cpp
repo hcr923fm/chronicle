@@ -57,16 +57,20 @@ int main(int argc, char* argv[])
 		}
 		else if (!strcmp(argv[i], "-d") || !strcmp(argv[i], "--directory"))
 		{
-			if (boost::filesystem::exists(argv[i + 1])) {
-				/* TODO: CHECK THIS BIT, ENSURE DIRECTORY NOT FILE */
-				output_directory = argv[i + 1];
-				i++; // Skip parsing the next argument
-			}
-			else {
-				cout << "The specified output folder does not exist!" << endl;
+			boost::filesystem::path proposedDir = argv[i + 1];
+			if  (!boost::filesystem::exists(proposedDir)) {
+				cout << "The specified output folder does not exist:" << endl;
+				cout << proposedDir << endl;
 				exit(1);
 			}
-			
+			else if (!boost::filesystem::is_directory(proposedDir)) {
+				cout << "The specified output folder is not a directory:" << endl;
+				cout << proposedDir << endl;
+				exit(1);
+			}
+
+			output_directory = proposedDir;
+			i++;
 		}
 		else if (!strcmp(argv[i], "-f") || !strcmp(argv[i], "--filename"))
 		{
