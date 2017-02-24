@@ -77,6 +77,25 @@ int main(int argc, char* argv[])
 			fileNameFormat = argv[i + 1];
 			i++; // Skip parsing the next argument
 		}
+		else if (!strcmp(argv[i], "-a") || !strcmp(argv[i], "--max-age")) {
+			int proposedLimit;
+			if (!atoi(argv[i + 1])){
+				cout << "The specified file age limit is not a valid number:" << endl;
+				cout << argv[i + 1] << endl;
+				exit(1);
+			}
+
+			proposedLimit = atoi(argv[i + 1]);
+
+			if (!proposedLimit > 1) {
+				cout << "The specified file age limit must be greater than 1 second:";
+				cout << proposedLimit << endl;
+				exit(1);
+			}
+
+			AUDIO_FILE_AGE_LIMIT = proposedLimit;
+			i++;
+		}
 	}
 	
 	doRecord(output_directory, fileNameFormat);
