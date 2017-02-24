@@ -24,7 +24,7 @@ extern "C"{
 
 
 std::string const SOFTWARE_NAME = "chronicle";
-std::string const VERSION = "0.1.1a3";
+std::string const VERSION = "0.1.1a4";
 
 using namespace std;
 
