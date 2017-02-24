@@ -30,7 +30,10 @@ using namespace std;
 SNDFILE* mySnd;
 RtAudio audio;
 
-int AUDIO_FILE_AGE_LIMIT = 1000 * 60 * 60 * 60;
+//int audioFileAgeLimitSeconds = 1000 * 60 * 60 * 60;
+int audioFileAgeLimitSeconds = 8;
+int soundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+string audioFileExtension = ".wav";
 
 bool silent_flag = 0;
 
@@ -41,7 +44,7 @@ int main(int argc, char* argv[])
 	boost::filesystem::path output_directory;
 	output_directory = boost::filesystem::current_path();
 
-	string fileNameFormat = "%Y-%m-%d %H%M%S.wav"; // Default strftime format for audio files. MinGW doesn't like %F...
+	string fileNameFormat = "%Y-%m-%d %H%M%S"; // Default strftime format for audio files. MinGW doesn't like %F...
 	
 	for (int i = 0; i < argc; i++)
 	{
@@ -93,8 +96,23 @@ int main(int argc, char* argv[])
 				exit(1);
 			}
 
-			AUDIO_FILE_AGE_LIMIT = proposedLimit;
+			audioFileAgeLimitSeconds = proposedLimit;
 			i++;
+		}
+		else if (!strcmp(argv[i], "-s") || !strcmp(argv[i], "--audio-format")) {
+			if (!strcmp(argv[i + 1], "OGG") || !strcmp(argv[i + 1], "ogg")) {
+				soundFormat = SF_FORMAT_OGG | SF_FORMAT_VORBIS;
+				audioFileExtension = ".ogg";
+			} else if (!strcmp(argv[i + 1], "WAV") || !strcmp(argv[i + 1], "wav")) {
+				soundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+				audioFileExtension = ".wav";
+			}
+			else {
+				cout << "Audio file format not supported:" << endl;
+				cout << argv[i + 1] << endl;
+				cout << "Supported formats are: [ OGG | WAV ]" << endl;
+				exit(1);
+			}
 		}
 	}
 	
@@ -172,7 +190,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 
 	SF_INFO sfInfo;
 	sfInfo.channels = 2;
-	sfInfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+	sfInfo.format = soundFormat;
 	sfInfo.samplerate = sampleRate;
 
 	if (sf_format_check(&sfInfo) == 0) {
@@ -194,7 +212,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 	*/
 
 	while (true) {
-		removeOldAudioFiles(chrono::seconds(AUDIO_FILE_AGE_LIMIT), directory);
+		removeOldAudioFiles(chrono::seconds(audioFileAgeLimitSeconds), directory);
 
 		chrono::time_point<chrono::system_clock> endTime = calculateRecordEndTimeFromNow();
 		// Now we can pass that to sleepUntil to finish the recording at the correct time!
@@ -209,6 +227,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 		boost::filesystem::path audioFileFullPath;
 		audioFileFullPath = directory;
 		audioFileFullPath /= audioFileName;
+		audioFileFullPath.replace_extension(audioFileExtension);		
 
 		mySnd = sf_open(audioFileFullPath.generic_string().c_str(), SFM_WRITE, &sfInfo);
 
@@ -260,7 +279,7 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 	//if ((long)round(streamTime) % 2 == 0) {
 		//cout << (long)round(streamTime) << endl;
 
-	int maxAudioVal = (pow(2, (sizeof(short) * 8)) - 1)/2;
+	int maxAudioVal = (pow(2, (sizeof(short) * 8)) - 1);
 	int thresholdDB = -60;
 	float thresholdVal = (pow(10, thresholdDB / 10))*maxAudioVal;
 
@@ -338,7 +357,7 @@ void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory)
 		dirEntry = *dirIter;
 		
 		chrono::time_point<chrono::system_clock> fileMTime = chrono::system_clock::from_time_t(boost::filesystem::last_write_time(dirEntry.path()));
-		if (fileMTime < oldestTimeChrono & dirEntry.path().extension() == ".wav") {
+		if (fileMTime < oldestTimeChrono & dirEntry.path().extension() == audioFileExtension) {
 			cout << "Removing old audio file: " << dirEntry.path().filename() << endl;
 			boost::filesystem::remove(dirEntry.path());
 		}
@@ -394,7 +413,7 @@ Usage:
                                 be added. On Windows, if using a trailing slash, use a trailing double-slash.
                                 Defaults to current directory.
         -f | --format       strftime-compatible format to use when naming the audio files.
-                                Defaults to %F %H%M%S.wav .
+                                Defaults to %F %H%M%S .
         -a | --max-age      Sets the maximum age (in seconds) before audio files will be automatically deleted.
                                 Defaults to 216000000 (1000 hours, in accordance with OFCOM rules).
 )";
