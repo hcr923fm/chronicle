@@ -314,7 +314,7 @@ void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory)
 		boost::filesystem::directory_entry dirEntry;
 		dirEntry = *dirIter;
 		
-		chrono::time_point<chrono::system_clock> fileMTime = chrono::system_clock::from_time_t(last_write_time(dirEntry.path()));
+		chrono::time_point<chrono::system_clock> fileMTime = chrono::system_clock::from_time_t(boost::filesystem::last_write_time(dirEntry.path()));
 		if (fileMTime < oldestTimeChrono & dirEntry.path().extension() == ".wav") {
 			cout << "Removing old audio file: " << dirEntry.path().filename() << endl;
 			boost::filesystem::remove(dirEntry.path());
