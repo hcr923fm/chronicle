@@ -30,7 +30,7 @@ using namespace std;
 SNDFILE* mySnd;
 RtAudio audio;
 
-int ageThresholdSeconds = 1000 * 60 * 60 * 60;
+int AUDIO_FILE_AGE_LIMIT = 1000 * 60 * 60 * 60;
 
 bool silent_flag = 0;
 
@@ -171,26 +171,13 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 	*/
 
 	while (true) {
-		removeOldAudioFiles(chrono::seconds(ageThresholdSeconds), directory);
+		removeOldAudioFiles(chrono::seconds(AUDIO_FILE_AGE_LIMIT), directory);
 
-		chrono::time_point<chrono::system_clock> nowChrono, endChronoInaccurate, endChronoAccurate;
-		nowChrono = chrono::system_clock::now();
-
-		endChronoInaccurate = nowChrono + chrono::seconds(3600);
-		// Convert the end-time into a form than we can manipulate
-		time_t end_tt = chrono::system_clock::to_time_t(endChronoInaccurate);
-		struct tm* end_tm = localtime(&end_tt);
-		// And remove any extraneous hours/minutes so the time is at the top of hour
-		end_tm->tm_min = 0;
-		end_tm->tm_sec = 0;
-
-		// Now convert back to a chrono
-		end_tt = mktime(end_tm);
-		endChronoAccurate = chrono::system_clock::from_time_t(end_tt);
+		chrono::time_point<chrono::system_clock> endTime = calculateRecordEndTimeFromNow();
 		// Now we can pass that to sleepUntil to finish the recording at the correct time!
 
 		char audioFileName[81];
-		time_t now_tt = chrono::system_clock::to_time_t(nowChrono);
+		time_t now_tt = chrono::system_clock::to_time_t(chrono::system_clock::now());
 		tm now_tm;
 		localtime_s(&now_tm, &now_tt);
 
@@ -212,7 +199,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 			exit(0);
 		}
 
-		this_thread::sleep_until(endChronoAccurate);
+		this_thread::sleep_until(endTime);
 		cout << "Recording completed." << endl;
 		cout << endl;
 
@@ -289,6 +276,26 @@ void stopRecord() {
 	if (audio.isStreamOpen()) { audio.closeStream(); }
 	sf_write_sync(mySnd);
 	sf_close(mySnd);
+}
+
+chrono::time_point<chrono::system_clock> calculateRecordEndTimeFromNow(){
+
+	chrono::time_point<chrono::system_clock> nowChrono, endChronoInaccurate, endChronoAccurate;
+	nowChrono = chrono::system_clock::now();
+
+	endChronoInaccurate = nowChrono + chrono::seconds(3600);
+	// Convert the end-time into a form than we can manipulate
+	time_t end_tt = chrono::system_clock::to_time_t(endChronoInaccurate);
+	struct tm* end_tm = localtime(&end_tt);
+	// And remove any extraneous hours/minutes so the time is at the top of hour
+	end_tm->tm_min = 0;
+	end_tm->tm_sec = 0;
+
+	// Now convert back to a chrono
+	end_tt = mktime(end_tm);
+	endChronoAccurate = chrono::system_clock::from_time_t(end_tt);
+
+	return endChronoAccurate;
 }
 
 void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory) {
