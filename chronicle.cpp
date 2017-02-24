@@ -215,11 +215,10 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 		removeOldAudioFiles(chrono::seconds(audioFileAgeLimitSeconds), directory);
 
 		chrono::time_point<chrono::system_clock> endTime = calculateRecordEndTimeFromNow();
-		// Now we can pass that to sleepUntil to finish the recording at the correct time!
 
 		char audioFileName[81];
 		time_t now_tt = chrono::system_clock::to_time_t(chrono::system_clock::now());
-		tm now_tm;
+		struct tm now_tm;
 		localtime_s(&now_tm, &now_tt);
 
 		strftime(audioFileName, 80, fileNameFormat.c_str(), &now_tm);
