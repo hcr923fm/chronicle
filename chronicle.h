@@ -32,6 +32,9 @@ using namespace std;
 
 int main(int argc, char* argv[]);
 void doRecord(boost::filesystem::path directory, string fileNameFormat);
+
+chrono::time_point<chrono::system_clock> calculateRecordEndTimeFromNow();
+
 int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, double    me, RtAudioStreamStatus status, void *userData);
 void stopRecord();
 void signalHandler(int sigNum);
