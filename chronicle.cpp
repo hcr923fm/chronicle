@@ -417,7 +417,7 @@ Usage:
                                  Defaults to %F %H%M%S .
         -a | --max-age       Sets the maximum age (in seconds) before audio files will be automatically deleted.
                                  Defaults to 216000000 (1000 hours, in accordance with OFCOM rules).
-        -s | --audio--format Sets the audio format to use for the recorded audio files.
+        -s | --audio-format Sets the audio format to use for the recorded audio files.
                                  Acceptable parameters are:
                                      OGG | Ogg Vorbis (.ogg)
                                      WAV | 16-bit PCM WAV (.wav)
