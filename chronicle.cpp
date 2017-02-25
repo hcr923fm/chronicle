@@ -30,8 +30,7 @@ using namespace std;
 SNDFILE* mySnd;
 RtAudio audio;
 
-//int audioFileAgeLimitSeconds = 1000 * 60 * 60 * 60;
-int audioFileAgeLimitSeconds = 8;
+int audioFileAgeLimitSeconds = 1000 * 60 * 60 * 60;
 int soundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 string audioFileExtension = ".wav";
 
