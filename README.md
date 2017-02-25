@@ -1,10 +1,14 @@
 # Chronicle
 
+## What is Chronicle?
+
 Chronicle is an audio logger, designed for radio station use.
 
 At the moment, it records audio from the default input to an audio file, on the hour, every hour. Once the recordings have become outdated, they will be deleted. As such, it is a full rotating logger.
 
-**To use:**
+
+## Usage:
+
 ```
 chronicle [ -h | --help ] [ --licence ] [ -d | --directory OUTPUT_DIRECTORY]  [ -f | --filename FORMAT ]
         [ -a | --max-age MAX_FILE_AGE ] [ -s | --audio-format [ WAV | OGG ] ]
@@ -17,7 +21,12 @@ Where:
 * Audio format can be specified as WAV for 16-bit PCM Wave files, or OGG for Ogg Vorbis.
 
 
+## Buy me a coffee?
+If you find chronicle to be useful, fancy buying me a coffee?
 
+I'm on Flattr:
+[![Flattr this!](//button.flattr.com/flattr-badge-large.png)](https://flattr.com/submit/auto?fid=kzr39z&url=http%3A%2F%2Fgithub.com%2Fcalmcl1%2Fchronicle)
 
+## Copyright
 Copyright 2016-2017 Callum McLean.
 Distributed under the MIT Licence.
