@@ -30,7 +30,7 @@ using namespace std;
 SNDFILE* mySnd;
 RtAudio audio;
 
-int audioFileAgeLimitSeconds = 1000 * 60 * 60 * 60;
+int audioFileAgeLimitSeconds = 1000 * 60 * 60
 int soundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 string audioFileExtension = ".wav";
 unsigned int inputAudioDeviceId = audio.getDefaultInputDevice();
@@ -463,7 +463,7 @@ Usage:
                                  numbers can be obtained with `chronicle -l`.
                                  If unspecified, the system default audio recording device will be used.
         -a | --max-age       Sets the maximum age (in seconds) before audio files will be automatically deleted.
-                                 Defaults to 216000000 (1000 hours, in accordance with OFCOM rules).
+                                 Defaults to 3600000 (1000 hours, in accordance with OFCOM rules).
         -s | --audio-format Sets the audio format to use for the recorded audio files.
                                  Acceptable parameters are:
                                      OGG | Ogg Vorbis (.ogg)
