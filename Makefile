@@ -29,7 +29,7 @@ msys264:
 
 linux:
 	mkdir -p build/linux
-	g++ chronicle.cpp RtAudio.cpp -D__LINUX_ALSA__ -lpthread `pkg-config --libs --cflags sndfile alsa` -std=c++11
+	g++ chronicle.cpp RtAudio.cpp -D__LINUX_ALSA__ -lpthread $(MSYS2LIBS) -std=c++11
 	cp README.MD build/linux
 	cp LICENCE build/linux
 
