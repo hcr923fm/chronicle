@@ -30,8 +30,16 @@ using namespace std;
 
 // So, you've decided to make some logger software...
 
+struct recordingParameters {
+	unsigned int channelCount;
+	unsigned int sampleRate;
+	unsigned int bufferLength;
+};
+
 int main(int argc, char* argv[]);
 void doRecord(boost::filesystem::path directory, string fileNameFormat);
+
+recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice);
 
 chrono::time_point<chrono::system_clock> calculateRecordEndTimeFromNow();
 
