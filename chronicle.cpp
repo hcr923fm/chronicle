@@ -444,17 +444,24 @@ void printHelp() {
 	const char USAGE[] =
 		R"(
 Usage:
-    chronicle [-h | --help] [--licence] [-d | --directory OUTPUT_DIRECTORY] [-f | --filename FORMAT]
-        [-a | --max-age MAX_FILE_AGE] [-s | --audio-format [WAV | OGG]]
+    chronicle [-h | --help]
+    chronicle [--licence]
+    chronicle [-l | --list-devices ]
+    chronicle [-d | --directory OUTPUT_DIRECTORY] [-f | --filename FORMAT] [-i | --input-device DEVICE_ID] 
+              [-a | --max-age MAX_FILE_AGE] [-s | --audio-format [WAV | OGG]]
 
     Where:
         -h | --help          Prints this help message.
         --licence            Prints the licence information for this software and libraries that it uses.
+        -l | --list-devices  Lists the available input devices with their IDs.
         -d | --directory     Sets the directory to save the logged audio to. A trailing slash is not required, but may
                                  be added. On Windows, if using a trailing slash, use a trailing double-slash.
                                  Defaults to current directory.
         -f | --format        strftime-compatible format to use when naming the audio files.
                                  Defaults to %F %H%M%S .
+        -i | --input-device  The ID number of the input device to record from. A list of input devices and their ID
+                                 numbers can be obtained with `chronicle -l`.
+                                 If unspecified, the system default audio recording device will be used.
         -a | --max-age       Sets the maximum age (in seconds) before audio files will be automatically deleted.
                                  Defaults to 216000000 (1000 hours, in accordance with OFCOM rules).
         -s | --audio-format Sets the audio format to use for the recorded audio files.
