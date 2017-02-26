@@ -33,7 +33,7 @@ RtAudio audio;
 int audioFileAgeLimitSeconds = 1000 * 60 * 60 * 60;
 int soundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 string audioFileExtension = ".wav";
-RtAudio::DeviceInfo inputAudioDevice = audio.getDeviceInfo(audio.getDefaultInputDevice());
+unsigned int inputAudioDeviceId = audio.getDefaultInputDevice();
 
 bool silent_flag = 0;
 
@@ -166,7 +166,7 @@ int main(int argc, char* argv[])
 				exit(1);
 			}
 
-			inputAudioDevice = proposedDeviceInfo;
+			inputAudioDeviceId = proposedDeviceID;
 			i++;
 		}
 	}
@@ -184,16 +184,19 @@ int main(int argc, char* argv[])
 void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 	
 	RtAudio::StreamParameters params;
-	cout << "Using input device: " << inputAudioDevice.name() << endl;
-	params.nChannels = 2;
+	RtAudio::DeviceInfo deviceInfo = audio.getDeviceInfo(inputAudioDeviceId);
+	cout << "Using input device: " << deviceInfo.name << endl;
+
+	recordingParameters rp = getRecordingParameters(deviceInfo);
+
+	params.deviceId = inputAudioDeviceId;
+	params.nChannels = rp.channelCount;
 	params.firstChannel = 0;
-	unsigned int sampleRate = 44100;
-	unsigned int bufferFrames = 1024;
 
 	SF_INFO sfInfo;
-	sfInfo.channels = 2;
+	sfInfo.channels = rp.channelCount;
 	sfInfo.format = soundFormat;
-	sfInfo.samplerate = sampleRate;
+	sfInfo.samplerate = rp.sampleRate;
 
 	if (sf_format_check(&sfInfo) == 0) {
 		cout << "Destination format invalid; Exiting..." << endl;
@@ -234,7 +237,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 
 		try {
 			cout << "Recording to " << audioFileFullPath << endl;
-			audio.openStream(NULL, &params, RTAUDIO_SINT16, sampleRate, &bufferFrames, &cb_record);
+			audio.openStream(NULL, &params, RTAUDIO_SINT16, rp.sampleRate, &(rp.bufferLength), &cb_record);
 			audio.startStream();
 		}
 		catch (RtAudioError &e) {
@@ -296,12 +299,14 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 	if (framesAvg < threshold) { cout << "silence at "<<streamTime << " (" << framesAvg << ")"; }
 	cout << flush;*/
 
-	float numberOfEquals = (framesAvg / maxAudioVal) * 76;
+	int numberOfEquals = (framesAvg / maxAudioVal) * 60;
 	cout << "\r| ";
 	cout << string(numberOfEquals, '=');
-	cout << string(77 - numberOfEquals, ' ');
+	cout << string(63 - numberOfEquals, ' ');
 	cout << "]  " << level << " dB" << flush;
 	//}
+
+	//cout << "\r" << framesAvg << " / " << maxAudioVal << "        " << flush;
 	return 0;
 }
 
@@ -319,6 +324,40 @@ void stopRecord() {
 	if (audio.isStreamOpen()) { audio.closeStream(); }
 	sf_write_sync(mySnd);
 	sf_close(mySnd);
+}
+
+recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice) {
+	recordingParameters rp;
+	
+	/* Set channel count */
+	if (recordingDevice.inputChannels == 1) {
+		rp.channelCount = 1;
+	}
+	else if (recordingDevice.inputChannels >= 2) {
+		rp.channelCount = 2;
+	}
+	cout << "Recording channels count: " << rp.channelCount << endl;
+
+	/* Set sample rate - prefer 44100 */
+	if (recordingDevice.preferredSampleRate == 44100) {
+		rp.sampleRate = 44100;
+	}
+	else {
+		for (std::vector<unsigned int>::iterator i = recordingDevice.sampleRates.begin(); i != recordingDevice.sampleRates.end(); i++) {
+			if (*i == 44100) { rp.sampleRate = 44100; }
+		}
+
+		if (!rp.sampleRate) {
+			rp.sampleRate = recordingDevice.preferredSampleRate;
+			cout << "Could not set sample rate at 44.1 kHz, using preferred sample rate: " << rp.sampleRate << endl;
+		}
+	}
+	cout << "Sample rate: " << rp.sampleRate << endl;
+
+	rp.bufferLength = 1024;
+
+	cout << endl;
+	return rp;
 }
 
 chrono::time_point<chrono::system_clock> calculateRecordEndTimeFromNow(){
