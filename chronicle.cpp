@@ -102,13 +102,13 @@ int main(int argc, char* argv[])
 		}
 		else if (!strcmp(argv[i], "-a") || !strcmp(argv[i], "--max-age")) {
 			int proposedLimit;
-			if (!atoi(argv[i + 1])){
+			if (argv[i + 1], nullptr, 10) & argv[i + 1] == 0){
 				cout << "The specified file age limit is not a valid number:" << endl;
 				cout << argv[i + 1] << endl;
 				exit(1);
 			}
 
-			proposedLimit = atoi(argv[i + 1]);
+			proposedLimit = strtoul(argv[i + 1], nullptr, 10);
 
 			if (!proposedLimit > 1) {
 				cout << "The specified file age limit must be greater than 1 second:";
