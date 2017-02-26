@@ -8,7 +8,7 @@ At the moment, it records audio from specified input to an audio file, on the ho
 
 ## Getting Chronicle
 ### Windows x32 and x64
-Windows users (both 32 and 64 bit) can simply download the lated compiled binaries from the [Releases](https://github.com/calmcl1/chronicle/releases) page. Simply extract and run. Hooray!
+Windows users (both 32 and 64 bit) can simply download the latest compiled binaries from the [Releases](https://github.com/calmcl1/chronicle/releases) page. Simply extract and run. Hooray!
 
 ### Linux
 Linux users have a touch more work to do - I haven't gotten around to compiling binaries for Linux yet! :blush:
