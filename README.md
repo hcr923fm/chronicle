@@ -6,6 +6,27 @@ Chronicle is an audio logger, designed for radio station use.
 
 At the moment, it records audio from specified input to an audio file, on the hour, every hour. Once the recordings have become outdated, they will be deleted. As such, it is a full rotating logger.
 
+## Getting Chronicle
+### Windows x32 and x64
+Windows users (both 32 and 64 bit) can simply download the lated compiled binaries from the [Releases](https://github.com/calmcl1/chronicle/releases) page. Simply extract and run. Hooray!
+
+### Linux
+Linux users have a touch more work to do - I haven't gotten around to compiling binaries for Linux yet! :blush:
+Don't worry, it's not that bad. There are just a few prerequisites:
+* RtAudio, which you have to build (and `make install`) from source. [Get RtAudio here](https://www.music.mcgill.ca/~gary/rtaudio/index.html).
+* libsndfile, which is in most package managers.
+* Boost, which is in most package managers.
+
+Then, grab a copy of the source from the [Releases](https://github.com/calmcl1/chronicle/releases) page. Extract to your favourite directory.
+
+Open a terminal and `cd` into the source directory.
+
+Run `make linux`.
+
+The built binary will exist in (srcdir)/build/linux.
+
+I'll get around to making it easier, I promise!
+
 
 ## Usage:
 

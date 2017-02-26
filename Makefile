@@ -1,7 +1,3 @@
-WINBOOSTLIBDIR="C:\Program Files\boost\boost_1_63_0\x64\lib"
-WINBOOSTHEADERDIR="C:\Program Files\boost\boost_1_63_0\x64\include\boost-1_63"
-WINRTAUDIOLIBDIR="C:\Users\calmc\Source\Repos\chronicle\lib"
-
 MINGWBOOSTLIBDIR="C:\Program Files\boost\boost_1_63_0\x64_mingw\lib"
 
 MSYS2WINBOOSTLIBS=-lboost_filesystem-mt -lboost_system-mt
@@ -32,7 +28,10 @@ msys264:
 	cp LICENCE build/64
 
 linux:
+	mkdir -p build/linux
 	g++ chronicle.cpp RtAudio.cpp -D__LINUX_ALSA__ -lpthread `pkg-config --libs --cflags sndfile alsa` -std=c++11
+	cp README.MD build/linux
+	cp LICENCE build/linux
 
 clean:
 	rm -rf build/
