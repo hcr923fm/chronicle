@@ -38,7 +38,7 @@ bool silent_flag = 0;
 
 int main(int argc, char* argv[])
 {
-	cout << SOFTWARE_NAME << " v" << VERSION << " Copyright (c) 2016-2017 Callum McLean" << endl;
+	cout << SOFTWARE_NAME << " v" << VERSION << " Copyright (c) 2016-2017 Callum McLean" << endl<<endl;
 	
 	boost::filesystem::path output_directory;
 	output_directory = boost::filesystem::current_path();
@@ -56,6 +56,23 @@ int main(int argc, char* argv[])
 		{
 			printHelp();
 			exit(0);
+		}
+		else if (!strcmp(argv[i], "-l") || !strcmp(argv[i], "--list-devices")) {
+			/* List the input devices that are available and exit. */
+			
+			unsigned int devices = audio.getDeviceCount();
+			RtAudio::DeviceInfo deviceInfo;
+
+			for (unsigned int i = 0; i < devices; i++) {
+				deviceInfo = audio.getDeviceInfo(i);
+				if (deviceInfo.probed == true && deviceInfo.inputChannels != 0) {
+					cout << "#" << i << ": " << deviceInfo.name << endl;
+					cout << "    Channel count: " << deviceInfo.inputChannels << endl;
+				}
+			}
+
+			exit(0);
+
 		}
 		else if (!strcmp(argv[i], "-d") || !strcmp(argv[i], "--directory"))
 		{
