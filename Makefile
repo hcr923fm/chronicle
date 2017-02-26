@@ -4,14 +4,10 @@ WINRTAUDIOLIBDIR="C:\Users\calmc\Source\Repos\chronicle\lib"
 
 MINGWBOOSTLIBDIR="C:\Program Files\boost\boost_1_63_0\x64_mingw\lib"
 
-#MSYSWIN2BOOSTLIBDIR="C:/Program Files/boost/boost_1_63_0/msys2_64/lib"
-#MSYS2WINBOOSTHEADERDIR="C:/Program Files/boost/boost_1_63_0/msys2_64/include/boost-1_63/boost"
-#MSYS2WINRTAUDIOLIBDIR="C:/Users/calmc/Source/Repos/rtaudiobuild/msys2/lib"
-MSYS2WINBOOSTLIBDIR="/c/Program Files/boost/boost_1_63_0/msys2_64/lib"
-MSYS2WINBOOSTHEADERDIR="/c/Program Files/boost/boost_1_63_0/msys2_64/include/boost-1_63"
-MSYS2WINRTAUDIOLIBDIR="/c/Users/calmc/Source/Repos/rtaudiobuild/msys2/lib"
-MSYS2WINBOOSTLIBS=-lboost_system-mgw63-mt-1_63 -lboost_filesystem-mgw63-mt-1_63
+MSYS2WINBOOSTLIBS=-lboost_filesystem-mt -lboost_system-mt
 MSYS2WIN32LIBS=-lole32 -ldsound -luser32 -lwinmm -luuid -lksuser
+
+MSYS2LIBS=`pkg-config --cflags --libs sndfile rtaudio`
 
 
 windows:
@@ -21,10 +17,19 @@ winbuild:
 	cl /EHsc chronicle.cpp RtAudio.cpp -D__WINDOWS_DS__ -D__WINDOWS_WASAPI__ /I $(WINBOOSTHEADERDIR) /link /LIBPATH:$(WINBOOSTLIBDIR) /LIBPATH:lib /IMPLIB:
 
 
-msys2:
-	mkdir -p build
-	g++ chronicle.cpp RtAudio.cpp -D__WINDOWS_DS__ -D__WINDOWS_WASAPI__ -std=c++11 -I$(MSYS2WINBOOSTHEADERDIR) $(MSYS2WIN32LIBS) -llibsndfile-1 -llibrtaudio $(MSYS2WINBOOSTLIBS) -Llib -L$(MSYS2WINBOOSTLIBDIR) -L$(MSYS2WINRTAUDIOLIBDIR) -o build/chronicle.exe
-	cp libs/* build/
+msys232:
+	mkdir -p build/32
+	g++ chronicle.cpp RtAudio.cpp -std=c++11 $(MSYS2WIN32LIBS) $(MSYS2LIBS) $(MSYS2WINBOOSTLIBS) -o build/32/chronicle.exe
+	cp libs/32/* build/32
+	cp README.MD build/32
+	cp LICENCE build/32
+
+msys264:
+	mkdir -p build/64
+	g++ chronicle.cpp RtAudio.cpp -std=c++11 $(MSYS2WIN32LIBS) $(MSYS2LIBS) $(MSYS2WINBOOSTLIBS) -o build/64/chronicle.exe
+	cp libs/64/* build/64/
+	cp README.MD build/64
+	cp LICENCE build/64
 
 linux:
 	g++ chronicle.cpp RtAudio.cpp -D__LINUX_ALSA__ -lpthread `pkg-config --libs --cflags sndfile alsa` -std=c++11
