@@ -37,10 +37,15 @@ Where:
                              Defaults to WAV.
 ```
 
+## Known Issues:
+* Audio devices with more than 2 channels will default to the first two channels. This is perfectly suitable for standard line-in/mic-in audio devices and sound cards where the channels are split up into pairs (which most do), but any sound card that presents multiple channels in a single device will automatically record the first two.
+* All audio is resampled to 16bit for conversion to PCM Wave. Although theoretically an issue, this is not likely to affect the vast majority of users.
+* Due to the type sizes used in the underlying audio libraries, the audio monitoring graph on the 32-bit version is less reliable at very low levels. This does not affect the quality of the recorded output.
+
 ## Buy me a coffee?
 If you find chronicle to be useful, fancy buying me a coffee?
 
-I'm on [Flattr](https://flattr.com/submit/auto?fid=kzr39z&url=http%3A%2F%2Fgithub.com%2Fcalmcl1%2Fchronicle)!
+I'm on [Flattr](https://flattr.com/submit/auto?fid=kzr39z&url=http%3A%2F%2Fgithub.com%2Fcalmcl1%2Fchronicle) and [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FXDR44PHGFEDN)!
 
 ## Copyright
 Copyright 2016-2017 Callum McLean.
