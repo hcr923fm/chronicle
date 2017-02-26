@@ -33,6 +33,7 @@ RtAudio audio;
 int audioFileAgeLimitSeconds = 1000 * 60 * 60 * 60;
 int soundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 string audioFileExtension = ".wav";
+RtAudio::DeviceInfo inputAudioDevice = audio.getDeviceInfo(audio.getDefaultInputDevice());
 
 bool silent_flag = 0;
 
@@ -70,6 +71,9 @@ int main(int argc, char* argv[])
 					cout << "    Channel count: " << deviceInfo.inputChannels << endl;
 				}
 			}
+			
+			deviceInfo = audio.getDeviceInfo(audio.getDefaultInputDevice());
+			cout << endl << "Default device: " << deviceInfo.name << endl;
 
 			exit(0);
 
@@ -129,7 +133,48 @@ int main(int argc, char* argv[])
 				cout << "Supported formats are: [ OGG | WAV ]" << endl;
 				exit(1);
 			}
+			i++;
 		}
+		else if (!strcmp(argv[i], "-i") || !strcmp(argv[i], "--input-device")) {
+			unsigned int proposedDeviceID;
+			RtAudio::DeviceInfo proposedDeviceInfo;
+			
+			/* Is the input a valid number? */
+			if (!strtoul(argv[i + 1], nullptr,10) & argv[i+1] == 0) {
+				cout << "The specified device ID is not a valid number:" << endl;
+				cout << argv[i + 1] << endl;
+				exit(1);
+			}
+
+			proposedDeviceID = strtoul(argv[i + 1], nullptr, 10);
+
+			/* Does a device exist with the provided ID? */
+			if (proposedDeviceID > (audio.getDeviceCount()-1)) {
+				cout << "No audio device found with ID " << proposedDeviceID << endl;
+				cout << "Use:" << endl;
+				cout << "    chronicle --list-devices" << endl;
+				cout << "To find a list of available device IDs." << endl;
+				exit(1);
+			}
+
+			/* Is the device an input device? */
+			cout << "Getting device info" << endl;
+			proposedDeviceInfo = audio.getDeviceInfo(proposedDeviceID);
+			if (proposedDeviceInfo.inputChannels == 0) {
+				cout << "The specified audio device is not an input device:" << endl;
+				cout << "#" << proposedDeviceID << ": " << proposedDeviceInfo.name << endl;
+				exit(1);
+			}
+
+			inputAudioDevice = proposedDeviceInfo;
+			i++;
+		}
+	}
+
+	/* Make sure that audio devices exist before continuing... */
+	if (audio.getDeviceCount() < 1) {
+		cout << "No audio devices available! Exiting..." << endl;
+		exit(0);
 	}
 	
 	doRecord(output_directory, fileNameFormat);
@@ -137,68 +182,9 @@ int main(int argc, char* argv[])
 }
 
 void doRecord(boost::filesystem::path directory, string fileNameFormat) {
-	// How many devices are available?
-	unsigned int devices = audio.getDeviceCount();
-	if (devices < 1) {
-		cout << "No audio devices available! Exiting..." << endl;
-		exit(0);
-	}
-
-	// TODO: Check for *input* devices specifically
-
-	/*
-	// Tell us about the devices available
-
-	cout << devices << " devices available" << endl;
-	for (unsigned int i=0; i<devices; i+=1){
-		RtAudio::DeviceInfo deviceInfo = audio.getDeviceInfo(i);
-		cout << "Device #" << i << ": " << deviceInfo.name << endl;
-		if (deviceInfo.probed != true){
-			cout << "    Could not probe device! May not be usable." << endl;
-			continue;
-		}
-		cout << "    Input channels: " << deviceInfo.inputChannels << endl;
-		cout << "    Output channels: " << deviceInfo.outputChannels << endl;
-		cout << "    Max duplex channels: " << deviceInfo.duplexChannels << endl;
-		cout << "    Sample rates: ";
-
-		for (unsigned int j = 0; j < deviceInfo.sampleRates.size(); j++) {
-			cout << deviceInfo.sampleRates[j] << "; ";
-		}
-		cout << endl;
-
-		cout << "    Preferred sample rate: " << deviceInfo.preferredSampleRate << endl;
-		cout << "    Data formats: ";
-
-		RtAudioFormat deviceAudioFormats = deviceInfo.nativeFormats;
-		if (deviceAudioFormats & RTAUDIO_SINT8){
-			cout << "Signed 8-bit int; ";
-		}
-		if (deviceAudioFormats & RTAUDIO_SINT16){
-			cout << "Signed 16-bit int; ";
-		}
-		if (deviceAudioFormats & RTAUDIO_SINT24){
-			cout << "Signed 24-bit int; ";
-		}
-		if (deviceAudioFormats & RTAUDIO_SINT32){
-			cout << "Signed 32-bit int; ";
-		}
-		if (deviceAudioFormats & RTAUDIO_FLOAT32){
-			cout << "32-bit float; ";
-		}
-		if (deviceAudioFormats & RTAUDIO_FLOAT64){
-			cout << "64-bit double; ";
-		}
-
-		cout << endl;
-	}
-	*/
-
+	
 	RtAudio::StreamParameters params;
-	params.deviceId = audio.getDefaultInputDevice();
-	//params.deviceId = 2;
-	RtAudio::DeviceInfo info = audio.getDeviceInfo(params.deviceId);
-	cout << "Using input device: " << info.name << endl;
+	cout << "Using input device: " << inputAudioDevice.name() << endl;
 	params.nChannels = 2;
 	params.firstChannel = 0;
 	unsigned int sampleRate = 44100;
