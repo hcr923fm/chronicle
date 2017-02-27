@@ -212,6 +212,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 	{
 		signal(SIGINT, signalHandler);
 		signal(SIGABRT, signalHandler);
+		signal(SIGBREAK, signalHandler);
 	}
 
 	/* The time to finish recording is at the end of the hour.
