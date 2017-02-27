@@ -30,7 +30,7 @@ using namespace std;
 SNDFILE* mySnd;
 RtAudio audio;
 
-int audioFileAgeLimitSeconds = 1000 * 60 * 60;
+chrono::seconds audioFileAgeLimit = chrono::seconds(3600000);
 int soundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 string audioFileExtension = ".wav";
 unsigned int inputAudioDeviceId = audio.getDefaultInputDevice();
@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 
 	string fileNameFormat = "%Y-%m-%d %H%M%S"; // Default strftime format for audio files. MinGW doesn't like %F...
 	
-	for (int i = 0; i < argc; i++)
+	for (int i = 1; i < argc; i++)
 	{
 		if (!strcmp(argv[i], "--licence"))
 		{
@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
 				exit(1);
 			}
 
-			audioFileAgeLimitSeconds = proposedLimit;
+			audioFileAgeLimit = chrono::seconds(proposedLimit);
 			i++;
 		}
 		else if (!strcmp(argv[i], "-s") || !strcmp(argv[i], "--audio-format")) {
@@ -169,6 +169,11 @@ int main(int argc, char* argv[])
 			inputAudioDeviceId = proposedDeviceID;
 			i++;
 		}
+		else {
+			cout << "Unrecognized command-line argument:" << endl;
+			cout << argv[i] << endl;
+			exit(1);
+		}
 	}
 
 	/* Make sure that audio devices exist before continuing... */
@@ -217,7 +222,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 	*/
 
 	while (true) {
-		removeOldAudioFiles(chrono::seconds(audioFileAgeLimitSeconds), directory);
+		removeOldAudioFiles(audioFileAgeLimit, directory);
 
 		chrono::time_point<chrono::system_clock> endTime = calculateRecordEndTimeFromNow();
 
@@ -388,7 +393,7 @@ void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory)
 	audio files older than a certain age
 	*/
 
-	chrono::time_point<chrono::system_clock> nowChrono, oldestTimeChrono, fileMTime;
+	chrono::system_clock::time_point nowChrono, oldestTimeChrono, fileMTime;
 	nowChrono = chrono::system_clock::now();
 	oldestTimeChrono = nowChrono - age;
 
@@ -399,8 +404,9 @@ void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory)
 		boost::filesystem::directory_entry dirEntry;
 		dirEntry = *dirIter;
 		
-		chrono::time_point<chrono::system_clock> fileMTime = chrono::system_clock::from_time_t(boost::filesystem::last_write_time(dirEntry.path()));
-		if (fileMTime < oldestTimeChrono & dirEntry.path().extension() == audioFileExtension) {
+		chrono::system_clock::time_point fileMTime = chrono::system_clock::from_time_t(boost::filesystem::last_write_time(dirEntry.path()));
+
+		if ((fileMTime < oldestTimeChrono)& (dirEntry.path().extension() == audioFileExtension)) {
 			cout << "Removing old audio file: " << dirEntry.path().filename() << endl;
 			boost::filesystem::remove(dirEntry.path());
 		}
