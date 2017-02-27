@@ -30,7 +30,7 @@ using namespace std;
 SNDFILE* mySnd;
 RtAudio audio;
 
-int audioFileAgeLimitSeconds = 1000 * 60 * 60
+int audioFileAgeLimitSeconds = 1000 * 60 * 60;
 int soundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 string audioFileExtension = ".wav";
 unsigned int inputAudioDeviceId = audio.getDefaultInputDevice();
@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
 		}
 		else if (!strcmp(argv[i], "-a") || !strcmp(argv[i], "--max-age")) {
 			int proposedLimit;
-			if (argv[i + 1], nullptr, 10) & argv[i + 1] == 0){
+			if (strtoul(argv[i + 1], nullptr, 10) && argv[i + 1] == 0){
 				cout << "The specified file age limit is not a valid number:" << endl;
 				cout << argv[i + 1] << endl;
 				exit(1);
@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
 			RtAudio::DeviceInfo proposedDeviceInfo;
 			
 			/* Is the input a valid number? */
-			if (!strtoul(argv[i + 1], nullptr,10) & argv[i+1] == 0) {
+			if (!strtoul(argv[i + 1], nullptr,10) && argv[i+1] == 0) {
 				cout << "The specified device ID is not a valid number:" << endl;
 				cout << argv[i + 1] << endl;
 				exit(1);
