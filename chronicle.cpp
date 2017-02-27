@@ -307,10 +307,12 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 	if (framesAvg < threshold) { cout << "silence at "<<streamTime << " (" << framesAvg << ")"; }
 	cout << flush;*/
 
+#if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__))
 	int numberOfEquals = (framesAvg / maxAudioVal) * 60;
 	cout << "\r|";
 	cout << setfill('=') << setw(numberOfEquals) << " " << setfill(' ') << setw(63 - numberOfEquals);
 	cout << "]  " << level << " dB" << flush;
+#endif
 	
 	return 0;
 }
