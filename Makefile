@@ -1,17 +1,9 @@
-MINGWBOOSTLIBDIR="C:\Program Files\boost\boost_1_63_0\x64_mingw\lib"
-
-MSYS2WINBOOSTLIBS=-lboost_filesystem-mt -lboost_system-mt
 MSYS2WIN32LIBS=-lole32 -ldsound -luser32 -lwinmm -luuid -lksuser
 
+MSYS2WINBOOSTLIBS=-lboost_filesystem-mt -lboost_system-mt
+MSYS2LINBOOSTLIBS=-lboost_filesystem -lboost_system
+
 MSYS2LIBS=`pkg-config --cflags --libs sndfile rtaudio`
-
-
-windows:
-	clang chronicle.cpp RtAudio.cpp -D__WINDOWS_DS__ -D__WINDOWS_WASAPI__ -I$(WINBOOSTHEADERDIR) -lole32 -ldsound -luser32 -llibsndfile-1 -Llib -L$(WINBOOSTLIBDIR)
-
-winbuild:
-	cl /EHsc chronicle.cpp RtAudio.cpp -D__WINDOWS_DS__ -D__WINDOWS_WASAPI__ /I $(WINBOOSTHEADERDIR) /link /LIBPATH:$(WINBOOSTLIBDIR) /LIBPATH:lib /IMPLIB:
-
 
 msys232:
 	mkdir -p build/32
@@ -29,7 +21,7 @@ msys264:
 
 linux:
 	mkdir -p build/linux
-	g++ chronicle.cpp RtAudio.cpp -D__LINUX_ALSA__ -lpthread $(MSYS2LIBS) -std=c++11
+	g++ chronicle.cpp RtAudio.cpp -D__LINUX_ALSA__ -lpthread $(MSYS2LIBS) $(MSYS2LINBOOSTLIBS) -std=c++11
 	cp README.MD build/linux
 	cp LICENCE build/linux
 
