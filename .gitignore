@@ -36,6 +36,7 @@ includertaudio
 .vs
 *.db
 *.opendb
+*vcxproj*
 
 *.wav
 *.ogg
