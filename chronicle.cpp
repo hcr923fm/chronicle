@@ -308,13 +308,10 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 	cout << flush;*/
 
 	int numberOfEquals = (framesAvg / maxAudioVal) * 60;
-	cout << "\r| ";
-	cout << string(numberOfEquals, '=');
-	cout << string(63 - numberOfEquals, ' ');
+	cout << "\r|";
+	cout << setfill('=') << setw(numberOfEquals) << " " << setfill(' ') << setw(63 - numberOfEquals);
 	cout << "]  " << level << " dB" << flush;
-	//}
-
-	//cout << "\r" << framesAvg << " / " << maxAudioVal << "        " << flush;
+	
 	return 0;
 }
 
