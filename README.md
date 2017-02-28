@@ -16,6 +16,7 @@ Don't worry, it's not that bad. There are just a few prerequisites:
 * RtAudio, which you have to build (and `make install`) from source. [Get RtAudio here](https://www.music.mcgill.ca/~gary/rtaudio/index.html).
 * libsndfile, which is in most package managers.
 * Boost, which is in most package managers.
+* ncurses, which is available in most package managers.
 
 Then, grab a copy of the source from the [Releases](https://github.com/calmcl1/chronicle/releases) page. Extract to your favourite directory.
 
