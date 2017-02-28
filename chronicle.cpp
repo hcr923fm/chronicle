@@ -46,6 +46,7 @@ int main(int argc, char* argv[])
 
 	string fileNameFormat = "%Y-%m-%d %H%M%S"; // Default strftime format for audio files. MinGW doesn't like %F...
 	
+	/* Parse cmd-line arguments */
 	for (int i = 1; i < argc; i++)
 	{
 		if (!strcmp(argv[i], "--licence"))
@@ -58,7 +59,8 @@ int main(int argc, char* argv[])
 			printHelp();
 			exit(0);
 		}
-		else if (!strcmp(argv[i], "-l") || !strcmp(argv[i], "--list-devices")) {
+		else if (!strcmp(argv[i], "-l") || !strcmp(argv[i], "--list-devices"))
+		{
 			/* List the input devices that are available and exit. */
 			
 			unsigned int devices = audio.getDeviceCount();
@@ -181,8 +183,13 @@ int main(int argc, char* argv[])
 		cout << "No audio devices available! Exiting..." << endl;
 		exit(0);
 	}
+
+	string windowTitle = "Chronicle v" + VERSION;
+	initCurses(windowTitle);
 	
 	doRecord(output_directory, fileNameFormat);
+
+	closeCurses();
 	return 0;
 }
 
@@ -203,6 +210,8 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 	sfInfo.format = soundFormat;
 	sfInfo.samplerate = rp.sampleRate;
 
+	updateAudioDevice(deviceInfo.name, rp.sampleRate, rp.channelCount);
+
 	if (sf_format_check(&sfInfo) == 0) {
 		cout << "Destination format invalid; Exiting..." << endl;
 		exit(0);
@@ -213,6 +222,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 		signal(SIGINT, signalHandler);
 		signal(SIGABRT, signalHandler);
 		signal(SIGBREAK, signalHandler);
+		//signal(, handleWindowRedraw); // TODO: HANDLE TERMINAL RESIZE
 	}
 
 	/* The time to finish recording is at the end of the hour.
@@ -245,7 +255,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 		mySnd = sf_open(audioFileFullPath.generic_string().c_str(), SFM_WRITE, &sfInfo);
 
 		try {
-			cout << "Recording to " << audioFileFullPath << endl;
+			updateRecordingToPath(audioFileFullPath.string());
 			audio.openStream(NULL, &params, RTAUDIO_SINT16, rp.sampleRate, &(rp.bufferLength), &cb_record);
 			audio.startStream();
 		}
@@ -418,6 +428,7 @@ void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory)
 void signalHandler(int sigNum) {
 	cout << "Received signal " << sigNum << "; shutting down...";
 	stopRecord();
+	closeCurses();
 	exit(sigNum);
 }
 
