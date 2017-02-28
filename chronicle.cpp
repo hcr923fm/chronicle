@@ -217,6 +217,8 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 		exit(0);
 	}
 
+	sf_command(mySnd, SFC_SET_SCALE_FLOAT_INT_READ, NULL, SF_TRUE);
+
 	// Set up signal handling; fixes #1
 	{
 		signal(SIGINT, signalHandler);
@@ -256,7 +258,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 
 		try {
 			updateRecordingToPath(audioFileFullPath.string());
-			audio.openStream(NULL, &params, RTAUDIO_SINT16, rp.sampleRate, &(rp.bufferLength), &cb_record);
+			audio.openStream(NULL, &params, RTAUDIO_SINT16, rp.sampleRate, &(rp.bufferLength), &cb_record, &(rp.channelCount));
 			audio.startStream();
 		}
 		catch (RtAudioError &e) {
@@ -274,6 +276,11 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 
 int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, double streamTime, RtAudioStreamStatus status, void *userData)
 {
+	/* userData is the channel count. */
+
+	int* pChannelCount = (int*)userData;
+	int channelCount = *pChannelCount;
+
 	short* data = (short*)inputBuffer;
 	sf_writef_short(mySnd, data, nFrames);
 
@@ -284,6 +291,7 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 
 	The data is cast to a short. sizeof(short) = 2 (bytes) = 16 bits.
 	Max value in a short is therefore 2^16 -1 = 65535.
+	However, since the values are read from -1 to +1, the range is halved to 32763.
 	It is appropriate to assume that a -60dB is sufficient for silence detection. Anything
 	lower than this is negligible, especially for analogue broadcast.
 
@@ -294,36 +302,31 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 	-> I_db / 10 = log10(I / I_0)
 	-> 10^(I_db / 10) = I / I_0
 	-> I = 10^(I_db / 10) * I_0
-	-> I = 10^(-60 / 10) * 65535
-	-> I = 10^(-6) * 65535
+	-> I = 10^(-60 / 10) * 32763
+	-> I = 10^(-6) * 32763
 	-> I = 0.065535
 	*/
 	//cout << streamTime << endl;
 	//if ((long)round(streamTime) % 2 == 0) {
 		//cout << (long)round(streamTime) << endl;
 
-	int maxAudioVal = (pow(2, (sizeof(short) * 8)) - 1);
+	short maxAudioVal = (pow(2, (sizeof(short) * 8))/2) - 1;
 	int thresholdDB = -60;
 	float thresholdVal = (pow(10, thresholdDB / 10))*maxAudioVal;
 
-	unsigned int framesSum;
-	float framesAvg;
-	for (int i = 0; i < nFrames * 2; i++) {
-		framesSum += abs((*(data + i)));
+	short framesPeak=0;
+
+	for (int i = 0; i < nFrames * channelCount; i++) {
+		short val = abs(*(data+i));
+		framesPeak = max(val, framesPeak);
 	};
 
-	framesAvg = framesSum / nFrames;
-	float level = log10(framesAvg / maxAudioVal) * 10;
-	/*cout << "\rLevel: " << level << "dB";
-	if (framesAvg < threshold) { cout << "silence at "<<streamTime << " (" << framesAvg << ")"; }
-	cout << flush;*/
+	float level = log10(float(framesPeak) / float(maxAudioVal)) * 10;
+	//float level = float(framesPeak)/float(maxAudioVal);
+	string label = to_string(level) + " dB";
 
-#if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__))
-	int numberOfEquals = (framesAvg / maxAudioVal) * 60;
-	cout << "\r|";
-	cout << setfill('=') << setw(numberOfEquals) << " " << setfill(' ') << setw(63 - numberOfEquals);
-	cout << "]  " << level << " dB" << flush;
-#endif
+	updateAudioMeter(0 ,30, 30-abs(level), label);
+	//updateAudioMeter(0,maxAudioVal,framesPeak,to_string(level));
 	
 	return 0;
 }
