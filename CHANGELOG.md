@@ -4,7 +4,7 @@
 ## Unreleased - Will become v0.1.2
 ### Added
 * Added Changelog - you should always [Keep a Changelog](http:////keepachangelog.com)
-* Added ability to list the available audio devices to use with Chronicle (`-l | --list-devices`) (#9)
+* Added ability to list the available audio devices to use with Chronicle (`-l | --list-devices`) ([#9])
 * Added proper command-line switches
 * Added licence details
 * Added ability to supply custom `strftime`-style output filenames
