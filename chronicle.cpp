@@ -197,7 +197,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 	
 	RtAudio::StreamParameters params;
 	RtAudio::DeviceInfo deviceInfo = audio.getDeviceInfo(inputAudioDeviceId);
-	cout << "Using input device: " << deviceInfo.name << endl;
+	//cout << "Using input device: " << deviceInfo.name << endl;
 
 	recordingParameters rp = getRecordingParameters(deviceInfo);
 
@@ -213,7 +213,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 	updateAudioDevice(deviceInfo.name, rp.sampleRate, rp.channelCount);
 
 	if (sf_format_check(&sfInfo) == 0) {
-		cout << "Destination format invalid; Exiting..." << endl;
+		//cout << "Destination format invalid; Exiting..." << endl;
 		exit(0);
 	}
 
@@ -262,13 +262,13 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 			audio.startStream();
 		}
 		catch (RtAudioError &e) {
-			cout << "Could not open stream: " << e.getMessage() << endl;
+			//cout << "Could not open stream: " << e.getMessage() << endl;
 			exit(0);
 		}
 
 		this_thread::sleep_until(endTime);
-		cout << "Recording completed." << endl;
-		cout << endl;
+		//cout << "Recording completed." << endl;
+		//cout << endl;
 
 		stopRecord();
 	}
@@ -333,13 +333,13 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 
 void stopRecord() {
 
-	cout << "\r" << endl;
+	//cout << "\r" << endl;
 
 	try {
 		audio.stopStream();
 	}
 	catch (RtAudioError &e) {
-		cout << "Could not stop stream: " << e.getMessage() << endl;
+		//cout << "Could not stop stream: " << e.getMessage() << endl;
 	}
 
 	if (audio.isStreamOpen()) { audio.closeStream(); }
@@ -357,7 +357,7 @@ recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice) 
 	else if (recordingDevice.inputChannels >= 2) {
 		rp.channelCount = 2;
 	}
-	cout << "Recording channels count: " << rp.channelCount << endl;
+	//cout << "Recording channels count: " << rp.channelCount << endl;
 
 	/* Set sample rate - prefer 44100 */
 	if (recordingDevice.preferredSampleRate == 44100) {
@@ -370,14 +370,14 @@ recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice) 
 
 		if (!rp.sampleRate) {
 			rp.sampleRate = recordingDevice.preferredSampleRate;
-			cout << "Could not set sample rate at 44.1 kHz, using preferred sample rate: " << rp.sampleRate << endl;
+			//cout << "Could not set sample rate at 44.1 kHz, using preferred sample rate: " << rp.sampleRate << endl;
 		}
 	}
-	cout << "Sample rate: " << rp.sampleRate << endl;
+	//cout << "Sample rate: " << rp.sampleRate << endl;
 
 	rp.bufferLength = 1024;
 
-	cout << endl;
+	//cout << endl;
 	return rp;
 }
 
@@ -420,7 +420,7 @@ void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory)
 		chrono::system_clock::time_point fileMTime = chrono::system_clock::from_time_t(boost::filesystem::last_write_time(dirEntry.path()));
 
 		if ((fileMTime < oldestTimeChrono)& (dirEntry.path().extension() == audioFileExtension)) {
-			cout << "Removing old audio file: " << dirEntry.path().filename() << endl;
+			//cout << "Removing old audio file: " << dirEntry.path().filename() << endl;
 			boost::filesystem::remove(dirEntry.path());
 		}
 
@@ -429,7 +429,7 @@ void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory)
 }
 
 void signalHandler(int sigNum) {
-	cout << "Received signal " << sigNum << "; shutting down...";
+	//cout << "Received signal " << sigNum << "; shutting down...";
 	stopRecord();
 	closeCurses();
 	exit(sigNum);
