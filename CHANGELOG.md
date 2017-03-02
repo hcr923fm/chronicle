@@ -20,6 +20,7 @@
 * Fixed issue where no directory supplied would cause Chronicle to crash
 * Fixed issue where Chronicle would not compile on Unix due to libsndfile requiring `cinttypes`
 * Fixed issue where Chronicle would not compile on Unix due to using `localtime_s`
+* Fixed issue where Chronicle would not compile on Unix due to using SIGBEAK
 * Fixed filepath handling on Windows and Unix
 * Fixed issue where RtAudio would try to record into a directory that doesn't exist (#8)
 * Fixed release bundling - all .dlls are now bundled with the .exe (#10)
