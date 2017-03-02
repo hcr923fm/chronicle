@@ -27,3 +27,4 @@
 * Prettified help and licence strings (#3)
 * Fixed unsafe `atoi` use, now using `strtoul` (#14)
 * Fixed issue where audio metering differed between 32-bit and 64-bit devices
+* Simplified install process on Linux
