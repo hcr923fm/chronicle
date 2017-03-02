@@ -13,7 +13,7 @@ msys232:
 	cp libs/32/* build/32
 	cp README.md build/32
 	cp LICENCE build/32
-	cp CHANGELOG build/32
+	cp CHANGELOG.md build/32
 
 msys264:
 	mkdir -p build/64
@@ -21,14 +21,14 @@ msys264:
 	cp libs/64/* build/64/
 	cp README.md build/64
 	cp LICENCE build/64
-	cp CHANGELOG build/64
+	cp CHANGELOG.md build/64
 
 linux:
 	mkdir -p build/linux
-	g++ $(FILES) -std=c++11 -D__LINUX_ALSA__ -lpthread $(MSYS2LIBS) $(MSYS2LINBOOSTLIBS) -lncurses -o build/linux/chronicle
+	g++ $(FILES) -std=c++11 -D__LINUX_ALSA__ -lpthread $(MSYS2LIBS) $(MSYS2LINBOOSTLIBS) `pkg-config --cflags --libs ncurses` -o build/linux/chronicle
 	cp README.md build/linux
 	cp LICENCE build/linux
-	cp CHANGELOG build/linux
+	cp CHANGELOG.md build/linux
 
 clean:
 	rm -rf build/
