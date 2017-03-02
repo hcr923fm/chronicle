@@ -11,12 +11,12 @@ At the moment, it records audio from specified input to an audio file, on the ho
 Windows users (both 32 and 64 bit) can simply download the latest compiled binaries from the [Releases](https://github.com/calmcl1/chronicle/releases) page. Simply extract and run. Hooray!
 
 ### Linux
-Linux users have a touch more work to do - I haven't gotten around to compiling binaries for Linux yet! :blush:
-Don't worry, it's not that bad. There are just a few prerequisites:
+Linux users can also [download the binaries](https://github.com/calmcl1/chronicle/releases). However, you will need to manually install the pre-requisites:
+* `build-essential` and `pkg-config`
 * RtAudio, which you have to build (and `make install`) from source. [Get RtAudio here](https://www.music.mcgill.ca/~gary/rtaudio/index.html).
-* libsndfile, which is in most package managers.
-* Boost, which is in most package managers.
-* ncurses, which is available in most package managers.
+* libsndfile, which is in most package managers. (`libsndfile1-dev`)
+* Boost, which is in most package managers (`libboost-dev`).
+* ncurses, which is available in most package managers (`libncurses5-dev`).
 
 Then, grab a copy of the source from the [Releases](https://github.com/calmcl1/chronicle/releases) page. Extract to your favourite directory.
 
