@@ -1,7 +1,13 @@
 #ifndef __SCREEN_H__
 #define __SCREEN_H__
 
+#if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__))
+//#include <ncurses/ncurses.h>
 #include <ncurses/ncurses.h>
+#else
+#include <ncurses.h>
+#endif
+
 #include <string>
 #include <cstring>
 
