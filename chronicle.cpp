@@ -223,7 +223,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat) {
 	{
 		signal(SIGINT, signalHandler);
 		signal(SIGABRT, signalHandler);
-		signal(SIGBREAK, signalHandler);
+		//signal(SIGBREAK, signalHandler);
 		//signal(, handleWindowRedraw); // TODO: HANDLE TERMINAL RESIZE
 	}
 
