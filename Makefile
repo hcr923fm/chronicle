@@ -26,7 +26,7 @@ msys264:
 
 linux:
 	mkdir -p build/linux
-	g++ $(FILES) -std=c++11 -lpthread $(MSYS2LINLIBS) $(MSYS2LINBOOSTLIBS) `pkg-config --cflags --libs ncurses` -lrtaudio -o build/linux/chronicle
+	g++ $(FILES) -std=c++11 -lpthread $(MSYS2LINLIBS) $(MSYS2LINBOOSTLIBS) `pkg-config --cflags --libs ncurses` -o build/linux/chronicle
 	cp README.md build/linux
 	cp LICENCE build/linux
 	cp CHANGELOG.md build/linux
