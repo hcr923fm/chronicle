@@ -6,7 +6,7 @@ MSYS2WINBOOSTLIBS=-lboost_filesystem-mt -lboost_system-mt
 MSYS2LINBOOSTLIBS=-lboost_filesystem -lboost_system
 
 MSYS2WINLIBS=`pkg-config --cflags --libs sndfile rtaudio`
-MSYS2LINLIBS=`pkg-config --cflags --libs sndfile` -lrtaudio -D__LINUX_ALSA__
+MSYS2LINLIBS=`pkg-config --cflags --libs sndfile rtaudio`
 
 msys232:
 	mkdir -p build/32
