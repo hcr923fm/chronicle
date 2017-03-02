@@ -11,23 +11,21 @@ At the moment, it records audio from specified input to an audio file, on the ho
 Windows users (both 32 and 64 bit) can simply download the latest compiled binaries from the [Releases](https://github.com/calmcl1/chronicle/releases) page. Simply extract and run. Hooray!
 
 ### Linux
+#### With binaries
 Linux users can also [download the binaries](https://github.com/calmcl1/chronicle/releases). However, you will need to manually install the pre-requisites:
-* `build-essential` and `pkg-config`
-* RtAudio, which you have to build (and `make install`) from source. [Get RtAudio here](https://www.music.mcgill.ca/~gary/rtaudio/index.html).
+* RtAudio, (`librtaudio-dev`)
 * libsndfile, which is in most package managers. (`libsndfile1-dev`)
-* Boost, which is in most package managers (`libboost-dev`).
+* Boost, which is in most package managers (`libboost-all-dev`).
 * ncurses, which is available in most package managers (`libncurses5-dev`).
 
-Then, grab a copy of the source from the [Releases](https://github.com/calmcl1/chronicle/releases) page. Extract to your favourite directory.
-
-Open a terminal and `cd` into the source directory.
-
-Run `make linux`.
+#### Compiling from scratch
+Or, you can compile chronicle from scratch.
+You'll also need to download the build toolchain: `build-essential` and `pkg-config`
+Then, [download the source tarball](https://github.com/calmcl1/chronicle/releases) and run `make linux`.
 
 The built binary will exist in (srcdir)/build/linux.
 
-I'll get around to making it easier, I promise!
-
+`.deb`s will happen soon!
 
 ## Usage:
 
