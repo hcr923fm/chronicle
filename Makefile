@@ -5,7 +5,8 @@ MSYS2WIN32LIBS=-lole32 -ldsound -luser32 -lwinmm -luuid -lksuser
 MSYS2WINBOOSTLIBS=-lboost_filesystem-mt -lboost_system-mt
 MSYS2LINBOOSTLIBS=-lboost_filesystem -lboost_system
 
-MSYS2LIBS=`pkg-config --cflags --libs sndfile`
+MSYS2WINLIBS=`pkg-config --cflags --libs sndfile rtaudio`
+MSYS2LINLIBS=`pkg-config --cflags --libs sndfile` -lrtaudio -D__LINUX_ALSA__
 
 msys232:
 	mkdir -p build/32
@@ -25,7 +26,7 @@ msys264:
 
 linux:
 	mkdir -p build/linux
-	g++ $(FILES) -std=c++11 -D__LINUX_ALSA__ -lpthread $(MSYS2LIBS) $(MSYS2LINBOOSTLIBS) `pkg-config --cflags --libs ncurses` -lrtaudio -o build/linux/chronicle
+	g++ $(FILES) -std=c++11 -lpthread $(MSYS2LIBS) $(MSYS2LINBOOSTLIBS) `pkg-config --cflags --libs ncurses` -lrtaudio -o build/linux/chronicle
 	cp README.md build/linux
 	cp LICENCE build/linux
 	cp CHANGELOG.md build/linux
