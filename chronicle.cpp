@@ -30,7 +30,7 @@ using namespace std;
 SNDFILE* mySnd;
 RtAudio audio;
 
-chrono::seconds audioFileAgeLimit = chrono::seconds(3600000);
+chrono::seconds audioFileAgeLimit = chrono::seconds(3628800);
 int soundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 string audioFileExtension = ".wav";
 unsigned int inputAudioDeviceId = audio.getDefaultInputDevice();
@@ -47,20 +47,21 @@ int main(int argc, char* argv[])
 	string fileNameFormat = "%Y-%m-%d %H%M%S"; // Default strftime format for audio files. MinGW doesn't like %F...
 	
 	/* Parse cmd-line arguments */
-	for (int i = 1; i < argc; i++)
-	{
-		if (!strcmp(argv[i], "--licence"))
 		{
+		cmdOpts opts = parse_options(argc, argv);
+		
+
+		/* Not recording, just querying - these options end with the program exiting */
+		
+		if (opts.licence == true){
 			printLicence();
 			exit(0);
 		}
-		else if(!strcmp(argv[i], "-h") || !strcmp(argv[i],"--help"))
-		{
+		else if (opts.help == true){
 			printHelp();
 			exit(0);
 		}
-		else if (!strcmp(argv[i], "-l") || !strcmp(argv[i], "--list-devices"))
-		{
+		else if (opts.list_devices == true){
 			/* List the input devices that are available and exit. */
 			
 			unsigned int devices = audio.getDeviceCount();
@@ -78,16 +79,26 @@ int main(int argc, char* argv[])
 			cout << endl << "Default device: " << deviceInfo.name << endl;
 
 			exit(0);
-
 		}
-		else if (!strcmp(argv[i], "-d") || !strcmp(argv[i], "--directory"))
-		{
-			boost::filesystem::path proposedDir = argv[i + 1];
+
+		/* Check for conflicting options */
+		if ((opts.max_age != 0) && (opts.no_delete == true)){
+			printf("Cannot supply --no-delete and --max-age together; they are incompatible");
+			exit(1);
+		}
+
+		/* Validate and set recording options */
+		if (opts.directory != ""){
+			boost::filesystem::path proposedDir = opts.directory;
+			
+			/* Check that the path exists */
 			if  (!boost::filesystem::exists(proposedDir)) {
 				cout << "The specified output folder does not exist:" << endl;
 				cout << proposedDir << endl;
 				exit(1);
 			}
+			
+			/* Check the the path is a directory */
 			else if (!boost::filesystem::is_directory(proposedDir)) {
 				cout << "The specified output folder is not a directory:" << endl;
 				cout << proposedDir << endl;
@@ -95,64 +106,52 @@ int main(int argc, char* argv[])
 			}
 
 			output_directory = proposedDir;
-			i++;
-		}
-		else if (!strcmp(argv[i], "-f") || !strcmp(argv[i], "--filename"))
-		{
-			fileNameFormat = argv[i + 1];
-			i++; // Skip parsing the next argument
-		}
-		else if (!strcmp(argv[i], "-a") || !strcmp(argv[i], "--max-age")) {
-			int proposedLimit;
-			if (strtoul(argv[i + 1], nullptr, 10) && argv[i + 1] == 0){
-				cout << "The specified file age limit is not a valid number:" << endl;
-				cout << argv[i + 1] << endl;
-				exit(1);
-			}
 
-			proposedLimit = strtoul(argv[i + 1], nullptr, 10);
-
-			if (!proposedLimit > 1) {
-				cout << "The specified file age limit must be greater than 1 second:";
-				cout << proposedLimit << endl;
-				exit(1);
-			}
-
-			audioFileAgeLimit = chrono::seconds(proposedLimit);
-			i++;
+			
 		}
-		else if (!strcmp(argv[i], "-s") || !strcmp(argv[i], "--audio-format")) {
-			if (!strcmp(argv[i + 1], "OGG") || !strcmp(argv[i + 1], "ogg")) {
+
+		if (opts.format != ""){
+			fileNameFormat = opts.format;
+		}
+
+		if (opts.no_delete == true){
+			/* Effectively set the threshold for when files should be deleted
+			to be in the future */
+			audioFileAgeLimit == chrono::seconds(-10);
+		}
+
+		if (opts.max_age != 0){
+			if (opts.max_age < 1) {
+					cout << "The specified file age limit must be greater than 1 second:";
+					cout << opts.max_age << endl;
+					exit(1);
+				}
+
+				audioFileAgeLimit = chrono::seconds(opts.max_age);
+		}
+
+		if (opts.audio_format != ""){
+			if (opts.audio_format == "OGG" || opts.audio_format == "ogg") {
 				soundFormat = SF_FORMAT_OGG | SF_FORMAT_VORBIS;
 				audioFileExtension = ".ogg";
-			} else if (!strcmp(argv[i + 1], "WAV") || !strcmp(argv[i + 1], "wav")) {
+			} else if (opts.audio_format == "WAV" || opts.audio_format == "wav") {
 				soundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 				audioFileExtension = ".wav";
 			}
 			else {
 				cout << "Audio file format not supported:" << endl;
-				cout << argv[i + 1] << endl;
+				cout << opts.audio_format << endl;
 				cout << "Supported formats are: [ OGG | WAV ]" << endl;
 				exit(1);
 			}
-			i++;
 		}
-		else if (!strcmp(argv[i], "-i") || !strcmp(argv[i], "--input-device")) {
-			unsigned int proposedDeviceID;
-			RtAudio::DeviceInfo proposedDeviceInfo;
-			
-			/* Is the input a valid number? */
-			if (!strtoul(argv[i + 1], nullptr,10) && argv[i+1] == 0) {
-				cout << "The specified device ID is not a valid number:" << endl;
-				cout << argv[i + 1] << endl;
-				exit(1);
-			}
 
-			proposedDeviceID = strtoul(argv[i + 1], nullptr, 10);
+		if (opts.input_device != -1){
+			RtAudio::DeviceInfo proposedDeviceInfo;
 
 			/* Does a device exist with the provided ID? */
-			if (proposedDeviceID > (audio.getDeviceCount()-1)) {
-				cout << "No audio device found with ID " << proposedDeviceID << endl;
+			if (opts.input_device > (audio.getDeviceCount()-1)) {
+				cout << "No audio device found with ID " << opts.input_device << endl;
 				cout << "Use:" << endl;
 				cout << "    chronicle --list-devices" << endl;
 				cout << "To find a list of available device IDs." << endl;
@@ -161,22 +160,18 @@ int main(int argc, char* argv[])
 
 			/* Is the device an input device? */
 			cout << "Getting device info" << endl;
-			proposedDeviceInfo = audio.getDeviceInfo(proposedDeviceID);
+			proposedDeviceInfo = audio.getDeviceInfo(opts.input_device);
 			if (proposedDeviceInfo.inputChannels == 0) {
 				cout << "The specified audio device is not an input device:" << endl;
-				cout << "#" << proposedDeviceID << ": " << proposedDeviceInfo.name << endl;
+				cout << "#" << opts.input_device << ": " << proposedDeviceInfo.name << endl;
 				exit(1);
 			}
 
-			inputAudioDeviceId = proposedDeviceID;
-			i++;
-		}
-		else {
-			cout << "Unrecognized command-line argument:" << endl;
-			cout << argv[i] << endl;
-			exit(1);
+			inputAudioDeviceId = opts.input_device;
+
 		}
 	}
+
 
 	/* Make sure that audio devices exist before continuing... */
 	if (audio.getDeviceCount() < 1) {
@@ -471,7 +466,7 @@ Usage:
     chronicle [--licence]
     chronicle [-l | --list-devices ]
     chronicle [-d | --directory OUTPUT_DIRECTORY] [-f | --filename FORMAT] [-i | --input-device DEVICE_ID] 
-              [-a | --max-age MAX_FILE_AGE] [-s | --audio-format [WAV | OGG]]
+              [[-a | --max-age MAX_FILE_AGE] | --no-delete] [-s | --audio-format [WAV | OGG]]
 
     Where:
         -h | --help          Prints this help message.
@@ -486,7 +481,9 @@ Usage:
                                  numbers can be obtained with `chronicle -l`.
                                  If unspecified, the system default audio recording device will be used.
         -a | --max-age       Sets the maximum age (in seconds) before audio files will be automatically deleted.
-                                 Defaults to 3600000 (1000 hours, in accordance with OFCOM rules).
+                                 Defaults to 3628800 (42 days, in accordance with OFCOM rules).
+		--no-delete          If passed, Chronicle will not delete old audio files, so they can be manually managed.
+		                         Incompatible with --max-age.
         -s | --audio-format Sets the audio format to use for the recorded audio files.
                                  Acceptable parameters are:
                                      OGG | Ogg Vorbis (.ogg)
