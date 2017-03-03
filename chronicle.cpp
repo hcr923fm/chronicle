@@ -466,7 +466,7 @@ Usage:
     chronicle [--licence]
     chronicle [-l | --list-devices ]
     chronicle [-d | --directory OUTPUT_DIRECTORY] [-f | --filename FORMAT] [-i | --input-device DEVICE_ID] 
-              [-a | --max-age MAX_FILE_AGE] [-s | --audio-format [WAV | OGG]]
+              [[-a | --max-age MAX_FILE_AGE] | --no-delete] [-s | --audio-format [WAV | OGG]]
 
     Where:
         -h | --help          Prints this help message.
@@ -481,7 +481,9 @@ Usage:
                                  numbers can be obtained with `chronicle -l`.
                                  If unspecified, the system default audio recording device will be used.
         -a | --max-age       Sets the maximum age (in seconds) before audio files will be automatically deleted.
-                                 Defaults to 3600000 (1000 hours, in accordance with OFCOM rules).
+                                 Defaults to 3628800 (42 days, in accordance with OFCOM rules).
+		--no-delete          If passed, Chronicle will not delete old audio files, so they can be manually managed.
+		                         Incompatible with --max-age.
         -s | --audio-format Sets the audio format to use for the recorded audio files.
                                  Acceptable parameters are:
                                      OGG | Ogg Vorbis (.ogg)
