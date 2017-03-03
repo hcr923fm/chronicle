@@ -5,6 +5,7 @@ typedef int64_t __int64;
 #endif
 
 #include "screen.h"
+#include "parse_opts.h"
 #include "RtAudio.h"
 
 extern "C"{

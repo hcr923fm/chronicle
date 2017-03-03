@@ -1,4 +1,4 @@
-FILES=chronicle.cpp screen.cpp RtAudio.cpp
+FILES=chronicle.cpp screen.cpp parse_opts.cpp RtAudio.cpp
 
 MSYS2WIN32LIBS=-lole32 -ldsound -luser32 -lwinmm -luuid -lksuser
 
