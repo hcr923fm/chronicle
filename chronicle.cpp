@@ -114,6 +114,12 @@ int main(int argc, char* argv[])
 			fileNameFormat = opts.format;
 		}
 
+		if (opts.no_delete == true){
+			/* Effectively set the threshold for when files should be deleted
+			to be in the future */
+			audioFileAgeLimit == chrono::seconds(-10);
+		}
+
 		if (opts.max_age != 0){
 			if (opts.max_age < 1) {
 					cout << "The specified file age limit must be greater than 1 second:";
