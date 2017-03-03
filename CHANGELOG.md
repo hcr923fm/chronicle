@@ -14,6 +14,7 @@
 * Added support for OGG files as well as WAV (#2)
 * Chronicle now validates and sanitizes cmd-line arguments before trying to record (#13)
 * Added full `ncurses` interface (#16)
+* Added `--no-delete` option (#22)
 
 # Fixed
 * Fixed issue where SIGKILL/SIGINT caused unreadable audio files (#1)
