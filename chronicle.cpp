@@ -105,6 +105,15 @@ int main(int argc, char *argv[])
 	if (opts.format != "")
 	{
 	    fileNameFormat = opts.format;
+		
+		/* strftime seems to not produce anything when passed %F on MinGW-compiled versions,
+		Fixes #26 */
+		size_t found = fileNameFormat.find("%F");
+		while (found != string::npos){
+			fileNameFormat.replace(found,2,"%Y-%m-%d");
+			found = fileNameFormat.find("%F");
+		}
+
 	}
 
 	if (opts.no_delete == true)
