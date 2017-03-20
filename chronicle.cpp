@@ -125,14 +125,31 @@ int main(int argc, char *argv[])
 
 	if (opts.max_age_value != 0)
 	{
-	    if (opts.max_age < 1)
+		
+		/* Allow the user to specify age limit in units other than seconds,
+		Fixes #12 */
+		chrono::seconds age_seconds;
+		if (opts.max_age_unit == "s") {
+			age_seconds = chrono::seconds(opts.max_age_value);
+		} else if (opts.max_age_unit == "m") {
+			age_seconds = chrono::minutes(opts.max_age_value);
+		}
+		else if (opts.max_age_unit == "h") {
+			age_seconds = chrono::hours(opts.max_age_value);
+		}
+		else if (opts.max_age_unit == "d") {
+			age_seconds = chrono::hours(opts.max_age_value*24);
+		}
+
+
+	    if (opts.max_age_value < 1)
 	    {
 		cout << "The specified file age limit must be greater than 1 second:";
-		cout << opts.max_age << endl;
+		cout << opts.max_age_value << endl;
 		exit(1);
 	    }
 
-	    audioFileAgeLimit = chrono::seconds(opts.max_age);
+	    audioFileAgeLimit = age_seconds;
 	}
 
 	if (opts.audio_format != "")
@@ -538,8 +555,11 @@ Usage:
         -i | --input-device  The ID number of the input device to record from. A list of input devices and their ID
                                  numbers can be obtained with `chronicle -l`.
                                  If unspecified, the system default audio recording device will be used.
-        -a | --max-age       Sets the maximum age (in seconds) before audio files will be automatically deleted.
-                                 Defaults to 3628800 (42 days, in accordance with OFCOM rules).
+        -a | --max-age       Sets the maximum age before audio files will be automatically deleted.
+								 Use the format <length><unit>, where unit is < s| m | h | d > for
+								 seconds, minutes, hours and days, respectively.
+						         So, to specify 25 hours, pass '-a 25h' .
+                                 Defaults to 42 days, in accordance with OFCOM rules.
 		--no-delete          If passed, Chronicle will not delete old audio files, so they can be manually managed.
 		                         Incompatible with --max-age.
         -s | --audio-format Sets the audio format to use for the recorded audio files.

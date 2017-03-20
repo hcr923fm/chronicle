@@ -48,8 +48,11 @@ Where:
     -i | --input-device  The ID number of the input device to record from. A list of input devices and their ID
                              numbers can be obtained with `chronicle -l`.
                              If unspecified, the system default audio recording device will be used.
-    -a | --max-age       Sets the maximum age (in seconds) before audio files will be automatically deleted.
-                             Defaults to 3600000 (1000 hours, in accordance with OFCOM rules).
+    -a | --max-age       Sets the maximum age before audio files will be automatically deleted.
+							 Use the format <length><unit>, where unit is < s| m | h | d > for
+							 seconds, minutes, hours and days, respectively.
+							 So, to specify 25 hours, pass '-a 25h' .
+				             Defaults to 42 days, in accordance with OFCOM rules.
     --no-delete          If passed, Chronicle will not delete old audio files, so they can be manually managed.
 		                     Incompatible with --max-age.
     -s | --audio-format Sets the audio format to use for the recorded audio files.
