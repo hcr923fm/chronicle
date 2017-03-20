@@ -1,6 +1,9 @@
 #include "parse_opts.h"
 #include <cerrno>
 #include <cstdio>
+#include <chrono>
+
+#include<iostream>
 
 cmdOpts parse_options(int argc, char* argv[]){
     cmdOpts opts;
@@ -40,20 +43,25 @@ cmdOpts parse_options(int argc, char* argv[]){
         }
 
         /* --max-age */
-        else if (!strcmp(argv[i], "-a") || !strcmp(argv[i], "--max-age")) {
-            char * endptr;
-            unsigned int n = strtoul(argv[i+1], &endptr, 10);
+		else if (!strcmp(argv[i], "-a") || !strcmp(argv[i], "--max-age")) {
 
-            if (endptr != argv[i+1]){ // Conversion didn't happen
-                opts.max_age = n;
-                i++;
-            } else {
-                printf("Argument supplied for --max-age is invalid (must be a number)\n");
-                printf(argv[i+1]);
-                exit(0);
-            }
-            
-        }
+			string arg = argv[i + 1];
+			string arg_unit = arg.substr(arg.length() - 1, 1); // s/m/d/h
+			string arg_value = arg.substr(0, arg.length() - 1);
+
+			char * endptr;
+			unsigned int n = strtoul(arg_value.c_str(), &endptr, 10);
+
+			if (endptr == arg_value.c_str()) { // Conversion didn't happen if endptr == start of string
+				printf("Argument supplied for --max-age is invalid (must be a number)\n");
+				printf(arg.c_str());
+				exit(0);
+			}
+
+			opts.max_age_value = n;
+			opts.max_age_unit = arg_unit;
+			i++;
+		}
 
         /* --audio-format */
         else if (!strcmp(argv[i], "-s") || !strcmp(argv[i], "--audio-format")) {
