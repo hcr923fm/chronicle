@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* Check for conflicting options */
-	if ((opts.max_age != 0) && (opts.no_delete == true))
+	if ((opts.max_age_value != 0) && (opts.no_delete == true))
 	{
 	    printf("Cannot supply --no-delete and --max-age together; they are incompatible");
 	    exit(1);
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
 	    audioFileAgeLimit == chrono::seconds(-10);
 	}
 
-	if (opts.max_age != 0)
+	if (opts.max_age_value != 0)
 	{
 	    if (opts.max_age < 1)
 	    {
