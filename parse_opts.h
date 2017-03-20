@@ -12,7 +12,8 @@ struct cmdOpts{
     string directory = "";
     string format = "";
     bool no_delete = false;
-    unsigned int max_age = 0;
+    unsigned int max_age_value = 0;
+	string max_age_unit = "";
     string audio_format = "";
     int input_device = -1;
 };
