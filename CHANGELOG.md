@@ -15,6 +15,7 @@
 * Chronicle now validates and sanitizes cmd-line arguments before trying to record (#13)
 * Added full `ncurses` interface (#16)
 * Added `--no-delete` option (#22)
+* Added ability to specify `--max-age` in seconds, minutes, hours or days (#12)
 
 # Fixed
 * Fixed issue where SIGKILL/SIGINT caused unreadable audio files (#1)
