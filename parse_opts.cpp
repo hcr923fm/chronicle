@@ -3,8 +3,6 @@
 #include <cstdio>
 #include <chrono>
 
-#include<iostream>
-
 cmdOpts parse_options(int argc, char* argv[]){
     cmdOpts opts;
     for (int i=1; i<argc;i++){
@@ -53,9 +51,14 @@ cmdOpts parse_options(int argc, char* argv[]){
 			unsigned int n = strtoul(arg_value.c_str(), &endptr, 10);
 
 			if (endptr == arg_value.c_str()) { // Conversion didn't happen if endptr == start of string
-				printf("Argument supplied for --max-age is invalid (must be a number)\n");
+				printf("Value supplied for --max-age is invalid (must be a number)\n");
 				printf(arg.c_str());
 				exit(0);
+			}
+
+			if (arg_unit != "s" && arg_unit != "m" && arg_unit != "h" && arg_unit != "d") {
+				printf("Unit supplied for --max-age is invalid (must be one of 's', 'm', 'h', or 'd')\n");
+					printf(arg.c_str());
 			}
 
 			opts.max_age_value = n;
