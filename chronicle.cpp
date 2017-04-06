@@ -45,6 +45,20 @@ int main(int argc, char *argv[])
 	boost::filesystem::path output_directory;
 	output_directory = boost::filesystem::current_path();
 
+	/* Init logging */
+	try {
+		boost::filesystem::create_directory("logs");
+		auto logger = spdlog::rotating_logger_mt("chronicle_log", "logs/chronicle.log", 1024 * 1024 * 5, 3);
+		logger->set_pattern("[%H:%M:%S %z] %l - %v");
+		logger->info("Chronicle started...");
+	}
+	catch (const spdlog::spdlog_ex &ex) {
+		cout << "Cannot init logging: " << ex.what() << endl;
+		exit(1);
+	}
+
+
+
 	string fileNameFormat = "%Y-%m-%d %H%M%S"; // Default strftime format for audio files. MinGW doesn't like %F...
 
 	/* Parse cmd-line arguments */
@@ -223,7 +237,8 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 
 	RtAudio::StreamParameters params;
 	RtAudio::DeviceInfo deviceInfo = audio.getDeviceInfo(inputAudioDeviceId);
-	//cout << "Using input device: " << deviceInfo.name << endl;
+	auto logger = spdlog::get("chronicle_log");
+	logger->info("Using input device: {}", deviceInfo.name);
 
 	recordingParameters rp = getRecordingParameters(deviceInfo);
 
@@ -240,7 +255,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 
 	if (sf_format_check(&sfInfo) == 0)
 	{
-		//cout << "Destination format invalid; Exiting..." << endl;
+		logger->critical("Destination format invalid, exiting...");
 		exit(0);
 	}
 
@@ -294,6 +309,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		catch (boost::filesystem::filesystem_error& e)
 		{
 			printf(e.what());
+			logger->critical("Could not create directory: {}", e.what());
 			exit(1);
 		}
 
@@ -304,7 +320,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		/* Check if the file can be opened. Fixes #6. */
 		if (mySnd == NULL) {
 			// Can't open the file. Exit.
-			// Reason: sf_strerror(mySnd);
+			logger->critical("Could not start recording: {}", sf_strerror(mySnd));
 			exit(1);
 		}
 
@@ -313,16 +329,16 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 			updateRecordingToPath(audioFileFullPath.generic_string());
 			audio.openStream(NULL, &params, RTAUDIO_SINT16, rp.sampleRate, &(rp.bufferLength), &cb_record, &(rp.channelCount));
 			audio.startStream();
+			logger->info("Started new recording");
 		}
 		catch (RtAudioError &e)
 		{
-			//cout << "Could not open stream: " << e.getMessage() << endl;
+			logger->critical("Could not open stream: {}", e.getMessage());
 			exit(0);
 		}
 
 		this_thread::sleep_until(endTime);
-		//cout << "Recording completed." << endl;
-		//cout << endl;
+		logger->info("Recording completed");
 
 		stopRecord();
 	}
@@ -388,8 +404,7 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 
 void stopRecord()
 {
-
-	//cout << "\r" << endl;
+	auto logger = spdlog::get("chronicle_log");
 
 	try
 	{
@@ -397,7 +412,7 @@ void stopRecord()
 	}
 	catch (RtAudioError &e)
 	{
-		//cout << "Could not stop stream: " << e.getMessage() << endl;
+		logger->warn("Could not stop stream: {}", e.getMessage());
 	}
 
 	if (audio.isStreamOpen())
@@ -410,6 +425,7 @@ void stopRecord()
 
 recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice)
 {
+	auto logger = spdlog::get("chronicle_log");
 	recordingParameters rp;
 
 	/* Set channel count */
@@ -421,7 +437,6 @@ recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice)
 	{
 		rp.channelCount = 2;
 	}
-	//cout << "Recording channels count: " << rp.channelCount << endl;
 
 	/* Set sample rate - prefer 44100 */
 	if (recordingDevice.preferredSampleRate == 44100)
@@ -441,14 +456,12 @@ recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice)
 		if (!rp.sampleRate)
 		{
 			rp.sampleRate = recordingDevice.preferredSampleRate;
-			//cout << "Could not set sample rate at 44.1 kHz, using preferred sample rate: " << rp.sampleRate << endl;
+			logger->warn("Could not set sample rate at 44.1 kHz, using preferred sample rate: {}", rp.sampleRate);
+			
 		}
 	}
-	//cout << "Sample rate: " << rp.sampleRate << endl;
 
 	rp.bufferLength = 1024;
-
-	//cout << endl;
 	return rp;
 }
 
@@ -495,7 +508,6 @@ void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory)
 
 		if ((fileMTime < oldestTimeChrono) & (dirEntry.path().extension() == audioFileExtension))
 		{
-			//cout << "Removing old audio file: " << dirEntry.path().filename() << endl;
 			boost::filesystem::remove(dirEntry.path());
 		}
 
@@ -505,7 +517,8 @@ void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory)
 
 void signalHandler(int sigNum)
 {
-	//cout << "Received signal " << sigNum << "; shutting down...";
+	auto logger = spdlog::get("chronicle_log");
+	logger->info("Received signal {}; shutting down...", sigNum);
 	stopRecord();
 	closeCurses();
 	exit(sigNum);
