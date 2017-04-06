@@ -7,6 +7,7 @@ typedef int64_t __int64;
 #include "screen.h"
 #include "parse_opts.h"
 #include "RtAudio.h"
+#include "spdlog/spdlog.h"
 
 extern "C"{
 	#include "sndfile.h"
