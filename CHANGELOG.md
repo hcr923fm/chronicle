@@ -17,7 +17,7 @@
 * Added `--no-delete` option (#22)
 * Added ability to specify `--max-age` in seconds, minutes, hours or days (#12)
 
-# Fixed
+### Fixed
 * Fixed issue where SIGKILL/SIGINT caused unreadable audio files (#1)
 * Fixed issue where no directory supplied would cause Chronicle to crash
 * Fixed issue where Chronicle would not compile on Unix due to libsndfile requiring `cinttypes`
@@ -30,3 +30,4 @@
 * Fixed unsafe `atoi` use, now using `strtoul` (#14)
 * Fixed issue where audio metering differed between 32-bit and 64-bit devices
 * Simplified install process on Linux
+* Fixed issue where chronicle would continue trying to record to unopenable files
