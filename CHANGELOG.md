@@ -31,3 +31,4 @@
 * Fixed issue where audio metering differed between 32-bit and 64-bit devices
 * Simplified install process on Linux
 * Fixed issue where chronicle would continue trying to record to unopenable files
+* Added loggin (fixes #31)
