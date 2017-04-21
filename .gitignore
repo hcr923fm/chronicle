@@ -45,3 +45,4 @@ build/*
 # Don't upload the libs in the directory, use the /libs instead
 libsndfile-1*
 chronicle.cpp.orig
+logs/
