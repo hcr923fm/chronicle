@@ -41,6 +41,8 @@ struct recordingParameters {
 int main(int argc, char* argv[]);
 void doRecord(boost::filesystem::path directory, string fileNameFormat);
 
+float calculateHardDriveUsage(chrono::seconds duration, SF_INFO sf_info);
+
 recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice);
 
 chrono::time_point<chrono::system_clock> calculateRecordEndTimeFromNow();
