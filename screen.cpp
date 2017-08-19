@@ -18,6 +18,8 @@ int POS_AUDIOMETER_MAXWIDTH;
 int POS_AUDIOMETER_LABEL_X;
 int POS_AUDIOMETER_LABEL_Y;
 
+int POS_HDSPACE_X;
+
 void initCurses(string windowTitle)
 {
     initscr();
@@ -62,6 +64,8 @@ void calculateWindowPositions()
 
     POS_AUDIOMETER_LABEL_X = POS_AUDIOMETER_X + 60;
     POS_AUDIOMETER_LABEL_Y = POS_AUDIOMETER_Y;
+
+	POS_HDSPACE_X = POS_AUDIO_DEVICE_X + 30;
 }
 
 void updateRecordingToPath(string filePath)
@@ -114,4 +118,12 @@ void updateAudioMeter(int minVal, int maxVal, int currentVal, string volumeLabel
 	wprintw(mainWindow,"   ");
 
     wrefresh(mainWindow);
+}
+
+void updateHardDriveSpace(long spaceAvailBeforeGB, long fileSizeMB) {
+	wmove(mainWindow, POS_STATUSBAR_Y, POS_HDSPACE_X);
+
+	string spaceStr = "Space available: " + to_string(spaceAvailBeforeGB) + " GB; Audio file size: " + to_string(fileSizeMB) + " MB";
+	wprintw(mainWindow, spaceStr.c_str());
+	wrefresh(mainWindow);
 }

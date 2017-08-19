@@ -313,8 +313,20 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 			exit(1);
 		}
 
+		
+		/* Calculate the file size - fixes #22 */
+		chrono::time_point<chrono::system_clock> tpNow = chrono::system_clock::now();
+		chrono::seconds recordDuration = chrono::duration_cast<chrono::seconds>(endTime - tpNow);
+		long fileSizeMB = calculateHardDriveUsage(recordDuration, sfInfo);
+		
+		boost::filesystem::space_info diskSpace = boost::filesystem::space(directory);
+		long diskSpaceAvailableGB = diskSpace.available/1073741824; // bytes to GB
+		updateHardDriveSpace(diskSpaceAvailableGB, fileSizeMB);
+
+		// Maintenance
 		removeOldAudioFiles(audioFileAgeLimit, directory);
 
+		// Open audio file for writing
 		mySnd = sf_open(audioFileFullPath.generic_string().c_str(), SFM_WRITE, &sfInfo);
 
 		/* Check if the file can be opened. Fixes #6. */
@@ -421,6 +433,18 @@ void stopRecord()
 	}
 	sf_write_sync(mySnd);
 	sf_close(mySnd);
+}
+
+float calculateHardDriveUsage(chrono::seconds duration, SF_INFO sf_info) {
+	/* Let's assume WAV, for now, because that's what we're recording... 
+	OGG/MP3/etc. will change this.
+	*/
+
+	/* WAV file size:
+	sz_in_mb = (bit_depth * sample_rate * channels * dur_in_secs) / 8 / 1000000
+	*/
+
+	return (sf_info.samplerate * 16.00 * sf_info.channels * duration.count()) / 8 / 1024/1024;
 }
 
 recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice)

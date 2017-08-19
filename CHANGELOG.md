@@ -1,6 +1,10 @@
 
 # Changelog - Chronicle
 
+## Will be 0.1.3
+### Added
+* Hard drive usage monitor (#22)
+
 ## v0.1.2
 ### Added
 * Added Changelog - you should always [Keep a Changelog](http:////keepachangelog.com)
