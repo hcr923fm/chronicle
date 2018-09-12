@@ -8,7 +8,7 @@ MSYS2LINBOOSTLIBS=-lboost_filesystem -lboost_system
 MSYS2WINLIBS=`pkg-config --cflags --libs sndfile rtaudio`
 MSYS2LINLIBS=`pkg-config --cflags --libs sndfile rtaudio`
 
-CFLAGS= -I ./include
+CFLAGS= -I ./include -I ./spdlog/include
 
 msys232:
 	mkdir -p build/32

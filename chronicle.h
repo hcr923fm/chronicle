@@ -9,8 +9,9 @@ typedef int64_t __int64;
 #include "RtAudio.h"
 #include "spdlog/spdlog.h"
 
-extern "C"{
-	#include "sndfile.h"
+extern "C"
+{
+#include "sndfile.h"
 }
 
 #include <boost/filesystem.hpp>
@@ -24,7 +25,6 @@ extern "C"{
 #include <csignal>
 #include <cstring>
 
-
 std::string const SOFTWARE_NAME = "chronicle";
 std::string const VERSION = "0.1.2";
 
@@ -32,13 +32,14 @@ using namespace std;
 
 // So, you've decided to make some logger software...
 
-struct recordingParameters {
+struct recordingParameters
+{
 	unsigned int channelCount;
 	unsigned int sampleRate;
 	unsigned int bufferLength;
 };
 
-int main(int argc, char* argv[]);
+int main(int argc, char *argv[]);
 void doRecord(boost::filesystem::path directory, string fileNameFormat);
 
 float calculateHardDriveUsage(chrono::seconds duration, SF_INFO sf_info);
@@ -47,7 +48,7 @@ recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice);
 
 chrono::time_point<chrono::system_clock> calculateRecordEndTimeFromNow();
 
-int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, double    me, RtAudioStreamStatus status, void *userData);
+int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, double me, RtAudioStreamStatus status, void *userData);
 void stopRecord();
 void signalHandler(int sigNum);
 
