@@ -34,36 +34,46 @@ chrono::seconds audioFileAgeLimit = chrono::seconds(3628800);
 int soundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 string audioFileExtension = ".wav";
 unsigned int inputAudioDeviceId = audio.getDefaultInputDevice();
+shared_ptr<spdlog::logger> logger;
 
 bool silent_flag = 0;
 
 int main(int argc, char *argv[])
 {
 	cout << SOFTWARE_NAME << " v" << VERSION << " Copyright (c) 2016-2017 Callum McLean" << endl
-		<< endl;
+		 << endl;
 
 	boost::filesystem::path output_directory;
 	output_directory = boost::filesystem::current_path();
-
-	/* Init logging */
-	try {
-		boost::filesystem::create_directory("logs");
-		auto logger = spdlog::rotating_logger_mt("chronicle_log", "logs/chronicle.log", 1024 * 1024 * 5, 3);
-		logger->set_pattern("[%H:%M:%S %z] %l - %v");
-		logger->info("Chronicle started...");
-	}
-	catch (const spdlog::spdlog_ex &ex) {
-		cout << "Cannot init logging: " << ex.what() << endl;
-		exit(1);
-	}
-
-
 
 	string fileNameFormat = "%Y-%m-%d %H%M%S"; // Default strftime format for audio files. MinGW doesn't like %F...
 
 	/* Parse cmd-line arguments */
 	{
 		cmdOpts opts = parse_options(argc, argv);
+
+		/* Init logging */
+		try
+		{
+			boost::filesystem::create_directory("logs");
+			logger = spdlog::rotating_logger_mt("chronicle_log", "logs/chronicle.log", 1024 * 1024 * 5, 3);
+			logger->set_pattern("[%H:%M:%S %z] %l - %v");
+			if (opts.is_debug)
+			{
+				logger->set_level(spdlog::level::debug);
+			}
+			else
+			{
+				logger->set_level(spdlog::level::info);
+			}
+
+			logger->info("Chronicle started...");
+		}
+		catch (const spdlog::spdlog_ex &ex)
+		{
+			cout << "Cannot init logging: " << ex.what() << endl;
+			exit(1);
+		}
 
 		/* Not recording, just querying - these options end with the program exiting */
 
@@ -96,7 +106,7 @@ int main(int argc, char *argv[])
 
 			deviceInfo = audio.getDeviceInfo(audio.getDefaultInputDevice());
 			cout << endl
-				<< "Default device: " << deviceInfo.name << endl;
+				 << "Default device: " << deviceInfo.name << endl;
 
 			exit(0);
 		}
@@ -123,11 +133,11 @@ int main(int argc, char *argv[])
 			/* strftime seems to not produce anything when passed %F on MinGW-compiled versions,
 			Fixes #26 */
 			size_t found = fileNameFormat.find("%F");
-			while (found != string::npos) {
+			while (found != string::npos)
+			{
 				fileNameFormat.replace(found, 2, "%Y-%m-%d");
 				found = fileNameFormat.find("%F");
 			}
-
 		}
 
 		if (opts.no_delete == true)
@@ -143,19 +153,22 @@ int main(int argc, char *argv[])
 			/* Allow the user to specify age limit in units other than seconds,
 			Fixes #12 */
 			chrono::seconds age_seconds;
-			if (opts.max_age_unit == "s") {
+			if (opts.max_age_unit == "s")
+			{
 				age_seconds = chrono::seconds(opts.max_age_value);
 			}
-			else if (opts.max_age_unit == "m") {
+			else if (opts.max_age_unit == "m")
+			{
 				age_seconds = chrono::minutes(opts.max_age_value);
 			}
-			else if (opts.max_age_unit == "h") {
+			else if (opts.max_age_unit == "h")
+			{
 				age_seconds = chrono::hours(opts.max_age_value);
 			}
-			else if (opts.max_age_unit == "d") {
+			else if (opts.max_age_unit == "d")
+			{
 				age_seconds = chrono::hours(opts.max_age_value * 24);
 			}
-
 
 			if (opts.max_age_value < 1)
 			{
@@ -219,9 +232,11 @@ int main(int argc, char *argv[])
 	/* Make sure that audio devices exist before continuing... */
 	if (audio.getDeviceCount() < 1)
 	{
-		cout << "No audio devices available! Exiting..." << endl;
+		logger->critical("No audio devices available! Exiting...");
 		exit(0);
 	}
+
+	logger->debug("Output directory: " + output_directory.string());
 
 	string windowTitle = "Chronicle v" + VERSION;
 	initCurses(windowTitle);
@@ -306,21 +321,20 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		{
 			boost::filesystem::create_directories(audioFileFullPath.parent_path());
 		}
-		catch (boost::filesystem::filesystem_error& e)
+		catch (boost::filesystem::filesystem_error &e)
 		{
 			printf(e.what());
 			logger->critical("Could not create directory: {}", e.what());
 			exit(1);
 		}
 
-		
 		/* Calculate the file size - fixes #22 */
 		chrono::time_point<chrono::system_clock> tpNow = chrono::system_clock::now();
 		chrono::seconds recordDuration = chrono::duration_cast<chrono::seconds>(endTime - tpNow);
 		long fileSizeMB = calculateHardDriveUsage(recordDuration, sfInfo);
-		
+
 		boost::filesystem::space_info diskSpace = boost::filesystem::space(directory);
-		long diskSpaceAvailableGB = diskSpace.available/1073741824; // bytes to GB
+		long diskSpaceAvailableGB = diskSpace.available / 1073741824; // bytes to GB
 		updateHardDriveSpace(diskSpaceAvailableGB, fileSizeMB);
 
 		// Maintenance
@@ -330,7 +344,8 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		mySnd = sf_open(audioFileFullPath.generic_string().c_str(), SFM_WRITE, &sfInfo);
 
 		/* Check if the file can be opened. Fixes #6. */
-		if (mySnd == NULL) {
+		if (mySnd == NULL)
+		{
 			// Can't open the file. Exit.
 			logger->critical("Could not start recording: {}", sf_strerror(mySnd));
 			exit(1);
@@ -435,7 +450,8 @@ void stopRecord()
 	sf_close(mySnd);
 }
 
-float calculateHardDriveUsage(chrono::seconds duration, SF_INFO sf_info) {
+float calculateHardDriveUsage(chrono::seconds duration, SF_INFO sf_info)
+{
 	/* Let's assume WAV, for now, because that's what we're recording... 
 	OGG/MP3/etc. will change this.
 	*/
@@ -444,7 +460,7 @@ float calculateHardDriveUsage(chrono::seconds duration, SF_INFO sf_info) {
 	sz_in_mb = (bit_depth * sample_rate * channels * dur_in_secs) / 8 / 1000000
 	*/
 
-	return (sf_info.samplerate * 16.00 * sf_info.channels * duration.count()) / 8 / 1024/1024;
+	return (sf_info.samplerate * 16.00 * sf_info.channels * duration.count()) / 8 / 1024 / 1024;
 }
 
 recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice)
@@ -481,7 +497,6 @@ recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice)
 		{
 			rp.sampleRate = recordingDevice.preferredSampleRate;
 			logger->warn("Could not set sample rate at 44.1 kHz, using preferred sample rate: {}", rp.sampleRate);
-			
 		}
 	}
 
