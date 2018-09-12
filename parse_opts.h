@@ -5,7 +5,8 @@
 
 using namespace std;
 
-struct cmdOpts{
+struct cmdOpts
+{
     bool licence = false;
     bool help = false;
     bool list_devices = false;
@@ -13,11 +14,12 @@ struct cmdOpts{
     string format = "";
     bool no_delete = false;
     unsigned int max_age_value = 0;
-	string max_age_unit = "";
+    string max_age_unit = "";
     string audio_format = "";
     int input_device = -1;
+    bool is_debug = false;
 };
 
-cmdOpts parse_options(int argc, char* argv[]);
+cmdOpts parse_options(int argc, char *argv[]);
 
 #endif //__PARSE_OPTS__H
