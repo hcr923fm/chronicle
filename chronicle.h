@@ -9,6 +9,8 @@ typedef int64_t __int64;
 #include "RtAudio.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/rotating_file_sink.h"
+//#include <shine/layer3.h>
+#include "lame.h"
 
 extern "C"
 {
@@ -43,7 +45,7 @@ struct recordingParameters
 int main(int argc, char *argv[]);
 void doRecord(boost::filesystem::path directory, string fileNameFormat);
 
-float calculateHardDriveUsage(chrono::seconds duration, SF_INFO sf_info);
+float calculateHardDriveUsage(chrono::seconds duration, recordingParameters rp);
 
 recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice);
 

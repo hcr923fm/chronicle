@@ -24,15 +24,32 @@ SOFTWARE.
 */
 
 #include "chronicle.h"
-
 using namespace std;
 
+enum AudioFormat
+{
+	WAV,
+	OGG,
+	MP3
+};
+
+// Libsndfile stuff
 SNDFILE *mySnd;
+int sfSoundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+SF_INFO sfInfo;
+
+// LAME stuff
+lame_t lame_enc;
+FILE *lameOutFile;
+
+// The rest
 RtAudio audio;
 
 chrono::seconds audioFileAgeLimit = chrono::seconds(3628800);
-int soundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+
+AudioFormat destinationAudioFormat = AudioFormat::WAV;
 string audioFileExtension = ".wav";
+
 unsigned int inputAudioDeviceId = audio.getDefaultInputDevice();
 
 bool silent_flag = 0;
@@ -192,19 +209,26 @@ int main(int argc, char *argv[])
 		{
 			if (opts.audio_format == "OGG" || opts.audio_format == "ogg")
 			{
-				soundFormat = SF_FORMAT_OGG | SF_FORMAT_VORBIS;
+				sfSoundFormat = SF_FORMAT_OGG | SF_FORMAT_VORBIS;
 				audioFileExtension = ".ogg";
+				destinationAudioFormat = AudioFormat::OGG;
 			}
 			else if (opts.audio_format == "WAV" || opts.audio_format == "wav")
 			{
-				soundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+				sfSoundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 				audioFileExtension = ".wav";
+				destinationAudioFormat = AudioFormat::WAV;
+			}
+			else if (opts.audio_format == "MP3" || opts.audio_format == "mp3")
+			{
+				audioFileExtension = ".mp3";
+				destinationAudioFormat = AudioFormat::MP3;
 			}
 			else
 			{
 				cout << "Audio file format not supported:" << endl;
 				cout << opts.audio_format << endl;
-				cout << "Supported formats are: [ OGG | WAV ]" << endl;
+				cout << "Supported formats are: [ OGG | WAV | MP3 ]" << endl;
 				exit(1);
 			}
 		}
@@ -269,20 +293,36 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 	params.nChannels = rp.channelCount;
 	params.firstChannel = 0;
 
-	SF_INFO sfInfo;
-	sfInfo.channels = rp.channelCount;
-	sfInfo.format = soundFormat;
-	sfInfo.samplerate = rp.sampleRate;
-
-	updateAudioDevice(deviceInfo.name, rp.sampleRate, rp.channelCount);
-
-	if (sf_format_check(&sfInfo) == 0)
+	// Generate libsndfile information if we're using it
+	if (destinationAudioFormat != AudioFormat::MP3)
 	{
-		logger->critical("Destination format invalid, exiting...");
-		exit(0);
+		sfInfo.channels = rp.channelCount;
+		sfInfo.format = sfSoundFormat;
+		sfInfo.samplerate = rp.sampleRate;
+
+		if (sf_format_check(&sfInfo) == 0)
+		{
+			logger->critical("Destination format invalid, exiting...");
+			exit(0);
+		}
+
+		sf_command(mySnd, SFC_SET_SCALE_FLOAT_INT_READ, NULL, SF_TRUE);
 	}
 
-	sf_command(mySnd, SFC_SET_SCALE_FLOAT_INT_READ, NULL, SF_TRUE);
+	// Or setup the MP3 encoder
+	else
+	{
+		lame_enc = lame_init();
+		lame_set_in_samplerate(lame_enc, rp.sampleRate);
+		lame_set_brate(lame_enc, 256);
+		int ret = lame_init_params(lame_enc);
+		if (ret < 0)
+		{
+			logger->critical("Error occurred when initializing LAME parameters. Code: {}", ret);
+		}
+	}
+
+	updateAudioDevice(deviceInfo.name, rp.sampleRate, rp.channelCount);
 
 	// Set up signal handling; fixes #1
 	{
@@ -292,15 +332,17 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		//signal(, handleWindowRedraw); // TODO: HANDLE TERMINAL RESIZE
 	}
 
-	/* The time to finish recording is at the end of the hour.
+	// Main record loop begins
+
+	while (true)
+	{
+
+		/* The time to finish recording is at the end of the hour.
 	We can't assume that the recording starting from the top of the current hour,
 	as the first recording probably won't be.
 	So, we'll add an hour to the current time, and then remove any minutes and
 	seconds from that time.
 	*/
-
-	while (true)
-	{
 		chrono::time_point<chrono::system_clock> endTime = calculateRecordEndTimeFromNow();
 
 		char audioFileName[81];
@@ -339,7 +381,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		/* Calculate the file size - fixes #22 */
 		chrono::time_point<chrono::system_clock> tpNow = chrono::system_clock::now();
 		chrono::seconds recordDuration = chrono::duration_cast<chrono::seconds>(endTime - tpNow);
-		long fileSizeMB = calculateHardDriveUsage(recordDuration, sfInfo);
+		long fileSizeMB = calculateHardDriveUsage(recordDuration, rp);
 
 		boost::filesystem::space_info diskSpace = boost::filesystem::space(directory);
 		long diskSpaceAvailableGB = diskSpace.available / 1073741824; // bytes to GB
@@ -349,14 +391,27 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		removeOldAudioFiles(audioFileAgeLimit, directory);
 
 		// Open audio file for writing
-		mySnd = sf_open(audioFileFullPath.generic_string().c_str(), SFM_WRITE, &sfInfo);
-
-		/* Check if the file can be opened. Fixes #6. */
-		if (mySnd == NULL)
+		if (destinationAudioFormat != MP3)
 		{
-			// Can't open the file. Exit.
-			logger->critical("Could not start recording: {}", sf_strerror(mySnd));
-			exit(1);
+			mySnd = sf_open(audioFileFullPath.generic_string().c_str(), SFM_WRITE, &sfInfo);
+
+			/* Check if the file can be opened. Fixes #6. */
+			if (mySnd == NULL)
+			{
+				// Can't open the file. Exit.
+				logger->critical("Could not start recording: {}", sf_strerror(mySnd));
+				exit(1);
+			}
+		}
+		else
+		{
+			lameOutFile = fopen(audioFileFullPath.generic_string().c_str(), "wb");
+			if (lameOutFile == NULL)
+			{
+				// Can't open the file. Exit.
+				logger->critical("Couldn't open the destination file. Error: {}", strerror(errno));
+				exit(1);
+			}
 		}
 
 		try
@@ -392,9 +447,18 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 
 	int *pChannelCount = (int *)userData;
 	int channelCount = *pChannelCount;
-
 	short *data = (short *)inputBuffer;
-	sf_writef_short(mySnd, data, nFrames);
+	unsigned char MP3Buffer[sizeof(short) * nFrames];
+
+	if (destinationAudioFormat != MP3)
+	{
+		sf_writef_short(mySnd, data, nFrames);
+	}
+	else
+	{
+		int enc_data_size = lame_encode_buffer_interleaved(lame_enc, data, nFrames, MP3Buffer, sizeof(short) * nFrames);
+		fwrite(MP3Buffer, enc_data_size, 1, lameOutFile);
+	}
 
 	/* To figure out if a buffer is silent, we need to check the content of the buffer.
 	The buffer is just the (number of frames) * (the number of channels); in our case,
@@ -467,11 +531,22 @@ void stopRecord()
 	{
 		audio.closeStream();
 	}
-	sf_write_sync(mySnd);
-	sf_close(mySnd);
+
+	if (destinationAudioFormat != MP3)
+	{
+		sf_write_sync(mySnd);
+		sf_close(mySnd);
+	}
+	else
+	{
+		unsigned char empty_buf[0];
+		lame_encode_flush(lame_enc, empty_buf, 0);
+		fclose(lameOutFile);
+		lame_close(lame_enc);
+	}
 }
 
-float calculateHardDriveUsage(chrono::seconds duration, SF_INFO sf_info)
+float calculateHardDriveUsage(chrono::seconds duration, recordingParameters rp)
 {
 	/* Let's assume WAV, for now, because that's what we're recording... 
 	OGG/MP3/etc. will change this.
@@ -481,7 +556,7 @@ float calculateHardDriveUsage(chrono::seconds duration, SF_INFO sf_info)
 	sz_in_mb = (bit_depth * sample_rate * channels * dur_in_secs) / 8 / 1000000
 	*/
 
-	return (sf_info.samplerate * 16.00 * sf_info.channels * duration.count()) / 8 / 1024 / 1024;
+	return (rp.sampleRate * 16.00 * rp.channelCount * duration.count()) / 8 / 1024 / 1024;
 }
 
 recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice)
