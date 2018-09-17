@@ -8,6 +8,7 @@ typedef int64_t __int64;
 #include "parse_opts.h"
 #include "RtAudio.h"
 #include "spdlog/spdlog.h"
+#include "spdlog/sinks/rotating_file_sink.h"
 
 extern "C"
 {

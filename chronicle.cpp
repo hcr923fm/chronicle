@@ -34,7 +34,6 @@ chrono::seconds audioFileAgeLimit = chrono::seconds(3628800);
 int soundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 string audioFileExtension = ".wav";
 unsigned int inputAudioDeviceId = audio.getDefaultInputDevice();
-shared_ptr<spdlog::logger> logger;
 
 bool silent_flag = 0;
 
@@ -48,31 +47,40 @@ int main(int argc, char *argv[])
 
 	string fileNameFormat = "%Y-%m-%d %H%M%S"; // Default strftime format for audio files. MinGW doesn't like %F...
 
+	/* Init logging */
+	try
+	{
+		boost::filesystem::create_directory("logs");
+		auto logger = spdlog::rotating_logger_mt("chronicle_log", "logs/chronicle.log", 1024 * 1024 * 5, 3);
+		logger->set_pattern("[%H:%M:%S %z] %l - %v");
+
+		logger->info("Chronicle started...");
+	}
+	catch (const spdlog::spdlog_ex &ex)
+	{
+		cout << "Cannot init logging: " << ex.what() << endl;
+		exit(1);
+	}
+
+	auto logger = spdlog::get("chronicle_log");
+
 	/* Parse cmd-line arguments */
 	{
 		cmdOpts opts = parse_options(argc, argv);
 
-		/* Init logging */
-		try
-		{
-			boost::filesystem::create_directory("logs");
-			logger = spdlog::rotating_logger_mt("chronicle_log", "logs/chronicle.log", 1024 * 1024 * 5, 3);
-			logger->set_pattern("[%H:%M:%S %z] %l - %v");
-			if (opts.is_debug)
-			{
-				logger->set_level(spdlog::level::debug);
-			}
-			else
-			{
-				logger->set_level(spdlog::level::info);
-			}
+		// See if we're running in debug mode
 
-			logger->info("Chronicle started...");
-		}
-		catch (const spdlog::spdlog_ex &ex)
+		if (opts.is_debug)
 		{
-			cout << "Cannot init logging: " << ex.what() << endl;
-			exit(1);
+			logger->set_level(spdlog::level::debug);
+			logger->info("Log level: Debug");
+			logger->flush_on(spdlog::level::debug);
+		}
+		else
+		{
+			logger->set_level(spdlog::level::info);
+			logger->info("Log level: Info");
+			logger->flush_on(spdlog::level::info);
 		}
 
 		/* Not recording, just querying - these options end with the program exiting */
@@ -354,7 +362,9 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		try
 		{
 			updateRecordingToPath(audioFileFullPath.generic_string());
+			logger->debug("Updated recording output path: {}", audioFileFullPath.generic_string());
 			audio.openStream(NULL, &params, RTAUDIO_SINT16, rp.sampleRate, &(rp.bufferLength), &cb_record, &(rp.channelCount));
+			logger->debug("Opened audio stream");
 			audio.startStream();
 			logger->info("Started new recording");
 		}
@@ -362,6 +372,11 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		{
 			logger->critical("Could not open stream: {}", e.getMessage());
 			exit(0);
+		}
+
+		catch (exception &e)
+		{
+			logger->critical("Could not begin recording: {}", e.what());
 		}
 
 		this_thread::sleep_until(endTime);
@@ -422,6 +437,12 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 	float level = log10(float(framesPeak) / float(maxAudioVal)) * 10;
 	//float level = float(framesPeak)/float(maxAudioVal);
 	string label = to_string(level) + " dB";
+
+	// Sometimes, the first value is -INF, which maths doesn't like, so we'll truncate it
+	if (level == -INFINITY)
+	{
+		level = 0.065535;
+	}
 
 	updateAudioMeter(0, 30, 30 - abs(level), label);
 	//updateAudioMeter(0,maxAudioVal,framesPeak,to_string(level));
