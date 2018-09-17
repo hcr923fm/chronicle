@@ -544,12 +544,10 @@ void stopRecord()
 	{
 		unsigned char discarded_buffer[8192];
 		int remaining_frames = lame_encode_flush(lame_enc, discarded_buffer, 8192);
-		logger->debug("Flushed LAME, discarding {} frames");
+		logger->debug("Flushed LAME, discarding {} bytes", discarded_buffer);
 		lame_mp3_tags_fid(lame_enc, lameOutFile);
 		fclose(lameOutFile);
 		logger->debug("Closed destination file");
-		// lame_close(lame_enc);
-		// lame_enc = NULL;
 		// logger->debug("Cleared LAME encoder");
 	}
 }
