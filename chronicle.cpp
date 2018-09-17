@@ -315,7 +315,8 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		lame_enc = lame_init();
 		lame_set_in_samplerate(lame_enc, rp.sampleRate);
 		lame_set_out_samplerate(lame_enc, rp.sampleRate);
-		lame_set_brate(lame_enc, 256);
+		lame_set_VBR(lame_enc, vbr_default);
+		lame_set_VBR_quality(lame_enc, 3);
 		lame_set_num_channels(lame_enc, rp.channelCount);
 		int ret = lame_init_params(lame_enc);
 		if (ret < 0)
@@ -407,7 +408,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		}
 		else
 		{
-			lameOutFile = fopen(audioFileFullPath.generic_string().c_str(), "wb");
+			lameOutFile = fopen(audioFileFullPath.generic_string().c_str(), "wb+");
 			if (lameOutFile == NULL)
 			{
 				// Can't open the file. Exit.
@@ -450,7 +451,7 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 	int *pChannelCount = (int *)userData;
 	int channelCount = *pChannelCount;
 	short *data = (short *)inputBuffer;
-	unsigned char MP3Buffer[sizeof(short) * nFrames];
+	unsigned char MP3Buffer[8192];
 
 	if (destinationAudioFormat != MP3)
 	{
@@ -458,7 +459,7 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 	}
 	else
 	{
-		int enc_data_size = lame_encode_buffer_interleaved(lame_enc, data, nFrames, MP3Buffer, sizeof(short) * nFrames);
+		int enc_data_size = lame_encode_buffer_interleaved(lame_enc, data, nFrames, MP3Buffer, 8192);
 		fwrite(MP3Buffer, enc_data_size, 1, lameOutFile);
 	}
 
@@ -541,10 +542,15 @@ void stopRecord()
 	}
 	else
 	{
-		unsigned char empty_buf[0];
-		lame_encode_flush(lame_enc, empty_buf, 0);
+		unsigned char discarded_buffer[8192];
+		int remaining_frames = lame_encode_flush(lame_enc, discarded_buffer, 8192);
+		logger->debug("Flushed LAME, discarding {} frames");
+		lame_mp3_tags_fid(lame_enc, lameOutFile);
 		fclose(lameOutFile);
-		lame_close(lame_enc);
+		logger->debug("Closed destination file");
+		// lame_close(lame_enc);
+		// lame_enc = NULL;
+		// logger->debug("Cleared LAME encoder");
 	}
 }
 
@@ -677,6 +683,7 @@ void signalHandler(int sigNum)
 void printLicence()
 {
 	/* TODO: ADD BOOST WEBSITE + COPYRIGHT */
+	/* TODO: ADD libmp3lame STUFF */
 	const char LICENCE[] =
 		R"(
 Chronicle is distributed under the MIT Licence.
