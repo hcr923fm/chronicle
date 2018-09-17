@@ -557,6 +557,20 @@ float calculateHardDriveUsage(chrono::seconds duration, recordingParameters rp)
 	*/
 
 	return (rp.sampleRate * 16.00 * rp.channelCount * duration.count()) / 8 / 1024 / 1024;
+	if (destinationAudioFormat == WAV || destinationAudioFormat == OGG) // Fix this, implement OGG calculator!
+	{
+		return (rp.sampleRate * 16.00 * rp.channelCount * duration.count()) / 8 / 1024 / 1024;
+	}
+	else if (destinationAudioFormat == MP3)
+	{
+		// We use 256 kb/s
+		return (256 * duration.count() / 8 / 1024);
+	}
+	else
+	{
+		// Something's gone wrong...
+		return 0;
+	}
 }
 
 recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice)
