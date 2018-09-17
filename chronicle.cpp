@@ -314,7 +314,9 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 	{
 		lame_enc = lame_init();
 		lame_set_in_samplerate(lame_enc, rp.sampleRate);
+		lame_set_out_samplerate(lame_enc, rp.sampleRate);
 		lame_set_brate(lame_enc, 256);
+		lame_set_num_channels(lame_enc, rp.channelCount);
 		int ret = lame_init_params(lame_enc);
 		if (ret < 0)
 		{
@@ -556,7 +558,6 @@ float calculateHardDriveUsage(chrono::seconds duration, recordingParameters rp)
 	sz_in_mb = (bit_depth * sample_rate * channels * dur_in_secs) / 8 / 1000000
 	*/
 
-	return (rp.sampleRate * 16.00 * rp.channelCount * duration.count()) / 8 / 1024 / 1024;
 	if (destinationAudioFormat == WAV || destinationAudioFormat == OGG) // Fix this, implement OGG calculator!
 	{
 		return (rp.sampleRate * 16.00 * rp.channelCount * duration.count()) / 8 / 1024 / 1024;
