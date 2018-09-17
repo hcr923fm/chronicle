@@ -13,7 +13,7 @@ CFLAGS= -I ./include
 msys232:
 	mkdir -p build/32
 	g++ $(FILES) -std=c++11 $(CFLAGS) $(MSYS2WIN32LIBS) $(MSYS2WINLIBS) $(MSYS2WINBOOSTLIBS) -lncurses -o build/32/chronicle.exe
-	cp libs/32/* build/32
+	#cp libs/32/* build/32
 	cp README.md build/32
 	cp LICENCE build/32
 	cp CHANGELOG.md build/32
@@ -21,7 +21,7 @@ msys232:
 msys264:
 	mkdir -p build/64
 	g++ $(FILES) -std=c++11 $(CFLAGS) $(MSYS2WIN32LIBS) $(MSYS2WINLIBS) $(MSYS2WINBOOSTLIBS) -lncurses -o build/64/chronicle.exe
-	cp libs/64/* build/64/
+	#cp libs/64/* build/64/
 	cp README.md build/64
 	cp LICENCE build/64
 	cp CHANGELOG.md build/64
