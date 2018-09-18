@@ -1,7 +1,7 @@
 
 # Changelog - Chronicle
 
-## Unreleased
+## v1.0.0
 ### Added
 * Hard drive usage monitor (#22)
 * MP3 recording (#20)

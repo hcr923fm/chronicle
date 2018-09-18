@@ -87,7 +87,7 @@ Where:
 * Due to the type sizes used in the underlying audio libraries, the audio monitoring graph on the 32-bit version is less reliable at very low levels. This does not affect the quality of the recorded output.
 
 ## Buy me a coffee?
-If you find chronicle to be useful, fancy buying me a coffee?
+If you find Chronicle to be useful, fancy buying me a coffee?
 
 I'm on [Flattr](https://flattr.com/submit/auto?fid=kzr39z&url=http%3A%2F%2Fgithub.com%2Fcalmcl1%2Fchronicle) and [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FXDR44PHGFEDN)!
 
