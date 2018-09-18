@@ -58,3 +58,13 @@ configure.ac
 *.in
 *.old
 Makefile
+/compile
+/depcomp
+/install-sh
+/ltmain.sh
+/missing
+/confdefs.h
+/conftest.c
+/conftest.err
+/conftest.cpp
+/conftest.lst
