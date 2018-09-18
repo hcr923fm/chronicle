@@ -1,4 +1,5 @@
-AC_INIT([chronicle], [version-0.1.2], [calmcl1@aol.com])
+AC_INIT([chronicle], [0.1.2], [calmcl1@aol.com])
+AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 AC_CONFIG_SRCDIR([chronicle.h])
 AC_CONFIG_HEADERS([config.h])
