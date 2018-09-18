@@ -17,6 +17,7 @@ extern "C"
 #include "sndfile.h"
 }
 
+#include <boost/version.hpp>
 #include <boost/filesystem.hpp>
 
 #include <iostream>
