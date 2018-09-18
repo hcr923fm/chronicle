@@ -10,7 +10,7 @@ typedef int64_t __int64;
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/rotating_file_sink.h"
 //#include <shine/layer3.h>
-#include "lame.h"
+#include "lame/lame.h"
 
 extern "C"
 {
