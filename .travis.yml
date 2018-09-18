@@ -1,7 +1,9 @@
 language: cpp
-script: ./autogen.sh && ./configure && make
+script: cd chronicle && ./autogen.sh && ./configure && make
 compiler: gcc
 before-install:
 - sudo apt-get update -qq
 - sudo apt-get install libncurses5-dev libsndfile1-dev libboost-all-dev libasound2 libasound2-dev
-install: ./travis-make-deps.sh
+install:
+- cd chronicle
+- ./travis-make-deps.sh
