@@ -6,7 +6,7 @@ MSYS2WINBOOSTLIBS=-lboost_filesystem-mt -lboost_system-mt
 MSYS2LINBOOSTLIBS=-lboost_filesystem -lboost_system
 
 MSYS2WINLIBS=`pkg-config --cflags --libs sndfile rtaudio` -lmp3lame
-MSYS2LINLIBS=`pkg-config --cflags --libs sndfile rtaudio`
+MSYS2LINLIBS=`pkg-config --cflags --libs sndfile rtaudio` -lmp3lame
 
 CFLAGS= -I ./include
 
