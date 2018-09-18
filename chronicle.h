@@ -31,7 +31,7 @@ extern "C"
 using namespace std;
 
 string const SOFTWARE_NAME = "chronicle";
-string const VERSION = "0.1.2";
+string const SOFTWARE_VERSION = "0.1.2";
 
 // So, you've decided to make some logger software...
 
