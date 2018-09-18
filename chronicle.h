@@ -28,10 +28,10 @@ extern "C"
 #include <csignal>
 #include <cstring>
 
-std::string const SOFTWARE_NAME = "chronicle";
-std::string const VERSION = "0.1.2";
-
 using namespace std;
+
+string const SOFTWARE_NAME = "chronicle";
+string const VERSION = "0.1.2";
 
 // So, you've decided to make some logger software...
 
