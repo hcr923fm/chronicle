@@ -31,7 +31,7 @@ If you want the latest bleeding-edge version, clone this repository and build fr
 ```
 git clone http://hcr923fm/chronicle
 cd chronicle
-./configure && make && make install
+./autogen.sh && ./configure && make && make install
 ```
 
 **Stable builds**

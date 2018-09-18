@@ -1,7 +1,7 @@
 bin_PROGRAMS = chronicle
-chronicle_SOURCES = chronicle.cpp screen.cpp parse_opts.cpp
+chronicle_SOURCES = chronicle.h chronicle.cpp screen.h screen.cpp parse_opts.h parse_opts.cpp
 
-ACLOCAL_AMFLAGS = -I .
+ACLOCAL_AMFLAGS = -I build-aux
 
 AM_CFLAGS=$(RTAUDIO_CFLAGS) $(SNDFILE_CFLAGS) $(NCURSES_CFLAGS) $(BOOST_CPPFLAGS)
 AM_LDFLAGS=$(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS)
