@@ -1,19 +1,7 @@
 language: cpp
 script: ./autogen.sh && ./configure && make
 compiler: gcc
-install:
+before-install:
 - sudo apt-get update -qq
 - sudo apt-get install libncurses5-dev libsndfile1-dev libboost-all-dev libasound2 libasound2-dev
-- wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.0.0.tar.gz
-- tar xvf rtaudio-*
-- cd rtaudio*
-- ./configure --with-alsa
-- make
-- sudo make install
-- cd ..
-- wget https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
-- tar xvf lame-*
-- cd lame-*
-- ./configure --disable-decoder
-- make
-- sudo make install
+install: ./travis-make-deps.sh
