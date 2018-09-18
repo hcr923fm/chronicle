@@ -17,3 +17,4 @@ before_install:
 - ./configure --disable-decoder
 - make
 - sudo make install
+- cd ..
