@@ -5,6 +5,7 @@
 ### Added
 * Hard drive usage monitor (#22)
 * MP3 recording (#20)
+* Proper autotools installation
 
 ## v0.1.2
 ### Added
