@@ -1,4 +1,5 @@
 # Chronicle
+![Chronicle build](https://api.travis-ci.com/hcr923fm/chronicle.svg?branch=master)
 
 ## Note: 3rd July 2017
 > Chronicle hasn't been updated much lately, I know.  It's certainly not a dead project, I just haven't had a lot of time to work on it as this is the busy season for my work!
