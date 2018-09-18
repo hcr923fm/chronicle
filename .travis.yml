@@ -1,5 +1,5 @@
 language: cpp
-script: make linux
+script: ./autogen.sh && ./configure && make
 compiler: gcc
 before_install:
 - sudo apt-get update -qq
