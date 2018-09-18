@@ -680,8 +680,6 @@ void signalHandler(int sigNum)
 
 void printLicence()
 {
-	/* TODO: ADD BOOST WEBSITE + COPYRIGHT */
-	/* TODO: ADD libmp3lame STUFF */
 	const char LICENCE[] =
 		R"(
 Chronicle is distributed under the MIT Licence.
@@ -702,6 +700,9 @@ Chronicle uses the following libraries internally:
 
 	Boost
 		Licenced under the Boost Software Licence.
+
+	LAME
+		Licenced under the LGPL v2.1. Courtesy of www.mp3dev.org
 )";
 
 	cout << LICENCE << endl;
