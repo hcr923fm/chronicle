@@ -1,8 +1,8 @@
 bin_PROGRAMS = chronicle
-chronicle_SOURCES = chronicle.cpp
+chronicle_SOURCES = chronicle.cpp screen.cpp parse_opts.cpp
 
 ACLOCAL_AMFLAGS = -I .
 
-AM_CFLAGS=$(rtaudio_cflags) $(sndfile_cflags) $(BOOST_CPPFLAGS)
+AM_CFLAGS=$(RTAUDIO_CFLAGS) $(SNDFILE_CFLAGS) $(NCURSES_CFLAGS) $(BOOST_CPPFLAGS)
 AM_LDFLAGS=$(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS)
-LIBS=$(rtaudio_libs) $(sndfile_libs) $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
+LIBS=$(RTAUDIO_LIBS) $(SNDFILE_LIBS) $(NCURSES_LIBS) $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS) -lmp3lame

@@ -13,7 +13,7 @@ BOOST_SYSTEM
 AC_CHECK_HEADERS([iostream, ctime, chrono, thread, iomanip, csignal, cstring])
 PKG_CHECK_MODULES(RTAUDIO, rtaudio)
 PKG_CHECK_MODULES(SNDFILE, sndfile)
-
+PKG_CHECK_MODULES(NCURSES, ncurses)
 
 AC_CONFIG_FILES(Makefile)
 AC_OUTPUT()
