@@ -24,6 +24,7 @@ Linux users can also [download the binaries](https://github.com/calmcl1/chronicl
 * libsndfile, which is in most package managers. (`libsndfile1-dev`)
 * Boost, which is in most package managers (`libboost-all-dev`).
 * ncurses, which is available in most package managers (`libncurses5-dev`).
+* LAME encoding library, which is in most package managers (`libmp3lame-dev`).
 
 #### Compiling from scratch
 Or, you can compile chronicle from scratch.
