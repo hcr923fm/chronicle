@@ -14,7 +14,6 @@ before_install:
 - wget https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
 - tar xvf lame-*
 - cd lame-*
-- ./configure --disable-encoder
+- ./configure --disable-decoder
 - make
 - sudo make install
-- cd ../chronicle
