@@ -52,7 +52,7 @@ configure
 .deps*
 autom4te*
 out*
-*.m4
+aclocal.m4
 config.*
 configure.ac
 *.in
@@ -70,3 +70,8 @@ Makefile
 /conftest.lst
 /libtool
 /stamp-h1
+/libtool.m4
+/lt~obsolete.m4
+/ltoptions.m4
+/ltsugar.m4
+/ltversion.m4
