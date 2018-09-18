@@ -68,3 +68,5 @@ Makefile
 /conftest.err
 /conftest.cpp
 /conftest.lst
+/libtool
+/stamp-h1
