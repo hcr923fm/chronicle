@@ -46,3 +46,14 @@ build/*
 libsndfile-1*
 chronicle.cpp.orig
 logs/
+
+# Autotools stuff
+*.am
+.deps*
+autom4te*
+out*
+*.m4
+config.*
+configure.ac
+*.in
+*.old
