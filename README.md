@@ -1,13 +1,6 @@
 # Chronicle
 ![Chronicle build](https://api.travis-ci.com/hcr923fm/chronicle.svg?branch=master)
 
-## Note: 3rd July 2017
-> Chronicle hasn't been updated much lately, I know.  It's certainly not a dead project, I just haven't had a lot of time to work on it as this is the busy season for my work!
->
-> No, Chronicle isn't dead. It's just... *napping*.
->
-> Cal McLean.
-
 ## What is Chronicle?
 
 Chronicle is an audio logger, designed for radio station use.
@@ -16,11 +9,11 @@ At the moment, it records audio from specified input to an audio file, on the ho
 
 ## Getting Chronicle
 ### Windows x32 and x64
-Windows users (both 32 and 64 bit) can simply download the latest compiled binaries from the [Releases](https://github.com/calmcl1/chronicle/releases) page. Simply extract and run. Hooray!
+Windows users (both 32 and 64 bit) can simply download the latest compiled binaries from the [Releases](https://github.com/hcr923fm/chronicle/releases/latest) page. Simply extract and run. Hooray!
 
 ### Linux
 #### With binaries
-Linux users can also [download the binaries](https://github.com/calmcl1/chronicle/releases). However, you will need to manually install the pre-requisites:
+Linux users can also [download the binaries](https://github.com/hcr923fm/chronicle/releases/latest). However, you will need to manually install the pre-requisites:
 * RtAudio, (`librtaudio-dev`)
 * libsndfile, which is in most package managers. (`libsndfile1-dev`)
 * Boost, which is in most package managers (`libboost-all-dev`).
@@ -30,9 +23,25 @@ Linux users can also [download the binaries](https://github.com/calmcl1/chronicl
 #### Compiling from scratch
 Or, you can compile chronicle from scratch.
 You'll also need to download the build toolchain: `build-essential` and `pkg-config`
-Then, [download the source tarball](https://github.com/calmcl1/chronicle/releases) and run `make linux`.
 
-The built binary will exist in (srcdir)/build/linux.
+**Bleeding-edge source**
+
+If you want the latest bleeding-edge version, clone this repository and build from source:
+
+```
+git clone http://hcr923fm/chronicle
+cd chronicle
+./configure && make && make install
+```
+
+**Stable builds**
+For the latest stable build, [download the source tarball](https://github.com/hcr923fm/chronicle/releases/latest) and run
+
+```
+tar xvf chronicle-*
+ch chronicle
+./configure && make && make install
+```
 
 `.deb`s will happen soon!
 
@@ -68,6 +77,7 @@ Where:
                              Acceptable parameters are:
                                  OGG | Ogg Vorbis (.ogg)
                                  WAV | 16-bit PCM WAV (.wav)
+                                 MP3 | MP3 VBR, quality 3 (.mp3)
                              Defaults to WAV.
 ```
 
@@ -82,5 +92,5 @@ If you find chronicle to be useful, fancy buying me a coffee?
 I'm on [Flattr](https://flattr.com/submit/auto?fid=kzr39z&url=http%3A%2F%2Fgithub.com%2Fcalmcl1%2Fchronicle) and [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FXDR44PHGFEDN)!
 
 ## Copyright
-Copyright 2016-2017 Callum McLean.
+Copyright 2016-2018 Callum McLean.
 Distributed under the MIT Licence. See LICENCE for details.
