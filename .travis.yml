@@ -3,7 +3,7 @@ script: make linux
 compiler: gcc
 before_install:
 - sudo apt-get update -qq
-- sudo apt-get install libncurses5-dev libsndfile1-dev libboost-all-dev libasound2
+- sudo apt-get install libncurses5-dev libsndfile1-dev libboost-all-dev libasound2 libasound2-dev
 - wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.0.0.tar.gz
 - tar xvf rtaudio-*
 - cd rtaudio*
