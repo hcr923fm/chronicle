@@ -487,13 +487,13 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 
 	/* To figure out if a buffer is silent, we need to check the content of the buffer.
 	The buffer is just the (number of frames) * (the number of channels); in our case,
-	nFrames*2. Each buffer is then just a number, representing the amplitude of the audio.
+	nFrames*numChannels. Each buffer is then just a number, representing the amplitude of the audio.
 	Therefore, if the buffer is empty, the audio is silent. */
 
 	// Do this for each channel
 	for (int ch = 0; ch < channelCount; ch++)
 	{
-		short framesPeak = 1;
+		short framesPeak = 0;
 
 		// Out of all of the frames we have available, iterate over the ones for the given channel and find the loudest
 		// It's interleaved audio (i.e. LRLRLRLRLR), so we skip every channelCount'th frame
@@ -502,13 +502,14 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 			short val = abs(*(data + i));
 			framesPeak = max(val, framesPeak);
 		};
-		cout << "peak " << float(framesPeak) << " max " << float(maxAudioVal) << " thresh " << thresholdVal << " nFrames" << nFrames << endl;
 
 		// I_db = 10*log10(I/I_0)
-		float level = 10 * (log10(float(framesPeak) / float(maxAudioVal)));
+		// Substitute 1 for framesPeak if it's actually 0, or the maths doesn't work. We can live we the inaccuracy at this low level.
+		float level = 10 * (log10(float((framesPeak > 0) ? framesPeak : 1) / float(maxAudioVal)));
 
 		char label[10];
-		sprintf(label, "%02.2f dB", level);
+		// If framesPeak < 0, print the level as being "-INF db"
+		(framesPeak > 1) ? sprintf(label, "%02.2f dB", level) : sprintf(label, "  -INF dB");
 
 		updateAudioMeter(ch, abs(silenceThresholdDB), abs(silenceThresholdDB) - abs(level), label);
 	}
@@ -587,14 +588,13 @@ recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice)
 	recordingParameters rp;
 
 	/* Set channel count */
-	if (recordingDevice.inputChannels == 1)
+	/*if (recordingDevice.inputChannels == 1)
 	{
 		rp.channelCount = 1;
 	}
 	else if (recordingDevice.inputChannels >= 2)
 	{
 		rp.channelCount = 2;
-	}
 
 	/* Set sample rate - prefer 44100 */
 	if (recordingDevice.preferredSampleRate == 44100)
