@@ -11,7 +11,7 @@ BOOST_REQUIRE([1.68.0])
 BOOST_FILESYSTEM(mt)
 BOOST_SYSTEM
 
-AC_CHECK_HEADERS([iostream, ctime, chrono, thread, iomanip, csignal, cstring])
+AC_CHECK_HEADERS([cstring])
 PKG_CHECK_MODULES(RTAUDIO, rtaudio)
 PKG_CHECK_MODULES(SNDFILE, sndfile)
 PKG_CHECK_MODULES(NCURSES, ncurses)
