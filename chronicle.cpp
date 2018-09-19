@@ -562,14 +562,19 @@ float calculateHardDriveUsage(chrono::seconds duration, recordingParameters rp)
 	sz_in_mb = (bit_depth * sample_rate * channels * dur_in_secs) / 8 / 1000000
 	*/
 
-	if (destinationAudioFormat == WAV || destinationAudioFormat == OGG) // Fix this, implement OGG calculator!
+	if (destinationAudioFormat == WAV)
 	{
 		return (rp.sampleRate * 16.00 * rp.channelCount * duration.count()) / 8 / 1024 / 1024;
 	}
+	else if (destinationAudioFormat == OGG)
+	{
+		// The OGG encoding uses VBR with a mean bit rate of 128 kbps
+		return (128 * duration.count() / 8 / 1024)
+	}
 	else if (destinationAudioFormat == MP3)
 	{
-		// We use 256 kb/s
-		return (256 * duration.count() / 8 / 1024);
+		// Our MP3 encoding uses VBR, but ~128kbps seems to give an accurate-ish number
+		return (128 * duration.count() / 8 / 1024);
 	}
 	else
 	{
