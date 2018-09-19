@@ -595,6 +595,9 @@ recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice)
 	else if (recordingDevice.inputChannels >= 2)
 	{
 		rp.channelCount = 2;
+	}*/
+
+	(recordingDevice.inputChannels == 1) ? rp.channelCount = 1 : rp.channelCount = 2;
 
 	/* Set sample rate - prefer 44100 */
 	if (recordingDevice.preferredSampleRate == 44100)
