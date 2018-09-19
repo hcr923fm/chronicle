@@ -62,10 +62,10 @@ void calculateWindowPositions()
     POS_AUDIOMETER_Y = POS_FNAME_Y + 2;
     POS_AUDIOMETER_MAXWIDTH = COLS - POS_AUDIOMETER_X - 15;
 
-    POS_AUDIOMETER_LABEL_X = POS_AUDIOMETER_X + 60;
+    POS_AUDIOMETER_LABEL_X = POS_AUDIOMETER_X + POS_AUDIOMETER_MAXWIDTH + 3;
     POS_AUDIOMETER_LABEL_Y = POS_AUDIOMETER_Y;
 
-	POS_HDSPACE_X = POS_AUDIO_DEVICE_X + 30;
+    POS_HDSPACE_X = POS_AUDIO_DEVICE_X + 30;
 }
 
 void updateRecordingToPath(string filePath)
@@ -82,7 +82,7 @@ void updateAudioDevice(string audioDevice, int sampleRate, int channelCount)
     /* Draw audio device name */
     wmove(mainWindow, POS_STATUSBAR_Y, POS_AUDIO_DEVICE_X);
     wprintw(mainWindow, audioDevice.c_str());
-    wrefresh(mainWindow);
+    //wrefresh(mainWindow);
 
     /* Draw sample rate */
     wmove(mainWindow, POS_STATUSBAR_Y, POS_SAMPLERATE_X);
@@ -94,36 +94,39 @@ void updateAudioDevice(string audioDevice, int sampleRate, int channelCount)
     string channelCountStr = to_string(channelCount) + " Channels";
     wprintw(mainWindow, channelCountStr.c_str());
 
+    /* Draw channel meter start and end bars */
+    for (int channelNum = 0; channelNum < channelCount; channelNum++)
+    {
+        wmove(mainWindow, POS_AUDIOMETER_Y + channelNum, POS_AUDIOMETER_X);
+        wprintw(mainWindow, "| ");
+        wmove(mainWindow, POS_AUDIOMETER_Y + channelNum, POS_AUDIOMETER_MAXWIDTH - 2);
+        wprintw(mainWindow, "| ");
+    }
+
     wrefresh(mainWindow);
 }
 
-void updateAudioMeter(int minVal, int maxVal, int currentVal, string volumeLabel)
+void updateAudioMeter(int channelNum, float maxVal, float currentVal, string volumeLabel)
 {
-    wmove(mainWindow, POS_AUDIOMETER_Y, POS_AUDIOMETER_X);
-    wprintw(mainWindow, "| ");
+    int barWidth = (POS_AUDIOMETER_MAXWIDTH - 3) * (currentVal / maxVal);
 
-    float range = (maxVal-minVal);
-	float proportion = currentVal / range;
-	int barWidth = (POS_AUDIOMETER_MAXWIDTH - 3) * proportion;
-
-    whline(mainWindow, '=', barWidth);
-    wmove(mainWindow, POS_AUDIOMETER_Y, barWidth);
+    wmove(mainWindow, POS_AUDIOMETER_Y + channelNum, POS_AUDIOMETER_X + 1);
+    mvwhline(mainWindow, POS_AUDIOMETER_Y + channelNum, POS_AUDIOMETER_X + 1, '=', min(POS_AUDIOMETER_MAXWIDTH, max(1, barWidth)));
+    //whline(mainWindow, '=', min(POS_AUDIOMETER_MAXWIDTH, max(1, barWidth)));
+    wmove(mainWindow, POS_AUDIOMETER_Y + channelNum, barWidth);
     whline(mainWindow, ' ', POS_AUDIOMETER_MAXWIDTH - barWidth - 3);
 
-    wmove(mainWindow, POS_AUDIOMETER_Y, POS_AUDIOMETER_MAXWIDTH - 1);
-    wprintw(mainWindow, "| ");
+    wmove(mainWindow, POS_AUDIOMETER_Y + channelNum, POS_AUDIOMETER_MAXWIDTH);
     wprintw(mainWindow, volumeLabel.c_str());
-	//wprintw(mainWindow, currentVal);
-	//wprintw(mainWindow, to_string(proportion).c_str());
-	wprintw(mainWindow,"   ");
 
     wrefresh(mainWindow);
 }
 
-void updateHardDriveSpace(long spaceAvailBeforeGB, long fileSizeMB) {
-	wmove(mainWindow, POS_STATUSBAR_Y, POS_HDSPACE_X);
+void updateHardDriveSpace(long spaceAvailBeforeGB, long fileSizeMB)
+{
+    wmove(mainWindow, POS_STATUSBAR_Y, POS_HDSPACE_X);
 
-	string spaceStr = "Space available: " + to_string(spaceAvailBeforeGB) + " GB; Audio file size: " + to_string(fileSizeMB) + " MB";
-	wprintw(mainWindow, spaceStr.c_str());
-	wrefresh(mainWindow);
+    string spaceStr = "Space available: " + to_string(spaceAvailBeforeGB) + " GB; Audio file size: " + to_string(fileSizeMB) + " MB";
+    wprintw(mainWindow, spaceStr.c_str());
+    wrefresh(mainWindow);
 }
