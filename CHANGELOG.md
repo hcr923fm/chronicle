@@ -1,6 +1,11 @@
 
 # Changelog - Chronicle
 
+##v1.0.1
+### Fixed
+* Fixed inaccurate file size calculation when using OGG output
+* Fixed inaccurate file size calculation when using MP3 output
+
 ## v1.0.0
 ### Added
 * Hard drive usage monitor (#22)
