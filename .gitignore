@@ -48,7 +48,6 @@ chronicle.cpp.orig
 logs/
 
 # Autotools stuff
-configure
 .deps*
 autom4te*
 out*
