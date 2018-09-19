@@ -108,13 +108,11 @@ void updateAudioDevice(string audioDevice, int sampleRate, int channelCount)
 
 void updateAudioMeter(int channelNum, float maxVal, float currentVal, string volumeLabel)
 {
-    int barWidth = (POS_AUDIOMETER_MAXWIDTH - 3) * (currentVal / maxVal);
+    int potentialBarWidth = (POS_AUDIOMETER_MAXWIDTH - 3) * (currentVal / maxVal);
+    int clippedBarWidth = min(POS_AUDIOMETER_MAXWIDTH - 3, max(2, potentialBarWidth));
 
-    wmove(mainWindow, POS_AUDIOMETER_Y + channelNum, POS_AUDIOMETER_X + 1);
-    mvwhline(mainWindow, POS_AUDIOMETER_Y + channelNum, POS_AUDIOMETER_X + 1, '=', min(POS_AUDIOMETER_MAXWIDTH, max(1, barWidth)));
-    //whline(mainWindow, '=', min(POS_AUDIOMETER_MAXWIDTH, max(1, barWidth)));
-    wmove(mainWindow, POS_AUDIOMETER_Y + channelNum, barWidth);
-    whline(mainWindow, ' ', POS_AUDIOMETER_MAXWIDTH - barWidth - 3);
+    mvwhline(mainWindow, POS_AUDIOMETER_Y + channelNum, POS_AUDIOMETER_X + 1, '=', clippedBarWidth);
+    mvwhline(mainWindow, POS_AUDIOMETER_Y + channelNum, POS_AUDIO_DEVICE_X + clippedBarWidth, ' ', POS_AUDIOMETER_MAXWIDTH - clippedBarWidth - 3);
 
     wmove(mainWindow, POS_AUDIOMETER_Y + channelNum, POS_AUDIOMETER_MAXWIDTH);
     wprintw(mainWindow, volumeLabel.c_str());
