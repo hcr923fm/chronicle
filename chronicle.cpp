@@ -45,6 +45,28 @@ FILE *lameOutFile;
 // The rest
 RtAudio audio;
 
+/* The data is cast to a short. sizeof(short) = 2 (bytes) = 16 bits.
+	Max value in a short is therefore 2^16 -1 = 65535.
+	However, since the values are read from -1 to +1, the range is halved to 32763.
+	It is appropriate to assume that a -40dB is sufficient for silence detection. Anything
+	lower than this is negligible, especially for analogue broadcast.
+
+	We can use this to figure out our silence detection.
+	Assuming 65535 is max volume (0dB).
+
+	I_db = 10 * log10(I / I_0)
+	-> I_db / 10 = log10(I / I_0)
+	-> 10^(I_db / 10) = I / I_0
+	-> I = 10^(I_db / 10) * I_0
+	-> I = 10^(-40 / 10) * 32763
+	-> I = 10^(-4) * 32763
+	-> I = 0.065535
+	*/
+
+const short maxAudioVal = (pow(2, (sizeof(short) * 8)) / 2) - 1;
+const int silenceThresholdDB = -40;
+const float thresholdVal = (pow(10, silenceThresholdDB / 10)) * maxAudioVal;
+
 chrono::seconds audioFileAgeLimit = chrono::seconds(3628800);
 
 AudioFormat destinationAudioFormat = AudioFormat::WAV;
@@ -453,11 +475,11 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 	short *data = (short *)inputBuffer;
 	unsigned char MP3Buffer[8192];
 
-	if (destinationAudioFormat != MP3)
+	if (destinationAudioFormat == WAV || destinationAudioFormat == OGG)
 	{
 		sf_writef_short(mySnd, data, nFrames);
 	}
-	else
+	else if (destinationAudioFormat == MP3)
 	{
 		int enc_data_size = lame_encode_buffer_interleaved(lame_enc, data, nFrames, MP3Buffer, 8192);
 		fwrite(MP3Buffer, enc_data_size, 1, lameOutFile);
@@ -466,54 +488,30 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 	/* To figure out if a buffer is silent, we need to check the content of the buffer.
 	The buffer is just the (number of frames) * (the number of channels); in our case,
 	nFrames*2. Each buffer is then just a number, representing the amplitude of the audio.
-	Therefore, if the buffer is empty, the audio is silent.
+	Therefore, if the buffer is empty, the audio is silent. */
 
-	The data is cast to a short. sizeof(short) = 2 (bytes) = 16 bits.
-	Max value in a short is therefore 2^16 -1 = 65535.
-	However, since the values are read from -1 to +1, the range is halved to 32763.
-	It is appropriate to assume that a -60dB is sufficient for silence detection. Anything
-	lower than this is negligible, especially for analogue broadcast.
-
-	We can use this to figure out our silence detection.
-	Assuming 65535 is max volume (0dB).
-
-	I_db = 10 * log10(I / I_0)
-	-> I_db / 10 = log10(I / I_0)
-	-> 10^(I_db / 10) = I / I_0
-	-> I = 10^(I_db / 10) * I_0
-	-> I = 10^(-60 / 10) * 32763
-	-> I = 10^(-6) * 32763
-	-> I = 0.065535
-	*/
-	//cout << streamTime << endl;
-	//if ((long)round(streamTime) % 2 == 0) {
-	//cout << (long)round(streamTime) << endl;
-
-	short maxAudioVal = (pow(2, (sizeof(short) * 8)) / 2) - 1;
-	int thresholdDB = -60;
-	float thresholdVal = (pow(10, thresholdDB / 10)) * maxAudioVal;
-
-	short framesPeak = 0;
-
-	for (int i = 0; i < nFrames * channelCount; i++)
+	// Do this for each channel
+	for (int ch = 0; ch < channelCount; ch++)
 	{
-		short val = abs(*(data + i));
-		framesPeak = max(val, framesPeak);
-	};
+		short framesPeak = 1;
 
-	float level = log10(float(framesPeak) / float(maxAudioVal)) * 10;
-	//float level = float(framesPeak)/float(maxAudioVal);
-	string label = to_string(level) + " dB";
+		// Out of all of the frames we have available, iterate over the ones for the given channel and find the loudest
+		// It's interleaved audio (i.e. LRLRLRLRLR), so we skip every channelCount'th frame
+		for (int i = ch; i < nFrames * channelCount; i += channelCount)
+		{
+			short val = abs(*(data + i));
+			framesPeak = max(val, framesPeak);
+		};
+		cout << "peak " << float(framesPeak) << " max " << float(maxAudioVal) << " thresh " << thresholdVal << " nFrames" << nFrames << endl;
 
-	// Sometimes, the first value is -INF, which maths doesn't like, so we'll truncate it
-	if (level == -INFINITY)
-	{
-		level = 0.065535;
+		// I_db = 10*log10(I/I_0)
+		float level = 10 * (log10(float(framesPeak) / float(maxAudioVal)));
+
+		char label[10];
+		sprintf(label, "%02.2f dB", level);
+
+		updateAudioMeter(ch, abs(silenceThresholdDB), abs(silenceThresholdDB) - abs(level), label);
 	}
-
-	updateAudioMeter(0, 30, 30 - abs(level), label);
-	//updateAudioMeter(0,maxAudioVal,framesPeak,to_string(level));
-
 	return 0;
 }
 
