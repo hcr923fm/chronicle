@@ -569,7 +569,7 @@ float calculateHardDriveUsage(chrono::seconds duration, recordingParameters rp)
 	else if (destinationAudioFormat == OGG)
 	{
 		// The OGG encoding uses VBR with a mean bit rate of 128 kbps
-		return (128 * duration.count() / 8 / 1024)
+		return (128 * duration.count() / 8 / 1024);
 	}
 	else if (destinationAudioFormat == MP3)
 	{
