@@ -511,6 +511,7 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 		// If framesPeak < 0, print the level as being "-INF db"
 		(framesPeak > 1) ? sprintf(label, "%02.2f dB", level) : sprintf(label, "  -INF dB");
 
+		// TODO: Rather than calling this for every channel individually it would be nicer to just pass an array of values representing all of the channels...
 		updateAudioMeter(ch, abs(silenceThresholdDB), abs(silenceThresholdDB) - abs(level), label);
 	}
 	return 0;
@@ -543,7 +544,7 @@ void stopRecord()
 	{
 		unsigned char discarded_buffer[8192];
 		int remaining_frames = lame_encode_flush(lame_enc, discarded_buffer, 8192);
-		logger->debug("Flushed LAME, discarding {} bytes", discarded_buffer);
+		logger->debug("Flushed LAME");
 		lame_mp3_tags_fid(lame_enc, lameOutFile);
 		fclose(lameOutFile);
 		logger->debug("Closed destination file");
@@ -750,6 +751,7 @@ Usage:
                                      OGG | Ogg Vorbis (.ogg)
                                      WAV | 16-bit PCM WAV (.wav)
                                  Defaults to WAV.
+		--debug              Enables debug logging
 )";
 
 	cout << USAGE << endl;
