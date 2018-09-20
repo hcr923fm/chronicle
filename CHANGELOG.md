@@ -2,7 +2,9 @@
 # Changelog - Chronicle
 
 ## v1.0.1
+### Added
 * Added per-channel level monitoring (#38)
+* In debug mode, list audio device caps on init
 
 ### Fixed
 * Fixed inaccurate file size calculation when using OGG output

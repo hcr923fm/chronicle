@@ -588,17 +588,8 @@ recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice)
 	auto logger = spdlog::get("chronicle_log");
 	recordingParameters rp;
 
-	/* Set channel count */
-	/*if (recordingDevice.inputChannels == 1)
-	{
-		rp.channelCount = 1;
-	}
-	else if (recordingDevice.inputChannels >= 2)
-	{
-		rp.channelCount = 2;
-	}*/
-
 	(recordingDevice.inputChannels == 1) ? rp.channelCount = 1 : rp.channelCount = 2;
+	logger->debug("Input device has {} channels, using {}", recordingDevice.inputChannels, rp.channelCount);
 
 	/* Set sample rate - prefer 44100 */
 	if (recordingDevice.preferredSampleRate == 44100)
@@ -622,7 +613,9 @@ recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice)
 		}
 	}
 
-	rp.bufferLength = 1024;
+	logger->debug("Using sample rate: {}", rp.sampleRate);
+
+		rp.bufferLength = 1024;
 	return rp;
 }
 
