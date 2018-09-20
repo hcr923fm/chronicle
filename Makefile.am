@@ -1,5 +1,5 @@
 bin_PROGRAMS = chronicle
-chronicle_SOURCES = chronicle.h chronicle.cpp screen.h screen.cpp parse_opts.h parse_opts.cpp spdlog/** RtAudio.*
+chronicle_SOURCES = chronicle.h chronicle.cpp screen.h screen.cpp parse_opts.h parse_opts.cpp spdlog/** RtAudio.* lame/*
 
 ACLOCAL_AMFLAGS = -I build-aux
 
