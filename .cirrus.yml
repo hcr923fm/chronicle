@@ -1,0 +1,31 @@
+container:
+  image: gcc:latest
+
+task:
+  lame_cache:
+    folder: lame
+    populate_script:
+      - mkdir lame
+      - cd lame
+      - wget https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
+      - tar xvf lame-*
+      - cd lame-*
+      - ./configure --disable-decoder
+      - make
+      - sudo make install
+  rtaudio_cache: 
+    folder: rtaudio
+    populate_script:
+      - mkdir rtaudio
+      - cd rtaudio
+      - wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.0.0.tar.gz
+      - tar xvf rtaudio-*
+      - cd rtaudio*
+      - ./configure
+      - make
+      - sudo make install
+  script:
+  - sudo apt-get update -qq
+  - sudo apt-get install libncurses5-dev libsndfile1-dev libboost-all-dev libasound2 libasound2-dev
+  - ./autogen.sh
+  - ./configure && make
