@@ -31,5 +31,6 @@ build_task:
       - make
       - make install
   build_script:
+  - chmod +x autogen.sh
   - ./autogen.sh
   - ./configure && make
