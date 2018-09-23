@@ -8,8 +8,8 @@ task:
       - mkdir -p lame
       - cd lame
       - wget https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
-      - tar xvf lame-*
-      - cd lame-*
+      - tar xf lame-*
+      - cd lame-3.100
       - ./configure --disable-decoder
       - make
       - sudo make install
@@ -19,8 +19,8 @@ task:
       - mkdir -p rtaudio
       - cd rtaudio
       - wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.0.0.tar.gz
-      - tar xvf rtaudio-*
-      - cd rtaudio*
+      - tar xf rtaudio-*
+      - cd rtaudio-5.0.0
       - ./configure
       - make
       - sudo make install
