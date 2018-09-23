@@ -5,7 +5,7 @@ task:
   lame_cache:
     folder: lame
     populate_script:
-      - mkdir lame
+      - mkdir -p lame
       - cd lame
       - wget https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
       - tar xvf lame-*
@@ -16,7 +16,7 @@ task:
   rtaudio_cache: 
     folder: rtaudio
     populate_script:
-      - mkdir rtaudio
+      - mkdir -p rtaudio
       - cd rtaudio
       - wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.0.0.tar.gz
       - tar xvf rtaudio-*
