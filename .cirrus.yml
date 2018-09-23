@@ -7,7 +7,7 @@ install_deps_task:
     - sudo apt-get install libncurses5-dev libsndfile1-dev libboost-all-dev libasound2 libasound2-dev
 
 build_task:
-  depends:
+  depends_on:
     - install_deps
   lame_cache:
     folder: lame
