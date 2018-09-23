@@ -4,7 +4,7 @@ container:
 build_task:
   depends_on:
     - install_deps
-  script:
+  apt_script:
     - apt-get update -qq
     - apt-get install libncurses5-dev libsndfile1-dev libboost-filesystem-dev libboost-system-dev libasound2 libasound2-dev -qq -y
   lame_cache:
@@ -30,6 +30,6 @@ build_task:
       - ./configure
       - make
       - make install
-  script:
+  build_script:
   - ./autogen.sh
   - ./configure && make
