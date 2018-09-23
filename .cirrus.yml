@@ -1,14 +1,12 @@
 container:
   image: gcc:latest
 
-install_deps_task:
-  script:
-    - apt-get update -qq
-    - apt-get install libncurses5-dev libsndfile1-dev libboost-filesystem-dev libboost-system-dev libasound2 libasound2-dev -qq -y
-
 build_task:
   depends_on:
     - install_deps
+  script:
+    - apt-get update -qq
+    - apt-get install libncurses5-dev libsndfile1-dev libboost-filesystem-dev libboost-system-dev libasound2 libasound2-dev -qq -y
   lame_cache:
     folder: lame
     populate_script:
