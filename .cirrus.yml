@@ -1,7 +1,14 @@
 container:
   image: gcc:latest
 
-task:
+install_deps_task:
+  script:
+    - sudo apt-get update -qq
+    - sudo apt-get install libncurses5-dev libsndfile1-dev libboost-all-dev libasound2 libasound2-dev
+
+build_task:
+  depends:
+    - install_deps
   lame_cache:
     folder: lame
     populate_script:
@@ -26,7 +33,5 @@ task:
       - make
       - make install
   script:
-  - sudo apt-get update -qq
-  - sudo apt-get install libncurses5-dev libsndfile1-dev libboost-all-dev libasound2 libasound2-dev
   - ./autogen.sh
   - ./configure && make
