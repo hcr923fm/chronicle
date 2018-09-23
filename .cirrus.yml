@@ -7,13 +7,21 @@ build_task:
   apt_script:
     - apt-get update -qq
     #- apt-get install libncurses5-dev libsndfile1-dev libboost-filesystem-dev libboost-system-dev libboost-dev libasound2 libasound2-dev -qq -y
-    - apt-get install libncurses5-dev libsndfile1-dev libboost-all-dev libasound2 libasound2-dev -qq -y
+    #- apt-get install libncurses5-dev libsndfile1-dev libboost-all-dev libasound2 libasound2-dev -qq -y
+    - apt-get install libncurses5-dev libsndfile1-dev libasound2 libasound2-dev -qq -y
 
+  boost_cache:
+  folder: boost_1_68_0
+  populate_script:
+    - wget https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.gz
+    - tar xf boost*
+    - cd boost_1_68_0
+    - ./bootstrap
+    - ./b2 install
+  
   lame_cache:
-    folder: lame
+    folder: lame-3.100
     populate_script:
-      - mkdir -p lame
-      - cd lame
       - wget https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
       - tar xf lame-*
       - cd lame-3.100
@@ -22,10 +30,8 @@ build_task:
       - make install
 
   rtaudio_cache: 
-    folder: rtaudio
+    folder: rtaudio-5.0.0
     populate_script:
-      - mkdir -p rtaudio
-      - cd rtaudio
       - wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.0.0.tar.gz
       - tar xf rtaudio-*
       - cd rtaudio-5.0.0
