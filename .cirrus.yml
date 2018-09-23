@@ -12,7 +12,10 @@ task:
       - cd lame-3.100
       - ./configure --disable-decoder
       - make
-      - sudo make install
+      - make install
+    fingerprint_script:
+      - cat lame-3.100.tar.gz
+
   rtaudio_cache: 
     folder: rtaudio
     populate_script:
@@ -23,7 +26,9 @@ task:
       - cd rtaudio-5.0.0
       - ./configure
       - make
-      - sudo make install
+      - make install
+    fingerprint_script:
+    - cat rtaudio-5.0.0.tar.gz
   script:
   - sudo apt-get update -qq
   - sudo apt-get install libncurses5-dev libsndfile1-dev libboost-all-dev libasound2 libasound2-dev
