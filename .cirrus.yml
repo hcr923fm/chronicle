@@ -11,13 +11,13 @@ build_task:
     - apt-get install libncurses5-dev libsndfile1-dev libasound2 libasound2-dev -qq -y
 
   boost_cache:
-  folder: boost_1_68_0
-  populate_script:
-    - wget https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.gz
-    - tar xf boost*
-    - cd boost_1_68_0
-    - ./bootstrap
-    - ./b2 install
+    folder: boost_1_68_0
+    populate_script:
+      - wget https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.gz
+      - tar xf boost*
+      - cd boost_1_68_0
+      - ./bootstrap
+      - ./b2 install
   
   lame_cache:
     folder: lame-3.100
