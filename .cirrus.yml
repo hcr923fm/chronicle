@@ -61,7 +61,7 @@ windows_build_task:
 
   apt_script:
     - apt-get update -qq
-    - apt-get install libncurses5-dev libsndfile1-dev mingw-w64 mingw-w64-tools pkg-config libtool -qq -y
+    - apt-get install libsndfile1-dev mingw-w64 mingw-w64-tools pkg-config libtool -qq -y
 
   ncurses_cache:
     folder: ncurses-6.1
