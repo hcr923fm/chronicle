@@ -57,20 +57,20 @@ windows_build_task:
 
   apt_script:
     - apt-get update -qq
-    - apt-get install libncurses5-dev libsndfile1-dev libasound2 libasound2-dev -qq -y
+    - apt-get install libncurses5-dev libsndfile1-dev libasound2 libasound2-dev libboost-all-dev -qq -y
 
-  boost_cache:
-    folder: boost_1_68_0
-    populate_script:
-      - wget https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.gz
-      - tar xf boost_1_68_0.tar.gz
-      - cd boost_1_68_0
-      - 'echo "using gcc : : i686-w64-mingw32-gcc ;" > user-config.jam'
-      - ./bootstrap.sh --with-libraries=system,filesystem
+  # boost_cache:
+  #   folder: boost_1_68_0
+  #   populate_script:
+  #     - wget https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.gz
+  #     - tar xf boost_1_68_0.tar.gz
+  #     - cd boost_1_68_0
+  #     - 'echo "using gcc : : i686-w64-mingw32-gcc ;" > user-config.jam'
+  #     - ./bootstrap.sh --with-libraries=system,filesystem
   
-  boost_build_script:
-    - cd boost_1_68_0
-    - ./b2 --user-config=user-config.jam toolset=gcc-mingw-w64-x86-64 target-os=windows release
+  # boost_build_script:
+  #   - cd boost_1_68_0
+  #   - ./b2 --user-config=user-config.jam toolset=gcc-mingw-w64-x86-64 target-os=windows release
   
   lame_cache:
     folder: lame-3.100
