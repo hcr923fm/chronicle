@@ -56,7 +56,7 @@ windows_build_task:
       - wget https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.gz
       - tar xf boost_1_68_0.tar.gz
       - cd boost_1_68_0
-      - echo "using gcc : : i686-w64-mingw32-g++ ;" > user-config.jam
+      - echo "using gcc ':' ':' i686-w64-mingw32-g++ ;" > user-config.jam
       - ./bootstrap.sh --with-libraries=system,filesystem
       - ./b2 --user-config=user-config.jam toolset=gcc-mingw target-os=windows release
   
