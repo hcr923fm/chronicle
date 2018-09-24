@@ -69,7 +69,7 @@ windows_build_task:
       - wget ftp://ftp.alsa-project.org/pub/lib/alsa-lib-1.1.6.tar.bz2
       - tar xjf alsa-lib-1.1.6.tar.bz2
       - cd alsa-lib-1.1.6
-      - ./configure --prefix=/usr
+      - ./configure --prefix=/usr/local/x86_64-w64-mingw32
     
   alsa_build_script:
     - cd alsa-lib-1.1.6
@@ -108,7 +108,7 @@ windows_build_task:
       - wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.0.0.tar.gz
       - tar xf rtaudio-*
       - cd rtaudio-5.0.0
-      - ./configure --prefix=/usr
+      - ./configure --prefix=/usr/local/x86_64-w64-mingw32
 
   rtaudio_build_script:
     - cd rtaudio-5.0.0
