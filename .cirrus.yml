@@ -70,7 +70,7 @@ windows_build_task:
   
   boost_build_script:
   - cd boost_1_68_0
-  - ./b2 --user-config=user-config.jam toolset=gcc target-os=windows release address-model=64 architecture=x86
+  - ./b2 --user-config=user-config.jam --prefix=/usr/local toolset=gcc target-os=windows release address-model=64 architecture=x86
   #- ./b2 toolset=gcc-mingw target-os=windows release address-model=64 architecture=x86
   
   lame_cache:
@@ -102,4 +102,4 @@ windows_build_task:
   build_script:
   - chmod +x autogen.sh
   - ./autogen.sh
-  - ./configure --host=x86_64-w64-mingw32 && make
+  - ./configure --disable-shared --enable-static --host=x86_64-w64-mingw32 && make
