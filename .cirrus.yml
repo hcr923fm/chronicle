@@ -1,9 +1,7 @@
-container:
-  image: gcc:latest
+linux_build_task:
+  container:
+    image: gcc:latest
 
-build_task:
-  depends_on:
-    - install_deps
   apt_script:
     - apt-get update -qq
     #- apt-get install libncurses5-dev libsndfile1-dev libboost-filesystem-dev libboost-system-dev libboost-dev libasound2 libasound2-dev -qq -y
@@ -43,3 +41,46 @@ build_task:
   - chmod +x autogen.sh
   - ./autogen.sh
   - ./configure && make
+
+windows_build_task:
+  container:
+    image: tim03/mingw64:latest
+
+  apt_script:
+    - apt-get update -qq
+    - apt-get install libncurses5-dev libsndfile1-dev libasound2 libasound2-dev -qq -y
+
+  boost_cache:
+    folder: boost_1_68_0
+    populate_script:
+      - wget https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.gz
+      - tar xf boost_1_68_0.tar.gz
+      - cd boost_1_68_0
+      - echo "using gcc : : i686-w64-mingw32-g++ ;" > user-config.jam
+      - ./bootstrap.sh --with-libraries=system,filesystem
+      - ./b2 --user-config=user-config.jam toolset=gcc-mingw target-os=windows release
+  
+  lame_cache:
+    folder: lame-3.100
+    populate_script:
+      - wget https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
+      - tar xf lame-*
+      - cd lame-3.100
+      - ./configure --disable-decoder --host=x86_64-w64-mingw32
+      - make
+      - make install
+
+  rtaudio_cache: 
+    folder: rtaudio-5.0.0
+    populate_script:
+      - wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.0.0.tar.gz
+      - tar xf rtaudio-*
+      - cd rtaudio-5.0.0
+      - ./configure --host=x86_64-w64-mingw32
+      - make
+      - make install
+
+  build_script:
+  - chmod +x autogen.sh
+  - ./autogen.sh
+  - ./configure --host=x86_64-w64-mingw32 && make
