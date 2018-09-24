@@ -53,7 +53,7 @@ linux_build_task:
 
 windows_build_task:
   env:
-    PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+    PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
   container:
     image: gcc:latest
 
