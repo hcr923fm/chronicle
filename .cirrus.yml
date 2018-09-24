@@ -59,7 +59,19 @@ windows_build_task:
 
   apt_script:
     - apt-get update -qq
-    - apt-get install libncurses5-dev libsndfile1-dev libasound2 libasound2-dev mingw-w64 mingw-w64-tools -qq -y
+    - apt-get install libncurses5-dev libsndfile1-dev mingw-w64 mingw-w64-tools -qq -y
+
+  alsa_cache:
+    folder: alsa-lib-1.1.6.tar.bz2
+    populate_script:
+      - wget ftp://ftp.alsa-project.org/pub/lib/alsa-lib-1.1.6.tar.bz2
+      - tar xjf alsa-lib-1.1.6.tar.bz2
+      - cd alsa-lib-1.1.6
+      - ./configure --prefix=/usr
+    
+  alsa_build:
+    - cd alsa-lib-1.1.6
+    - make install
 
   boost_cache:
     folder: boost_1_68_0
@@ -68,7 +80,7 @@ windows_build_task:
       - tar xf boost_1_68_0.tar.gz
       - cd boost_1_68_0
       - 'echo "using gcc : : x86_64-w64-mingw32-gcc ;" > user-config.jam'
-      - ./bootstrap.sh --with-libraries=system,filesystem --prefix=/usr/local
+      - ./bootstrap.sh --with-libraries=system,filesystem --prefix=/usr
   
   boost_build_script:
   - cd boost_1_68_0
@@ -94,7 +106,7 @@ windows_build_task:
       - wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.0.0.tar.gz
       - tar xf rtaudio-*
       - cd rtaudio-5.0.0
-      - ./configure
+      - ./configure --prefix=/usr
 
   rtaudio_build_script:
     - cd rtaudio-5.0.0
