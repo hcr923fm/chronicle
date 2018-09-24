@@ -44,7 +44,7 @@ linux_build_task:
 
 windows_build_task:
   container:
-    image: shyxormz/mingw64:latest
+    image: mwaeckerlin/mingw:latest
 
   apt_script:
     - apt-get update -qq
