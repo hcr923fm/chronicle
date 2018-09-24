@@ -63,13 +63,21 @@ windows_build_task:
     - apt-get update -qq
     - apt-get install libncurses5-dev libsndfile1-dev mingw-w64 mingw-w64-tools pkg-config -qq -y
 
+  ncurses_cache:
+    folder: ncurses-6.1
+    populate_script:
+      - wget ftp://ftp.invisible-island.net/ncurses/ncurses-6.1.tar.gz
+      - tar xf ncurses-6.1.tar.gz
+      - cd ncurses-6.1.tar.gz
+      - ./configure --prefix=/usr/local/x86_64-w64-mingw32 --host=x86_64-w64-mingw32
+
   alsa_cache:
     folder: alsa-lib-1.1.6.tar.bz2
     populate_script:
       - wget ftp://ftp.alsa-project.org/pub/lib/alsa-lib-1.1.6.tar.bz2
       - tar xjf alsa-lib-1.1.6.tar.bz2
       - cd alsa-lib-1.1.6
-      - ./configure --prefix=/usr/local/x86_64-w64-mingw32
+      - ./configure --prefix=/usr/local/x86_64-w64-mingw32 --host=x86_64-w64-mingw32
     
   alsa_build_script:
     - cd alsa-lib-1.1.6
