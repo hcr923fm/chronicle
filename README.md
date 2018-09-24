@@ -1,5 +1,5 @@
 # Chronicle
-![Chronicle build](https://api.travis-ci.com/hcr923fm/chronicle.svg?branch=master)
+[![Build Status](https://api.cirrus-ci.com/github/hcr923fm/chronicle.svg)](https://cirrus-ci.com/github/hcr923fm/chronicle)
 
 ## What is Chronicle?
 
