@@ -1458,7 +1458,7 @@ Optional Packages:
   --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
   --with-sysroot[=DIR]    Search for dependent libraries within DIR (or the
                           compiler's sysroot if not specified).
-  --with-boost=DIR        prefix of Boost 1.68.0 [guess]
+  --with-boost=DIR        prefix of Boost 1.65.0 [guess]
 
 Some influential environment variables:
   CC          C compiler command
@@ -15836,7 +15836,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 echo "$as_me: this is boost.m4 serial 27" >&5
 boost_save_IFS=$IFS
-boost_version_req=1.68.0
+boost_version_req=1.65.0
 IFS=.
 set x $boost_version_req 0 0 0
 IFS=$boost_save_IFS

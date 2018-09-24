@@ -48,6 +48,7 @@ chronicle.cpp.orig
 logs/
 
 # Autotools stuff
+configure
 .deps*
 autom4te*
 out*
@@ -84,5 +85,3 @@ Makefile
 /build-aux/ltversion.m4
 /build-aux/missing
 chronicle-*
-/configure
-configure
