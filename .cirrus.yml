@@ -53,7 +53,7 @@ linux_build_task:
 
 windows_build_task:
   # Most sources need to be built from scratch, since the mingw version of pkg-config ignores PKG_CONFIG_PATH
-  #env:
+  env:
     # Let's do it just for conveniences' sake
     PKG_CONFIG_PATH: /usr/local/x86_64-w64-mingw32/lib/pkgconfig
   container:
