@@ -53,15 +53,15 @@ linux_build_task:
 
 windows_build_task:
   # Most sources need to be built from scratch, since the mingw version of pkg-config ignores PKG_CONFIG_PATH
-  env:
+  #env:
     # Let's do it just for conveniences' sake
-    PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
+    PKG_CONFIG_PATH: /usr/local/x86_64-w64-mingw32/lib/pkgconfig
   container:
     image: gcc:latest
 
   apt_script:
     - apt-get update -qq
-    - apt-get install libncurses5-dev libsndfile1-dev mingw-w64 pkg-config -qq -y
+    - apt-get install libncurses5-dev libsndfile1-dev mingw-w64 mingw-w64-tools pkg-config -qq -y
 
   alsa_cache:
     folder: alsa-lib-1.1.6.tar.bz2
@@ -69,7 +69,7 @@ windows_build_task:
       - wget ftp://ftp.alsa-project.org/pub/lib/alsa-lib-1.1.6.tar.bz2
       - tar xjf alsa-lib-1.1.6.tar.bz2
       - cd alsa-lib-1.1.6
-      - ./configure --prefix=/usr/local/
+      - ./configure --prefix=/usr/local/x86_64-w64-mingw32
     
   alsa_build_script:
     - cd alsa-lib-1.1.6
@@ -108,7 +108,7 @@ windows_build_task:
       - wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.0.0.tar.gz
       - tar xf rtaudio-*
       - cd rtaudio-5.0.0
-      - ./configure --prefix=/usr/local
+      - ./configure --prefix=/usr/local/x86_64-w64-mingw32
 
   rtaudio_build_script:
     - cd rtaudio-5.0.0
