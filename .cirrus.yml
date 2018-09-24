@@ -79,7 +79,7 @@ windows_build_task:
       - wget https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
       - tar xf lame-*
       - cd lame-3.100
-      - ./configure --disable-decoder --host=x86_64-w64-mingw32
+      - ./configure --disable-decoder --disable-shared --enable-static --host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32
   
   lame_build_script:
     - cd lame-3.100
