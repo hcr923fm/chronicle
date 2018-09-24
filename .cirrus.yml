@@ -116,7 +116,7 @@ windows_build_task:
     - make install
 
   build_script:
-  - x86_64-w64-mingw32-pkg-config rtaudio --debug
+  - pkg-config rtaudio --debug
   - chmod +x autogen.sh
   - ./autogen.sh
   - ./configure --disable-shared --enable-static --host=x86_64-w64-mingw32 && make
