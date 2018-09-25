@@ -125,7 +125,7 @@ windows_build_task:
       - wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.0.0.tar.gz
       - tar xf rtaudio-*
       - cd rtaudio-5.0.0
-      - ./configure --with-dsound --without-alsa
+      - ./configure --with-ds --without-alsa --host=x86_64-w64-mingw32
       #--prefix=/usr/local/x86_64-w64-mingw32
 
   rtaudio_build_script:
