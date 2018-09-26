@@ -6,7 +6,7 @@ linux_build_task:
     - apt-get update -qq
     #- apt-get install libncurses5-dev libsndfile1-dev libboost-filesystem-dev libboost-system-dev libboost-dev libasound2 libasound2-dev -qq -y
     #- apt-get install libncurses5-dev libsndfile1-dev libboost-all-dev libasound2 libasound2-dev -qq -y
-    - apt-get install libncurses5-dev libsndfile1-dev libasound2 libasound2-dev -qq -y
+    - apt-get install libncurses5-dev libsndfile1-dev libasound2 libasound2-dev git -qq -y
 
   boost_cache:
     folder: boost_1_68_0
@@ -47,21 +47,35 @@ linux_build_task:
     - make install
 
   build_script:
-  - chmod +x autogen.sh
-  - ./autogen.sh
-  - ./configure && make
+    - chmod +x autogen.sh
+    - ./autogen.sh
+    - mkdir -p chronicle-v1.0.0-linux
+    - cd chronicle-v1.0.0-linux
+    - ../configure && make
+
+  dist_script:
+    - cd chronicle-v1.0.0-linux
+    - make mostlyclean
+    - deps=$(ldd ./chronicle.exe | awk '/~*mingw*/ {print $3}')
+    - for dep in $deps; do; cp $dep . ;done
+    - cp ../LICENCE .
+    - cp ../README.md .
+    - cp ../CHANGELOG.md .
+    - cd ..
+    - tar zcf chronicle-v1.0.0-linux.tar.gz chronicle-v1.0.0-linux
 
 windows_build_task:
   # Most sources need to be built from scratch, since the mingw version of pkg-config ignores PKG_CONFIG_PATH
   env:
     # Let's do it just for conveniences' sake
     PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
+    CFLAGS: -Wno-unused-but-set-variable
   container:
     image: gcc:latest
 
   apt_script:
     - apt-get update -qq
-    - apt-get install libsndfile1-dev mingw-w64 mingw-w64-tools pkg-config -qq -y
+    - apt-get install libsndfile1-dev mingw-w64 mingw-w64-tools pkg-config git -qq -y
 
   ncurses_cache:
     folder: ncurses-6.1
@@ -76,21 +90,6 @@ windows_build_task:
     - cd ncurses-6.1
     - make
     - make install
-
-  ### YOU'RE BUILDING FOR WINDOWS, WHY ARE YOU EVEN TRYING TO USE ALSA AND NOT DSOUND FOR RTAUDIO???
-
-  #alsa_cache:
-  #  folder: alsa-lib-1.1.6.tar.bz2
-  #  populate_script:
-  #    - wget ftp://ftp.alsa-project.org/pub/lib/alsa-lib-1.1.6.tar.bz2
-  #    - tar xjf alsa-lib-1.1.6.tar.bz2
-  #    - cd alsa-lib-1.1.6
-  #    - ./configure --host=x86_64-w64-mingw32
-  #    #--prefix=/usr/local/x86_64-w64-mingw32
-    
-  #alsa_build_script:
-  #  - cd alsa-lib-1.1.6
-  #  - make install
 
   boost_cache:
     folder: boost_1_68_0
@@ -120,21 +119,19 @@ windows_build_task:
     - make install
 
   rtaudio_cache: 
-    folder: rtaudio-5.0.0
+    folder: rtaudio
     populate_script:
-      - wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.0.0.tar.gz
-      - tar xf rtaudio-*
-      - cd rtaudio-5.0.0
+      - git clone http://github.com/thestk/rtaudio
+      - cd rtaudio
       - ./configure --with-ds --without-alsa --host=x86_64-w64-mingw32
-      #--prefix=/usr/local/x86_64-w64-mingw32
 
   rtaudio_build_script:
-    - cd rtaudio-5.0.0
+    - cd rtaudio
     - make
     - make install
 
   build_script:
-  - pkg-config rtaudio --debug
-  - chmod +x autogen.sh
-  - ./autogen.sh
-  - ./configure --disable-shared --enable-static --host=x86_64-w64-mingw32 && make
+    - pkg-config rtaudio --debug
+    - chmod +x autogen.sh
+    - ./autogen.sh
+    - ./configure --disable-shared --enable-static --host=x86_64-w64-mingw32 && make
