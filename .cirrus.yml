@@ -69,36 +69,13 @@ windows_build_task:
   env:
     # Let's do it just for conveniences' sake
     PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
-    CFLAGS: -Wno-unused-but-set-variable
+    CFLAGS: -Wno-unused-but-set-variable # We need this for the RtAudio build
   container:
     image: gcc:latest
 
   apt_script:
     - apt-get update -qq
     - apt-get install libsndfile1-dev mingw-w64 mingw-w64-tools pkg-config git -qq -y
-
-  ncurses_cache:
-    folder: ncurses-6.1
-    populate_script:
-      - wget ftp://ftp.invisible-island.net/ncurses/ncurses-6.1.tar.gz
-      - tar xf ncurses-6.1.tar.gz
-      - cd ncurses-6.1
-      - ./configure --enable-term-driver --enable-sp-funcs --host=x86_64-w64-mingw32
-      #--prefix=/usr/local/x86_64-w64-mingw32
-  
-  ncurses_build_script:
-    - cd ncurses-6.1
-    - make
-    - make install
-
-  boost_cache:
-    folder: boost_1_68_0
-    populate_script:
-      - wget https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.gz
-      - tar xf boost_1_68_0.tar.gz
-      - cd boost_1_68_0
-      - 'echo "using gcc : : x86_64-w64-mingw32-gcc ;" > user-config.jam'
-      - ./bootstrap.sh --with-libraries=system,filesystem --prefix=/usr/local
   
   boost_build_script:
   - cd boost_1_68_0
@@ -123,12 +100,35 @@ windows_build_task:
     populate_script:
       - git clone http://github.com/thestk/rtaudio
       - cd rtaudio
-      - ./configure --with-ds --without-alsa --host=x86_64-w64-mingw32
+      - ./autogen.sh --with-ds --without-alsa --host=x86_64-w64-mingw32
 
   rtaudio_build_script:
     - cd rtaudio
     - make
     - make install
+
+  ncurses_cache:
+    folder: ncurses-6.1
+    populate_script:
+      - wget ftp://ftp.invisible-island.net/ncurses/ncurses-6.1.tar.gz
+      - tar xf ncurses-6.1.tar.gz
+      - cd ncurses-6.1
+      - ./configure --enable-term-driver --enable-sp-funcs --host=x86_64-w64-mingw32
+      #--prefix=/usr/local/x86_64-w64-mingw32
+  
+  ncurses_build_script:
+    - cd ncurses-6.1
+    - make
+    - make install
+
+  boost_cache:
+    folder: boost_1_68_0
+    populate_script:
+      - wget https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.gz
+      - tar xf boost_1_68_0.tar.gz
+      - cd boost_1_68_0
+      - 'echo "using gcc : : x86_64-w64-mingw32-gcc ;" > user-config.jam'
+      - ./bootstrap.sh --with-libraries=system,filesystem --prefix=/usr/local
 
   build_script:
     - pkg-config rtaudio --debug
