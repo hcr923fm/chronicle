@@ -69,7 +69,6 @@ windows_build_task:
   env:
     # Let's do it just for conveniences' sake
     PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
-    CFLAGS: -Wno-unused-but-set-variable # We need this for the RtAudio build
   container:
     image: gcc:latest
 
@@ -95,7 +94,9 @@ windows_build_task:
     populate_script:
       - git clone http://github.com/thestk/rtaudio
       - cd rtaudio
-      - ./autogen.sh --with-ds --without-alsa --host=x86_64-w64-mingw32
+      - ./autogen.sh --no-configure
+      - export CFLAGS=-Wno-unused-but-set-variable # We need this for the RtAudio build
+      - ./configure --host=x86_64-w64-mingw32
 
   rtaudio_build_script:
     - cd rtaudio
