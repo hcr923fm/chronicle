@@ -77,11 +77,6 @@ windows_build_task:
     - apt-get update -qq
     - apt-get install libsndfile1-dev mingw-w64 mingw-w64-tools pkg-config git -qq -y
   
-  boost_build_script:
-  - cd boost_1_68_0
-  - ./b2 --user-config=user-config.jam toolset=gcc target-os=windows release address-model=64 architecture=x86 install
-  #- ./b2 toolset=gcc-mingw target-os=windows release address-model=64 architecture=x86
-  
   lame_cache:
     folder: lame-3.100
     populate_script:
@@ -129,6 +124,11 @@ windows_build_task:
       - cd boost_1_68_0
       - 'echo "using gcc : : x86_64-w64-mingw32-gcc ;" > user-config.jam'
       - ./bootstrap.sh --with-libraries=system,filesystem --prefix=/usr/local
+
+  boost_build_script:
+  - cd boost_1_68_0
+  - ./b2 --user-config=user-config.jam toolset=gcc target-os=windows release address-model=64 architecture=x86 install
+  #- ./b2 toolset=gcc-mingw target-os=windows release address-model=64 architecture=x86
 
   build_script:
     - pkg-config rtaudio --debug
