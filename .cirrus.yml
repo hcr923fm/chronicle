@@ -56,8 +56,9 @@ linux_build_task:
   dist_script:
     - cd chronicle-v1.0.0-linux
     - make mostlyclean
+    - ls -al
     - deps=$(ldd ./chronicle.exe | awk '/~*mingw*/ {print $3}')
-    - for dep in $deps; do; cp $dep . ;done
+    - for dep in $deps; do cp $dep . ;done
     - cp ../LICENCE .
     - cp ../README.md .
     - cp ../CHANGELOG.md .
@@ -132,7 +133,7 @@ windows_build_task:
       - wget ftp://ftp.invisible-island.net/ncurses/ncurses-6.1.tar.gz
       - tar xf ncurses-6.1.tar.gz
       - cd ncurses-6.1
-      - ./configure --enable-term-driver --enable-sp-funcs --host=x86_64-w64-mingw32 --with-build-cc=gcc --with-pkg-config-libdir=${PKG_CONFIG_PATH} --enable-pc-files --with-libtool
+      - ./configure --enable-term-driver --enable-sp-funcs --host=x86_64-w64-mingw32 --with-build-cc=gcc --with-pkg-config-libdir=${PKG_CONFIG_PATH} --enable-pc-files #--with-libtool
       #--prefix=/usr/local/x86_64-w64-mingw32
   
   ncurses_build_script:
