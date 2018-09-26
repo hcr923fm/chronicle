@@ -74,7 +74,7 @@ windows_build_task:
 
   apt_script:
     - apt-get update -qq
-    - apt-get install libsndfile1-dev mingw-w64 mingw-w64-tools pkg-config git -qq -y
+    - apt-get install mingw-w64 mingw-w64-tools pkg-config git -qq -y
   
   lame_cache:
     folder: lame-3.100
@@ -89,6 +89,19 @@ windows_build_task:
     - make
     - make install
 
+  libsndfile_cache:
+    folder: libsndfile-1.0.28
+    populate_script:
+      - wget http://www.mega-nerd.com/libsndfile/files/libsndfile-1.0.28.tar.gz
+      - tar xf libsndfile-1.0.28.tar.gz
+      - cd libsndfile-1.0.28
+      - ./configure --host=x86_64-w64-mingw32
+
+  libsndfile_build_script:
+    - cd libsndfile-1.0.28
+    - make
+    - make install
+
   rtaudio_cache: 
     folder: rtaudio
     populate_script:
@@ -99,6 +112,7 @@ windows_build_task:
       - ./configure --host=x86_64-w64-mingw32
 
   rtaudio_build_script:
+  # Depends on libsndfile
     - cd rtaudio
     - make
     - make install
@@ -132,7 +146,7 @@ windows_build_task:
   #- ./b2 toolset=gcc-mingw target-os=windows release address-model=64 architecture=x86
 
   build_script:
-    - pkg-config rtaudio --debug
+    #- pkg-config rtaudio --debug
     - chmod +x autogen.sh
     - ./autogen.sh
     - ./configure --disable-shared --enable-static --host=x86_64-w64-mingw32 && make
