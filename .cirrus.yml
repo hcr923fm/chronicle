@@ -74,8 +74,17 @@ windows_build_task:
 
   apt_script:
     - apt-get update -qq
-    - apt-get install mingw-w64 mingw-w64-tools pkg-config git -qq -y
-  
+    - apt-get install mingw-w64 mingw-w64-tools pkg-config git libtool libtool-bin -qq -y
+
+  # libtool_cache:
+  #   folder: libtool
+  #   populate_script:
+  #     - git clone git://git.savannah.gnu.org/libtool.git
+  #     - cd libtool
+
+  # libtool_build:
+  #   - 
+
   lame_cache:
     folder: lame-3.100
     populate_script:
@@ -123,7 +132,7 @@ windows_build_task:
       - wget ftp://ftp.invisible-island.net/ncurses/ncurses-6.1.tar.gz
       - tar xf ncurses-6.1.tar.gz
       - cd ncurses-6.1
-      - ./configure --enable-term-driver --enable-sp-funcs --host=x86_64-w64-mingw32 --with-build-cc=gcc --with-pkg-config-libdir=${PKG_CONFIG_PATH} --enable-pc-files
+      - ./configure --enable-term-driver --enable-sp-funcs --host=x86_64-w64-mingw32 --with-build-cc=gcc --with-pkg-config-libdir=${PKG_CONFIG_PATH} --enable-pc-files --with-libtool
       #--prefix=/usr/local/x86_64-w64-mingw32
   
   ncurses_build_script:
