@@ -3,7 +3,8 @@
 
 #if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__))
 //#include <ncurses/ncurses.h>
-#include <ncurses/ncurses.h>
+//#include <ncurses/ncurses.h>
+#include <ncurses/curses.h>
 #else
 #include <ncurses.h>
 #endif
