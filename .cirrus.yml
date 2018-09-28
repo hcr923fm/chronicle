@@ -123,4 +123,4 @@ windows_build_task:
     - .ci/mingw-64/boost-install-script.sh
 
   build_script:
-    - .ci/mingw-64/chronicle-build-script.sh
+    - .ci/mingw-64/chronicle-build.sh
