@@ -77,13 +77,13 @@ windows_build_task:
   container:
     image: ubuntu:latest
 
-  submodules_script:
-    - git submodule init
-    - git submodule update
-
   apt_script:
     - apt-get update -qq
     - apt-get install mingw-w64 mingw-w64-tools pkg-config git libtool libtool-bin -qq -y
+
+  submodules_script:
+    - git submodule init
+    - git submodule update
 
   # libtool_cache:
   #   folder: libtool
