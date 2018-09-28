@@ -2,6 +2,9 @@ linux_build_task:
   container:
     image: gcc:latest
 
+  submodules_script:
+    - git submodule update
+  
   apt_script:
     - apt-get update -qq
     #- apt-get install libncurses5-dev libsndfile1-dev libboost-filesystem-dev libboost-system-dev libboost-dev libasound2 libasound2-dev -qq -y
@@ -72,6 +75,9 @@ windows_build_task:
     PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
   container:
     image: gcc:latest
+
+  submodules_script:
+    - git submodule update
 
   apt_script:
     - apt-get update -qq
