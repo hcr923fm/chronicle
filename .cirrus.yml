@@ -8,9 +8,7 @@ linux_build_task:
   
   apt_script:
     - apt-get update -qq
-    #- apt-get install libncurses5-dev libsndfile1-dev libboost-filesystem-dev libboost-system-dev libboost-dev libasound2 libasound2-dev -qq -y
-    #- apt-get install libncurses5-dev libsndfile1-dev libboost-all-dev libasound2 libasound2-dev -qq -y
-    - apt-get install libncurses5-dev libsndfile1-dev libasound2 libasound2-dev git -qq -y
+    - apt-get install libncurses5-dev libsndfile1-dev libasound2 libasound2-dev git build-essential wget -qq -y
 
   boost_cache:
     folder: boost_1_68_0
