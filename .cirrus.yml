@@ -75,7 +75,7 @@ windows_build_task:
     # Let's do it just for conveniences' sake
     PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
   container:
-    image: gcc:latest
+    image: ubuntu:latest
 
   submodules_script:
     - git submodule init
