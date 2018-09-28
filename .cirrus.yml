@@ -3,6 +3,7 @@ linux_build_task:
     image: gcc:latest
 
   submodules_script:
+    - git submodule init
     - git submodule update
   
   apt_script:
@@ -77,6 +78,7 @@ windows_build_task:
     image: gcc:latest
 
   submodules_script:
+    - git submodule init
     - git submodule update
 
   apt_script:
