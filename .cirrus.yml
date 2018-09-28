@@ -77,21 +77,12 @@ windows_build_task:
 
   apt_script:
     - apt-get update -qq
-    - apt-get install mingw-w64 mingw-w64-tools pkg-config git libtool libtool-bin build-essential wget -qq -y
+    - apt-get install mingw-w64 mingw-w64-tools pkg-config git libtool libtool-bin build-essential wget autoconf automake -qq -y
 
   submodules_script:
     - git submodule init
     - git submodule update
-
-  # libtool_cache:
-  #   folder: libtool
-  #   populate_script:
-  #     - git clone git://git.savannah.gnu.org/libtool.git
-  #     - cd libtool
-
-  # libtool_build:
-  #   - 
-
+    
   lame_cache:
     folder: lame-3.100
     populate_script:
