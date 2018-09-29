@@ -8,7 +8,6 @@ void prepare_logdir()
     system("del /F /Q logs\\*");
 #else
     auto rv = system("mkdir -p logs");
-    (void)rv;
     rv = system("rm -f logs/*");
     (void)rv;
 #endif

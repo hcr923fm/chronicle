@@ -8,7 +8,7 @@ typedef int64_t __int64;
 #include "parse_opts.h"
 #include "RtAudio.h"
 #include "spdlog/include/spdlog/spdlog.h"
-#include "spdlog/include/spdlog/sinks/file_sinks.h"
+#include "spdlog/include/spdlog/sinks/rotating_file_sink.h"
 //#include <shine/layer3.h>
 #include "lame/lame.h"
 

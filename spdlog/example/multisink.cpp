@@ -1,9 +1,9 @@
+#include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/sinks/stdout_sinks.h"
 #include "spdlog/spdlog.h"
-
 #include <iostream>
 #include <memory>
 
-namespace spd = spdlog;
 int main(int, char *[])
 {
     bool enable_debug = true;
@@ -14,8 +14,8 @@ int main(int, char *[])
         // Each sink can have it's own log level and a message will be logged.
         std::vector<spdlog::sink_ptr> sinks;
         sinks.push_back(std::make_shared<spdlog::sinks::stdout_sink_mt>());
-        sinks.push_back(std::make_shared<spdlog::sinks::simple_file_sink_mt>("./log_regular_file.txt"));
-        sinks.push_back(std::make_shared<spdlog::sinks::simple_file_sink_mt>("./log_debug_file.txt"));
+        sinks.push_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("./log_regular_file.txt"));
+        sinks.push_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("./log_debug_file.txt"));
 
         spdlog::logger console_multisink("multisink", sinks.begin(), sinks.end());
         console_multisink.set_level(spdlog::level::warn);
@@ -38,7 +38,7 @@ int main(int, char *[])
         spdlog::drop_all();
     }
     // Exceptions will only be thrown upon failed logger or sink construction (not during logging)
-    catch (const spd::spdlog_ex &ex)
+    catch (const spdlog::spdlog_ex &ex)
     {
         std::cout << "Log init failed: " << ex.what() << std::endl;
         return 1;
