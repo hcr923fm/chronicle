@@ -56,16 +56,7 @@ linux_build_task:
     - ../configure && make
 
   dist_script:
-    - cd chronicle-v1.0.0-linux
-    - make mostlyclean
-    - ls -al
-    - deps=$(ldd ./chronicle | awk '/~*mingw*/ {print $3}')
-    - for dep in $deps; do cp $dep . ;done
-    - cp ../LICENCE .
-    - cp ../README.md .
-    - cp ../CHANGELOG.md .
-    - cd ..
-    - tar zcf chronicle-v1.0.0-linux.tar.gz chronicle-v1.0.0-linux
+    - .ci/linux/dist-script.sh
 
 windows_build_task:
   # Most sources need to be built from scratch, since the mingw version of pkg-config ignores PKG_CONFIG_PATH
