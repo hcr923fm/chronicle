@@ -96,3 +96,6 @@ windows_build_task:
   build_script:
     - chmod +x .ci/mingw-64/chronicle-build.sh
     - .ci/mingw-64/chronicle-build.sh
+
+  dist_script:
+    - .ci/mingw-64/dist.sh
