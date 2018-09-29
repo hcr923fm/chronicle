@@ -8,6 +8,7 @@ linux_build_task:
     image: gcc:latest
 
   apt_script:
+    - chmod +x .ci/linux/*.sh # I know, I dev on Windows -_-
     - .ci/linux/apt-deps.sh
 
   boost_cache:
