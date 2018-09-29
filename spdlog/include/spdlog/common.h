@@ -5,25 +5,23 @@
 
 #pragma once
 
-#define SPDLOG_VERSION "0.17.0"
-
-#include "tweakme.h"
+#include "spdlog/tweakme.h"
 
 #include <atomic>
 #include <chrono>
-#include <exception>
 #include <functional>
 #include <initializer_list>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
 
-#if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
+#if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 #include <codecvt>
 #include <locale>
 #endif
 
-#include "details/null_mutex.h"
+#include "spdlog/details/null_mutex.h"
 
 // visual studio upto 2013 does not support noexcept nor constexpr
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
@@ -49,7 +47,7 @@
 #define SPDLOG_DEPRECATED
 #endif
 
-#include "fmt/fmt.h"
+#include "spdlog/fmt/fmt.h"
 
 namespace spdlog {
 
@@ -62,14 +60,13 @@ class sink;
 using log_clock = std::chrono::system_clock;
 using sink_ptr = std::shared_ptr<sinks::sink>;
 using sinks_init_list = std::initializer_list<sink_ptr>;
-using formatter_ptr = std::shared_ptr<spdlog::formatter>;
+using log_err_handler = std::function<void(const std::string &err_msg)>;
+
 #if defined(SPDLOG_NO_ATOMIC_LEVELS)
 using level_t = details::null_atomic_int;
 #else
 using level_t = std::atomic<int>;
 #endif
-
-using log_err_handler = std::function<void(const std::string &err_msg)>;
 
 // Log level enum
 namespace level {
@@ -94,15 +91,16 @@ static const char *level_names[] SPDLOG_LEVEL_NAMES;
 
 static const char *short_level_names[]{"T", "D", "I", "W", "E", "C", "O"};
 
-inline const char *to_str(spdlog::level::level_enum l)
+inline const char *to_c_str(spdlog::level::level_enum l)
 {
     return level_names[l];
 }
 
-inline const char *to_short_str(spdlog::level::level_enum l)
+inline const char *to_short_c_str(spdlog::level::level_enum l)
 {
     return short_level_names[l];
 }
+
 inline spdlog::level::level_enum from_str(const std::string &name)
 {
     static std::unordered_map<std::string, level_enum> name_to_level = // map string->level
@@ -122,15 +120,6 @@ using level_hasher = std::hash<int>;
 } // namespace level
 
 //
-// Async overflow policy - block by default.
-//
-enum class async_overflow_policy
-{
-    block_retry,    // Block / yield / sleep until message can be enqueued
-    discard_log_msg // Discard the message it enqueue fails
-};
-
-//
 // Pattern time - specific time getting to use for pattern_formatter.
 // local time by default
 //
@@ -146,25 +135,25 @@ enum class pattern_time_type
 class spdlog_ex : public std::exception
 {
 public:
-    explicit spdlog_ex(std::string msg)
-        : _msg(std::move(msg))
+    explicit spdlog_ex(const std::string &msg)
+        : msg_(msg)
     {
     }
 
     spdlog_ex(const std::string &msg, int last_errno)
     {
-        fmt::MemoryWriter writer;
-        fmt::format_system_error(writer, last_errno, msg);
-        _msg = writer.str();
+        fmt::memory_buffer outbuf;
+        fmt::format_system_error(outbuf, last_errno, msg);
+        msg_ = fmt::to_string(outbuf);
     }
 
     const char *what() const SPDLOG_NOEXCEPT override
     {
-        return _msg.c_str();
+        return msg_.c_str();
     }
 
 private:
-    std::string _msg;
+    std::string msg_;
 };
 
 //
@@ -179,10 +168,10 @@ using filename_t = std::string;
 #define SPDLOG_CATCH_AND_HANDLE                                                                                                            \
     catch (const std::exception &ex)                                                                                                       \
     {                                                                                                                                      \
-        _err_handler(ex.what());                                                                                                           \
+        err_handler_(ex.what());                                                                                                           \
     }                                                                                                                                      \
     catch (...)                                                                                                                            \
     {                                                                                                                                      \
-        _err_handler("Unknown exeption in logger");                                                                                        \
+        err_handler_("Unknown exeption in logger");                                                                                        \
     }
 } // namespace spdlog
