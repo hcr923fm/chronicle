@@ -52,6 +52,7 @@ linux_build_task:
     - ../configure && make
 
   dist_script:
+    - chmod +x .ci/linux/dist-script.sh
     - .ci/linux/dist-script.sh
 
 windows_build_task:

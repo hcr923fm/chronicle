@@ -1,4 +1,3 @@
-#!/bin/bash
 cd chronicle-v1.0.0-linux
 make mostlyclean
 cp ../LICENCE .
