@@ -1,4 +1,4 @@
-cd chronicle-v1.0.0-linux
+cd ${CHRONICLE_TRIPLET}
 make mostlyclean
 cp ../LICENCE .
 cp ../README.md .
