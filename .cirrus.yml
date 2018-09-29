@@ -59,7 +59,7 @@ linux_build_task:
     - cd chronicle-v1.0.0-linux
     - make mostlyclean
     - ls -al
-    - deps=$(ldd ./chronicle.exe | awk '/~*mingw*/ {print $3}')
+    - deps=$(ldd ./chronicle | awk '/~*mingw*/ {print $3}')
     - for dep in $deps; do cp $dep . ;done
     - cp ../LICENCE .
     - cp ../README.md .
