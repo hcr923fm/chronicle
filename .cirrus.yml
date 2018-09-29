@@ -2,10 +2,6 @@ linux_build_task:
   container:
     image: gcc:latest
 
-  submodules_script:
-    - git submodule init
-    - git submodule update
-  
   apt_script:
     - apt-get update -qq
     - apt-get install libncurses5-dev libsndfile1-dev libasound2 libasound2-dev git build-essential libtool libtool-bin wget -qq -y
@@ -68,9 +64,6 @@ windows_build_task:
 
   apt_script:
     - .ci/mingw-64/apt-script.sh
-
-  submodules_script:
-    - .ci/mingw-64/git-submodules-script.sh
 
   lame_cache:
     folder: lame-3.100
