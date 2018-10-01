@@ -60,6 +60,38 @@ windows_build_task:
   lame_build_script:
     - .ci/mingw-64/lame-install-script.sh
 
+  libogg_cache:
+    folder: libogg-1.3.3
+    populate_script:
+      - .ci/mingw-64/libogg-download.sh
+
+  libogg_install_script:
+    -.ci/mingw-64/libogg-install.sh
+
+  libvorbis_cache:
+    folder: libvorbis-1.3.6
+    populate_script:
+      - .ci/mingw-64/libvorbis-download.sh
+
+  libvorbis_install_script:
+    -.ci/mingw-64/libvorbis-install.sh
+
+  libflac_cache:
+    folder: flac-1.3.2
+    populate_script:
+      - .ci/mingw-64/libflac-download.sh
+
+  libflac_install_script:
+    -.ci/mingw-64/libflac-install.sh
+
+  libflac_cache:
+    folder: speex-1.2.0
+    populate_script:
+      - .ci/mingw-64/libspeex-download.sh
+
+  libflac_install_script:
+    -.ci/mingw-64/libspeex-install.sh
+  
   libsndfile_cache:
     folder: libsndfile-1.0.28
     populate_script:
