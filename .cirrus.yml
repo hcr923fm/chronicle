@@ -46,6 +46,7 @@ windows_build_task:
   env:
     # Let's do it just for conveniences' sake
     PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
+    BOOST_ROOT: /usr/x86_64-w64-mingw32/include/boost-1_68/
   container:
     image: ubuntu:latest
 
