@@ -52,77 +52,86 @@ windows_build_task:
   apt_script:
     - .ci/mingw-64/apt-script.sh
 
-  lame_cache:
-    folder: lame-3.100
-    populate_script:
-      - .ci/mingw-64/lame-download-script.sh
+  # lame_cache:
+  #   folder: lame-3.100
+  #   populate_script:
+  #     - .ci/mingw-64/lame-download-script.sh
   
   lame_build_script:
+    - .ci/mingw-64/lame-download-script.sh
     - .ci/mingw-64/lame-install-script.sh
 
-  libogg_cache:
-    folder: libogg-1.3.3
-    populate_script:
-      - .ci/mingw-64/libogg-download.sh
+  # libogg_cache:
+  #   folder: libogg-1.3.3
+  #   populate_script:
+  #     - .ci/mingw-64/libogg-download.sh
 
   libogg_install_script:
+    - .ci/mingw-64/libogg-download.sh
     - .ci/mingw-64/libogg-install.sh
 
-  libvorbis_cache:
-    folder: libvorbis-1.3.6
-    populate_script:
-      - .ci/mingw-64/libvorbis-download.sh
+  # libvorbis_cache:
+  #   folder: libvorbis-1.3.6
+  #   populate_script:
+  #     - .ci/mingw-64/libvorbis-download.sh
 
   libvorbis_install_script:
+    - .ci/mingw-64/libvorbis-download.sh
     - .ci/mingw-64/libvorbis-install.sh
 
-  libflac_cache:
-    folder: flac-1.3.2
-    populate_script:
-      - .ci/mingw-64/libflac-download.sh
+  # libflac_cache:
+  #   folder: flac-1.3.2
+  #   populate_script:
+  #     - .ci/mingw-64/libflac-download.sh
 
   libflac_install_script:
+    - .ci/mingw-64/libflac-download.sh
     - .ci/mingw-64/libflac-install.sh
 
-  libspeex_cache:
-    folder: speex-1.2.0
-    populate_script:
-      - .ci/mingw-64/libspeex-download.sh
+  # libspeex_cache:
+  #   folder: speex-1.2.0
+  #   populate_script:
+  #     - .ci/mingw-64/libspeex-download.sh
 
   libspeex_install_script:
+    - .ci/mingw-64/libspeex-download.sh
     - .ci/mingw-64/libspeex-install.sh
   
-  libsndfile_cache:
-    folder: libsndfile-1.0.28
-    populate_script:
-      - .ci/mingw-64/libsndfile-download-script.sh # <---- Get libflac, libogg, libvorbis, vorbisenc
+  # libsndfile_cache:
+  #   folder: libsndfile-1.0.28
+  #   populate_script:
+  #     - .ci/mingw-64/libsndfile-download-script.sh
 
   libsndfile_build_script:
+    - .ci/mingw-64/libsndfile-download-script.sh
     - .ci/mingw-64/libsndfile-install-script.sh
 
-  rtaudio_cache: 
-    folder: rtaudio
-    populate_script:
-      - .ci/mingw-64/rtaudio-download-script.sh
+  # rtaudio_cache: 
+  #   folder: rtaudio
+  #   populate_script:
+  #     - .ci/mingw-64/rtaudio-download-script.sh
 
   rtaudio_build_script:
   # Depends on libsndfile
+    - .ci/mingw-64/rtaudio-download-script.sh
     - .ci/mingw-64/rtaudio-install-script.sh
 
-  ncurses_cache:
-    folder: ncurses-6.1
-    populate_script:
-      - .ci/mingw-64/ncurses-download-script.sh
+  # ncurses_cache:
+  #   folder: ncurses-6.1
+  #   populate_script:
+  #     - .ci/mingw-64/ncurses-download-script.sh
   
   ncurses_build_script:
+    - .ci/mingw-64/ncurses-download-script.sh
     - .ci/mingw-64/ncurses-install-script.sh
 
-  boost_cache:
-    folder: boost_1_68_0
-    populate_script:
-      - .ci/mingw-64/boost-download-script.sh
+  # boost_cache:
+  #   folder: boost_1_68_0
+  #   populate_script:
+  #     - .ci/mingw-64/boost-download-script.sh
 
   boost_build_script:
+    - .ci/mingw-64/boost-download-script.sh
     - .ci/mingw-64/boost-install-script.sh
 
   build_script:
