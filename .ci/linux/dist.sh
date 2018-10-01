@@ -1,4 +1,5 @@
 cd ${CHRONICLE_TRIPLET}
+ldd ./chronicle # Curious to see what the linux version links against
 make mostlyclean
 cp ../LICENCE .
 cp ../README.md .
