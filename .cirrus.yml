@@ -84,12 +84,12 @@ windows_build_task:
   libflac_install_script:
     -.ci/mingw-64/libflac-install.sh
 
-  libflac_cache:
+  libspeex_cache:
     folder: speex-1.2.0
     populate_script:
       - .ci/mingw-64/libspeex-download.sh
 
-  libflac_install_script:
+  libspeex_install_script:
     -.ci/mingw-64/libspeex-install.sh
   
   libsndfile_cache:
