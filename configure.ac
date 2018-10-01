@@ -8,7 +8,7 @@ AC_LANG(C++)
 AC_PROG_CPP
 AC_PROG_CXX
 LT_INIT
-AX_BOOST_BASE([1.65],,[AC_MSG_ERROR([libfoo needs Boost - but it was not found in your system])])
+AX_BOOST_BASE([1.65],,[AC_MSG_ERROR([Chronicle needs Boost - but it was not found in your system])])
 AX_BOOST_FILESYSTEM
 AX_BOOST_SYSTEM
 dnl BOOST_REQUIRE([1.65.0])
