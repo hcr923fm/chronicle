@@ -46,11 +46,12 @@ windows_build_task:
   env:
     # Let's do it just for conveniences' sake
     PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
-    BOOST_ROOT: /usr/x86_64-w64-mingw32/include/boost-1_68/
+    #BOOST_ROOT: /usr/x86_64-w64-mingw32/include/boost-1_68/
   container:
     image: ubuntu:latest
 
   apt_script:
+    - chmod +x .ci/mingw-64/*.sh
     - .ci/mingw-64/apt-script.sh
 
   # lame_cache:
@@ -136,7 +137,7 @@ windows_build_task:
     - .ci/mingw-64/boost-install-script.sh
 
   build_script:
-    - chmod +x .ci/mingw-64/chronicle-build.sh
+    #- chmod +x .ci/mingw-64/chronicle-build.sh
     - .ci/mingw-64/chronicle-build.sh
 
   dist_script:
