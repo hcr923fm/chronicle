@@ -402,6 +402,10 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 			logger->critical("Could not create directory: {}", e.what());
 			exit(1);
 		}
+		catch (exception &e)
+		{
+			logger->critical("Could not create directory: {}", e.what());
+		}
 
 		/* Calculate the file size - fixes #22 */
 		chrono::time_point<chrono::system_clock> tpNow = chrono::system_clock::now();
@@ -591,31 +595,34 @@ recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice)
 	(recordingDevice.inputChannels == 1) ? rp.channelCount = 1 : rp.channelCount = 2;
 	logger->debug("Input device has {} channels, using {}", recordingDevice.inputChannels, rp.channelCount);
 
-	/* Set sample rate - prefer 44100 */
-	if (recordingDevice.preferredSampleRate == 44100)
+	// /* Set sample rate - prefer 44100 */
+	// if (recordingDevice.preferredSampleRate == 44100)
+	// {
+	// 	logger->debug("Devices' preferred sample rate is 44100 Hz, using this");
+	// 	rp.sampleRate = 44100;
+	// }
+	// else
+	// {
+	for (std::vector<unsigned int>::iterator i = recordingDevice.sampleRates.begin(); i != recordingDevice.sampleRates.end(); i++)
 	{
-		rp.sampleRate = 44100;
-	}
-	else
-	{
-		for (std::vector<unsigned int>::iterator i = recordingDevice.sampleRates.begin(); i != recordingDevice.sampleRates.end(); i++)
+		logger->debug("Device supports sample rate {}", *i);
+		if (*i == 44100)
 		{
-			if (*i == 44100)
-			{
-				rp.sampleRate = 44100;
-			}
+			logger->debug("Device can accept sample rate of 44.1kHz, using this");
+			rp.sampleRate = 44100;
 		}
+	}
 
-		if (!rp.sampleRate)
-		{
-			rp.sampleRate = recordingDevice.preferredSampleRate;
-			logger->warn("Could not set sample rate at 44.1 kHz, using preferred sample rate: {}", rp.sampleRate);
-		}
+	if (rp.sampleRate != 44100)
+	{
+		rp.sampleRate = recordingDevice.preferredSampleRate;
+		logger->warn("Could not set sample rate at 44.1 kHz, using preferred sample rate: {}", rp.sampleRate);
 	}
+	// }
 
 	logger->debug("Using sample rate: {}", rp.sampleRate);
 
-		rp.bufferLength = 1024;
+	rp.bufferLength = 1024;
 	return rp;
 }
 
