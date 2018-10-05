@@ -40,7 +40,9 @@ includertaudio
 
 *.wav
 *.ogg
+*.mp3
 build/*
+*.tar.gz
 
 # Don't upload the libs in the directory, use the /libs instead
 libsndfile-1*
