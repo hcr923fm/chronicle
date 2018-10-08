@@ -10,7 +10,7 @@ linux_build_task:
     image: gcc:latest
 
   env:
-    CHRONICLE_TRIPLET: ${CHRONICLE_NAME}-${CHRONICLE_VERSION}-windows
+    CHRONICLE_TRIPLET: ${CHRONICLE_NAME}-${CHRONICLE_VERSION}-linux
 
   apt_script:
     - chmod +x .ci/linux/*.sh # I know, I dev on Windows -_-
