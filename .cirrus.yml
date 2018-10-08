@@ -136,6 +136,7 @@ windows_build_task:
     - .ci/mingw-64/chronicle-build.sh
 
   dist_script:
+    - pip install b2
     - .ci/mingw-64/chronicle-create-dist-archives.sh
     - .ci/mingw-64/chronicle-create-bb-upload.sh
     
