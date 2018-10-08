@@ -603,13 +603,15 @@ recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice)
 	// }
 	// else
 	// {
-	for (std::vector<unsigned int>::iterator i = recordingDevice.sampleRates.begin(); i != recordingDevice.sampleRates.end(); i++)
+	for (std::vector<unsigned int>::const_iterator i = recordingDevice.sampleRates.begin(); i != recordingDevice.sampleRates.end() + 1; i++)
 	{
+
 		logger->debug("Device supports sample rate {}", *i);
 		if (*i == 44100)
 		{
 			logger->debug("Device can accept sample rate of 44.1kHz, using this");
 			rp.sampleRate = 44100;
+			break;
 		}
 	}
 
