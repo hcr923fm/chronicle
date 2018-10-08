@@ -1,6 +1,8 @@
 cd ${CHRONICLE_TRIPLET}
 make mostlyclean
 deps=`x86_64-w64-mingw32-objdump -p chronicle.exe | grep dll | awk '{print $3}'`
+more_deps='libFLAC++-6.dll libvorbis-0.dll libFLAC-8.dll libogg-0.dll libsndfile-1.dll libspeex-1.dll libvorbis-0.dll libvorbisenc-2.dll libvorbisfile-3.dll'
+deps="$deps $more_deps"
 for dep in ${deps}
 do
     echo "Looking for ${dep}..."
@@ -13,6 +15,7 @@ do
         echo "Couldn't find it, moving on"
     fi
 done
+
 cp ../LICENCE .
 cp ../README.md .
 cp ../CHANGELOG.md .
