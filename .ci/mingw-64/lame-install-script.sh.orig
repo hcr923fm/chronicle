@@ -1,9 +1,0 @@
-#!/bin/bash
-cd lame-3.100
-<<<<<<< HEAD
-./configure --disable-decoder --disable-shared --enable-static --host=x86_64-w64-mingw32 --prefix=/usr/x86_64-w64-mingw32
-=======
-./configure --disable-decoder --disable-shared --enable-static --host=x86_64-w64-mingw32 --prefix=/usr/local #--prefix=/usr/x86_64-w64-mingw32
->>>>>>> e410899754a57eb48816f85d6770c6e27cc28735
-make
-make install
