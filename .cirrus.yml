@@ -43,7 +43,7 @@ linux_build_task:
 
   dist_script:
     - .ci/linux/chronicle-create-dist-archives.sh
-    - .ci/linux/chronicle-create-git-release.sh
+    - .ci/linux/chronicle-create-bb-upload.sh
 
 windows_build_task:
   # Most sources need to be built from scratch, since the mingw version of pkg-config ignores PKG_CONFIG_PATH
