@@ -42,6 +42,7 @@ linux_build_task:
     - .ci/linux/chronicle-build.sh
 
   dist_script:
+    - pip install --upgrade b2
     - .ci/linux/chronicle-create-dist-archives.sh
     - .ci/linux/chronicle-create-bb-upload.sh
 
