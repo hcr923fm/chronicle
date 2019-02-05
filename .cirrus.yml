@@ -136,6 +136,7 @@ windows_build_task:
     - .ci/mingw-64/boost-install-script.sh
 
   build_script:
+    - python .ci/mingw-64/list_full_deps.py
     - .ci/mingw-64/chronicle-build.sh
 
   dist_script:

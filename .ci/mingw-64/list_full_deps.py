@@ -1,5 +1,6 @@
 import sys
 import subprocess
+import os
 
 
 def findFileLocation(file_name, expected_subdir="/usr"):
@@ -26,4 +27,4 @@ for dep in deps:
         if not deps.count(extra_dep):
             deps.append(extra_dep)
 
-print dep_paths
+os.environ["CHRONICLE_DEP_PATHS"] = " ".join(dep_paths)
