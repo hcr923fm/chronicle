@@ -17,7 +17,7 @@ dep_paths=${CHRONICLE_DEP_PATHS}
 #     fi
 # done
 echo "Found the following deps:"
-echo for dep_path in $dep_paths
+for dep_path in $dep_paths
 do
     echo ${dep_path}
     done
