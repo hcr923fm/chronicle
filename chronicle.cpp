@@ -337,8 +337,9 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		lame_enc = lame_init();
 		lame_set_in_samplerate(lame_enc, rp.sampleRate);
 		lame_set_out_samplerate(lame_enc, rp.sampleRate);
-		lame_set_VBR(lame_enc, vbr_default);
-		lame_set_VBR_quality(lame_enc, 3);
+		lame_set_brate(lame_enc, 320);
+		lame_set_VBR(lame_enc, vbr_off);
+		//lame_set_VBR_quality(lame_enc, 3);
 		lame_set_num_channels(lame_enc, rp.channelCount);
 		int ret = lame_init_params(lame_enc);
 		if (ret < 0)
