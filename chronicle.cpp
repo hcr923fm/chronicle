@@ -720,42 +720,37 @@ Chronicle uses the following libraries internally:
 
 void printHelp()
 {
-
-	const char USAGE[] =
-		R"(
-Usage:
-    chronicle [-h | --help]
-    chronicle [--licence]
-    chronicle [-l | --list-devices ]
-    chronicle [-d | --directory OUTPUT_DIRECTORY] [-f | --filename FORMAT] [-i | --input-device DEVICE_ID] 
-              [[-a | --max-age MAX_FILE_AGE] | --no-delete] [-s | --audio-format [WAV | OGG]]
-
-    Where:
-        -h | --help          Prints this help message.
-        --licence            Prints the licence information for this software and libraries that it uses.
-        -l | --list-devices  Lists the available input devices with their IDs.
-        -d | --directory     Sets the directory to save the logged audio to. A trailing slash is not required, but may
-                                 be added. On Windows, if using a trailing slash, use a trailing double-slash.
-                                 Defaults to current directory.
-        -f | --format        strftime-compatible format to use when naming the audio files.
-                                 Defaults to %F %H%M%S .
-        -i | --input-device  The ID number of the input device to record from. A list of input devices and their ID
-                                 numbers can be obtained with `chronicle -l`.
-                                 If unspecified, the system default audio recording device will be used.
-        -a | --max-age       Sets the maximum age before audio files will be automatically deleted.
-								 Use the format <length><unit>, where unit is < s| m | h | d > for
-								 seconds, minutes, hours and days, respectively.
-						         So, to specify 25 hours, pass '-a 25h' .
-                                 Defaults to 42 days, in accordance with OFCOM rules.
-		--no-delete          If passed, Chronicle will not delete old audio files, so they can be manually managed.
-		                         Incompatible with --max-age.
-        -s | --audio-format Sets the audio format to use for the recorded audio files.
-                                 Acceptable parameters are:
-                                     OGG | Ogg Vorbis (.ogg)
-                                     WAV | 16-bit PCM WAV (.wav)
-                                 Defaults to WAV.
-		--debug              Enables debug logging
-)";
-
-	cout << USAGE << endl;
+	cout << "Usage: " << endl
+		 << "chronicle [-h | --help]" << endl
+		 << "chronicle [--licence]" << endl
+		 << "chronicle [-l | --list-devices ]" << endl
+		 << "chronicle [-d | --directory OUTPUT_DIRECTORY] [-f | --filename FORMAT] [-i | --input-device DEVICE_ID] " << endl
+		 << "          [[-a | --max-age MAX_FILE_AGE] | --no-delete] [-s | --audio-format [WAV | OGG]]" << endl
+		 << endl
+		 << "Where:" << endl
+		 << "-h | --help          Prints this help message." << endl
+		 << "--licence            Prints the licence information for this software and libraries that it uses." << endl
+		 << "-l | --list-devices  Lists the available input devices with their IDs." << endl
+		 << "-d | --directory     Sets the directory to save the logged audio to. A trailing slash is not required, but may" << endl
+		 << "                     be added. On Windows, if using a trailing slash, use a trailing double-slash." << endl
+		 << "                     Defaults to current directory." << endl
+		 << "-f | --format        strftime-compatible format to use when naming the audio files." << endl
+		 << "                     Defaults to %F %H%M%S ." << endl
+		 << "-i | --input-device  The ID number of the input device to record from. A list of input devices and their ID" << endl
+		 << "                     numbers can be obtained with `chronicle -l`." << endl
+		 << "                     If unspecified, the system default audio recording device will be used." << endl
+		 << "-a | --max-age       Sets the maximum age before audio files will be automatically deleted." << endl
+		 << "                     Use the format <length><unit>, where unit is < s| m | h | d > for" << endl
+		 << "                     seconds, minutes, hours and days, respectively." << endl
+		 << "                     So, to specify 25 hours, pass '-a 25h' ." << endl
+		 << "                     Defaults to 42 days, in accordance with OFCOM rules." << endl
+		 << "--no-delete          If passed, Chronicle will not delete old audio files, so they can be manually managed." << endl
+		 << "                     Incompatible with --max-age." << endl
+		 << "-s | --audio-format  Sets the audio format to use for the recorded audio files." << endl
+		 << "                     Acceptable parameters are:" << endl
+		 << "                     OGG | Ogg Vorbis (.ogg)" << endl
+		 << "                     WAV | 16-bit PCM WAV (.wav) (default)" << endl
+		 << "                     MP3 | 320kbps MP3 (.mp3)" << endl
+		 << "--debug              Enables debug logging" << endl
+		 << endl;
 }
