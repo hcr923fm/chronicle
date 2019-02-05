@@ -1,6 +1,12 @@
 
 # Changelog - Chronicle
 
+## v1.0.2
+### Fixed
+* Fixed issue where help string would print incorrectly
+* Fixed issue where MP3 encoding was not listed in the help string
+* Fixed issue where VBR was being used instead of CBR for MP3 recording, leading to duration inaccuracies
+
 ## v1.0.1
 ### Added
 * Added per-channel level monitoring (#38)
