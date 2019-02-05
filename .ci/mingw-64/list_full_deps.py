@@ -27,4 +27,4 @@ for dep in deps:
         if not deps.count(extra_dep):
             deps.append(extra_dep)
 
-os.environ["CHRONICLE_DEP_PATHS"] = " ".join(dep_paths)
+print " ".join(dep_paths)
