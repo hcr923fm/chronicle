@@ -140,7 +140,7 @@ windows_build_task:
 
   dist_script:
     - pip install b2
-    - export CHRONICLE_DEP_PATHS=`python .ci/mingw-64/list_full_deps.py`
+    - export CHRONICLE_DEP_PATHS=`python .ci/mingw-64/list_full_deps.py chronicle.exe`
     - .ci/mingw-64/chronicle-create-dist-archives.sh
     - .ci/mingw-64/chronicle-create-bb-upload.sh
     
