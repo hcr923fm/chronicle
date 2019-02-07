@@ -6,18 +6,22 @@ import os
 def findFileLocation(file_name, expected_subdir="/usr"):
     proc = subprocess.Popen(
         ["find", expected_subdir, "-name", file_name], stdout=subprocess.PIPE)
-    for loc_path in proc.communicate()[0]:
-        if loc_path.count(".dll"):
-            return loc_path
+    # for loc_path in proc.communicate()[0]:
+    loc_path = proc.communicate()[0]
+
+    for p in loc_path.split("\n"):
+        if p.count(".dll"):
+            return p
 
 
-def getDepOfLib(lib_path):
+def getDepsOfLib(lib_path):
+    #print "Getting deps of", lib_path
     proc_objdump = subprocess.Popen(
         ["x86_64-w64-mingw32-objdump", "-p", lib_path], stdout=subprocess.PIPE, shell=False)
     proc_grep = subprocess.Popen(
-        ["grep", "dll"], stdin=proc_objdump.stdout, stdout=subprocess.PIPE, shell=False)
+        ["grep", "\\.dll"], stdin=proc_objdump.stdout, stdout=subprocess.PIPE, shell=False)
     proc_awk = subprocess.Popen(
-        ["awk", "'{print $3}'"], stdin=proc_grep.stdout, stdout=subprocess.PIPE, shell=False)
+        ["awk", "{print $3}"], stdin=proc_grep.stdout, stdout=subprocess.PIPE, shell=False)
 
     proc_objdump.stdout.close()
     proc_grep.stdout.close()
@@ -29,17 +33,26 @@ def getDepOfLib(lib_path):
 
 # Actually no, expect the path to an executable
 
-exec_path = sys.argv[1]
-deps = []
+#exec_path = sys.argv[1:]
+deps = sys.argv[1:]
 dep_paths = []
 
 # get the direct deps of the exec
-deps.extend(getDepOfLib(exec_path))
+# deps.extend(getDepOfLib(exec_path))
 # We'll iterate over the list of deps and find their actual file location
 for dep in deps:
-    dep_paths.append(findFileLocation(dep))
-    for extra_dep in getDepOfLib(dep):
-        if not deps.count(extra_dep):
-            deps.append(extra_dep)
+    dep_location = findFileLocation(dep)
+
+    if dep_location:
+        #print "Adding", dep_location, "to dep_paths"
+        dep_paths.append(dep_location)
+    for dep_path in dep_paths:
+        extra_deps = getDepsOfLib(dep_path)
+        #print "Found extra deps:", extra_deps
+        for extra_dep in extra_deps:
+            if not deps.count(extra_dep):
+                #print extra_dep, "is not already in deps, adding"
+                deps.append(extra_dep)
+
 
 print " ".join(dep_paths)
