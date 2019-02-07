@@ -4,8 +4,11 @@ import os
 
 
 def findFileLocation(file_name, expected_subdir="/usr"):
-    return subprocess.check_output(
-        ["find", expected_subdir, "-name", file_name, "|", "grep", "-m", "1", ".dll"])
+    proc = subprocess.Popen(
+        ["find", expected_subdir, "-name", file_name], stdout=subprocess.PIPE)
+    for loc_path in proc.stdout.read():
+        if loc_path.count(".dll"):
+            return loc_path
 
 
 def getDepOfLib(lib_path):
@@ -15,11 +18,16 @@ def getDepOfLib(lib_path):
 
 
 # Expect a list of system file deps in sys.argv, like:
-# libc++std.so.6 libwhatever.so.4 libanotherone.so.1
+# libc++std.so.6 libwhatever.so.4 libanotherone.so.1,
 
-deps = sys.argv[1:]
+# Actually no, expect the path to an executable
+
+exec_path = sys.argv[1]
+deps = []
 dep_paths = []
 
+# get the direct deps of the exec
+deps.extend(getDepOfLib(exec_path))
 # We'll iterate over the list of deps and find their actual file location
 for dep in deps:
     dep_paths.append(findFileLocation(dep))
