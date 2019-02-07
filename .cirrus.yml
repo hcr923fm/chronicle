@@ -48,98 +48,192 @@ linux_build_task:
     - .ci/linux/chronicle-create-dist-archives.sh
     - .ci/linux/chronicle-create-bb-upload.sh
 
-windows_build_task:
+win64_build_task:
   # Most sources need to be built from scratch, since the mingw version of pkg-config ignores PKG_CONFIG_PATH
   env:
     # Let's do it just for conveniences' sake
     PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
     PATH: '$PATH:/usr/local'
-    CHRONICLE_TRIPLET: ${CHRONICLE_NAME}-${CHRONICLE_VERSION}-windows
+    CHRONICLE_TRIPLET: ${CHRONICLE_NAME}-${CHRONICLE_VERSION}-win64
   container:
     image: ubuntu:latest
 
   apt_script:
-    - chmod +x .ci/mingw-64/*.sh
-    - .ci/mingw-64/apt-script.sh
+    - chmod +x .ci/mingw32-64/*.sh
+    - .ci/mingw32-64/apt-script.sh
 
   lame_download_cache:
     folder: lame-3.100
     populate_script:
-      - .ci/mingw-64/lame-download-script.sh
+      - .ci/mingw32-64/lame-download-script.sh
     
   lame_build_script:
-    - .ci/mingw-64/lame-install-script.sh
+    - .ci/mingw32-64/lame-install-script.sh
 
   libogg_download_cache:
     folder: libogg-1.3.3
     populate_script:
-      - .ci/mingw-64/libogg-download.sh
+      - .ci/mingw32-64/libogg-download.sh
 
   libogg_install_script:
-    - .ci/mingw-64/libogg-install.sh
+    - .ci/mingw32-64/libogg-install.sh
 
   libvorbis_download_cache:
     folder: libvorbis-1.3.6
     populate_script:
-      - .ci/mingw-64/libvorbis-download.sh
+      - .ci/mingw32-64/libvorbis-download.sh
 
   libvorbis_install_script:
-    - .ci/mingw-64/libvorbis-install.sh
+    - .ci/mingw32-64/libvorbis-install.sh
 
   libflac_download_cache:
     folder: flac-1.3.2
     populate_script:
-      - .ci/mingw-64/libflac-download.sh
+      - .ci/mingw32-64/libflac-download.sh
 
   libflac_install_script:
-    - .ci/mingw-64/libflac-install.sh
+    - .ci/mingw32-64/libflac-install.sh
 
   libspeex_download_cache:
     folder: speex-1.2.0
     populate_script:
-      - .ci/mingw-64/libspeex-download.sh
+      - .ci/mingw32-64/libspeex-download.sh
 
   libspeex_install_script:
-    - .ci/mingw-64/libspeex-install.sh
+    - .ci/mingw32-64/libspeex-install.sh
   
   libsndfile_download_cache:
     folder: libsndfile-1.0.28
     populate_script:
-      - .ci/mingw-64/libsndfile-download-script.sh
+      - .ci/mingw32-64/libsndfile-download-script.sh
 
   libsndfile_build_script:
-    - .ci/mingw-64/libsndfile-install-script.sh
+    - .ci/mingw32-64/libsndfile-install-script.sh
 
   rtaudio_download_cache: 
     folder: rtaudio
     populate_script:
-      - .ci/mingw-64/rtaudio-download-script.sh
+      - .ci/mingw32-64/rtaudio-download-script.sh
 
   rtaudio_build_script:
   # Depends on libsndfile
-    - .ci/mingw-64/rtaudio-install-script.sh
+    - .ci/mingw32-64/rtaudio-install-script.sh
 
   ncurses_download_cache:
     folder: ncurses-6.1
     populate_script:
-      - .ci/mingw-64/ncurses-download-script.sh
+      - .ci/mingw32-64/ncurses-download-script.sh
   
   ncurses_build_script:
-    - .ci/mingw-64/ncurses-install-script.sh
+    - .ci/mingw32-64/ncurses-install-script.sh
 
   boost_download_cache:
     folder: boost_1_68_0
     populate_script:
-      - .ci/mingw-64/boost-download-script.sh
+      - .ci/mingw32-64/boost-download-script.sh
 
   boost_build_script:
-    - .ci/mingw-64/boost-install-script.sh
+    - .ci/mingw32-64/boost-install-script.sh
 
   build_script:
-    - .ci/mingw-64/chronicle-build.sh
+    - .ci/mingw32-64/chronicle-build.sh
 
   dist_script:
     - pip install b2
-    - .ci/mingw-64/chronicle-create-dist-archives.sh
-    - .ci/mingw-64/chronicle-create-bb-upload.sh
+    - .ci/mingw32-64/chronicle-create-dist-archives.sh
+    - .ci/mingw32-64/chronicle-create-bb-upload.sh
     
+  win32_build_task:
+  # Most sources need to be built from scratch, since the mingw version of pkg-config ignores PKG_CONFIG_PATH
+  env:
+    # Let's do it just for conveniences' sake
+    PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
+    PATH: '$PATH:/usr/local'
+    CHRONICLE_TRIPLET: ${CHRONICLE_NAME}-${CHRONICLE_VERSION}-win32
+  container:
+    image: ubuntu:latest
+
+  apt_script:
+    - chmod +x .ci/mingw32-32/*.sh
+    - .ci/mingw32-32/apt-script.sh
+
+  lame_download_cache:
+    folder: lame-3.100
+    populate_script:
+      - .ci/mingw32-32/lame-download-script.sh
+    
+  lame_build_script:
+    - .ci/mingw32-32/lame-install-script.sh
+
+  libogg_download_cache:
+    folder: libogg-1.3.3
+    populate_script:
+      - .ci/mingw32-32/libogg-download.sh
+
+  libogg_install_script:
+    - .ci/mingw32-32/libogg-install.sh
+
+  libvorbis_download_cache:
+    folder: libvorbis-1.3.6
+    populate_script:
+      - .ci/mingw32-32/libvorbis-download.sh
+
+  libvorbis_install_script:
+    - .ci/mingw32-32/libvorbis-install.sh
+
+  libflac_download_cache:
+    folder: flac-1.3.2
+    populate_script:
+      - .ci/mingw32-32/libflac-download.sh
+
+  libflac_install_script:
+    - .ci/mingw32-32/libflac-install.sh
+
+  libspeex_download_cache:
+    folder: speex-1.2.0
+    populate_script:
+      - .ci/mingw32-32/libspeex-download.sh
+
+  libspeex_install_script:
+    - .ci/mingw32-32/libspeex-install.sh
+  
+  libsndfile_download_cache:
+    folder: libsndfile-1.0.28
+    populate_script:
+      - .ci/mingw32-32/libsndfile-download-script.sh
+
+  libsndfile_build_script:
+    - .ci/mingw32-32/libsndfile-install-script.sh
+
+  rtaudio_download_cache: 
+    folder: rtaudio
+    populate_script:
+      - .ci/mingw32-32/rtaudio-download-script.sh
+
+  rtaudio_build_script:
+  # Depends on libsndfile
+    - .ci/mingw32-32/rtaudio-install-script.sh
+
+  ncurses_download_cache:
+    folder: ncurses-6.1
+    populate_script:
+      - .ci/mingw32-32/ncurses-download-script.sh
+  
+  ncurses_build_script:
+    - .ci/mingw32-32/ncurses-install-script.sh
+
+  boost_download_cache:
+    folder: boost_1_68_0
+    populate_script:
+      - .ci/mingw32-32/boost-download-script.sh
+
+  boost_build_script:
+    - .ci/mingw32-32/boost-install-script.sh
+
+  build_script:
+    - .ci/mingw32-32/chronicle-build.sh
+
+  dist_script:
+    - pip install b2
+    - .ci/mingw32-32/chronicle-create-dist-archives.sh
+    - .ci/mingw32-32/chronicle-create-bb-upload.sh
