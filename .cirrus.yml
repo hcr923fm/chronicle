@@ -143,7 +143,7 @@ win64_build_task:
     - .ci/mingw32-64/chronicle-create-dist-archives.sh
     - .ci/mingw32-64/chronicle-create-bb-upload.sh
     
-  win32_build_task:
+win32_build_task:
   # Most sources need to be built from scratch, since the mingw version of pkg-config ignores PKG_CONFIG_PATH
   env:
     # Let's do it just for conveniences' sake
