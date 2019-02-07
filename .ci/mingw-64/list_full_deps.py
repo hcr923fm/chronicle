@@ -6,15 +6,22 @@ import os
 def findFileLocation(file_name, expected_subdir="/usr"):
     proc = subprocess.Popen(
         ["find", expected_subdir, "-name", file_name], stdout=subprocess.PIPE)
-    for loc_path in proc.stdout.read():
+    for loc_path in proc.communicate()[0]:
         if loc_path.count(".dll"):
             return loc_path
 
 
 def getDepOfLib(lib_path):
-    find_op = subprocess.check_output(
-        ["x86_64-w64-mingw32-objdump", "-p", lib_path, "|", "grep", "dll", "|", "awk", "'{print $3}'"])
-    return find_op.split("\n")
+    proc_objdump = subprocess.Popen(
+        ["x86_64-w64-mingw32-objdump", "-p", lib_path], stdout=subprocess.PIPE, shell=False)
+    proc_grep = subprocess.Popen(
+        ["grep", "dll"], stdin=proc_objdump.stdout, stdout=subprocess.PIPE, shell=False)
+    proc_awk = subprocess.Popen(
+        ["awk", "'{print $3}'"], stdin=proc_grep.stdout, stdout=subprocess.PIPE, shell=False)
+
+    proc_objdump.stdout.close()
+    proc_grep.stdout.close()
+    return proc_awk.communicate()[0].split("\n")
 
 
 # Expect a list of system file deps in sys.argv, like:
