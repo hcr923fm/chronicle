@@ -14,11 +14,11 @@ Windows users (both 32 and 64 bit) can simply download the latest compiled binar
 ### Linux
 #### With binaries
 Linux users can also [download the binaries](https://github.com/hcr923fm/chronicle/releases/latest). However, you will need to manually install the pre-requisites:
-* RtAudio, (`librtaudio-dev`)
-* libsndfile, which is in most package managers. (`libsndfile1-dev`)
-* Boost, which is in most package managers (`libboost-all-dev`).
-* ncurses, which is available in most package managers (`libncurses5-dev`).
-* LAME encoding library, which is in most package managers (`libmp3lame-dev`).
+* RtAudio, (`librtaudio-dev`) @5.0.0
+* libsndfile, which is in most package managers (`libsndfile1-dev`)
+* Boost, which is in most package managers (`libboost-all-dev`) @1.68.0+
+* ncurses, which is available in most package managers (`libncurses5-dev`)
+* LAME encoding library, which is in most package managers (`libmp3lame-dev`) @1.3.0+
 
 #### Compiling from scratch
 Or, you can compile chronicle from scratch.
@@ -35,11 +35,12 @@ cd chronicle
 ```
 
 **Stable builds**
+
 For the latest stable build, [download the source tarball](https://github.com/hcr923fm/chronicle/releases/latest) and run
 
 ```
 tar xvf chronicle-*
-ch chronicle
+cd chronicle-*
 ./configure && make && make install
 ```
 
@@ -52,7 +53,7 @@ chronicle [-h | --help]
 chronicle [--licence]
 chronicle [-l | --list-devices ]
 chronicle [-d | --directory OUTPUT_DIRECTORY] [-f | --filename FORMAT] [-i | --input-device DEVICE_ID]
-          [[-a | --max-age MAX_FILE_AGE] | --no-delete] [-s | --audio-format [WAV | OGG]]
+          [[-a | --max-age MAX_FILE_AGE] | --no-delete] [-s | --audio-format [WAV | OGG | MP3]]
 
 Where:
     -h | --help          Prints this help message.
@@ -77,7 +78,7 @@ Where:
                              Acceptable parameters are:
                                  OGG | Ogg Vorbis (.ogg)
                                  WAV | 16-bit PCM WAV (.wav)
-                                 MP3 | MP3 VBR, quality 3 (.mp3)
+                                 MP3 | MP3 CBR, 320kbps (.mp3)
                              Defaults to WAV.
 ```
 
@@ -92,5 +93,5 @@ If you find Chronicle to be useful, fancy buying me a coffee?
 I'm on [Flattr](https://flattr.com/submit/auto?fid=kzr39z&url=http%3A%2F%2Fgithub.com%2Fcalmcl1%2Fchronicle) and [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FXDR44PHGFEDN)!
 
 ## Copyright
-Copyright 2016-2018 Callum McLean.
+Copyright 2016-2019 Callum McLean.
 Distributed under the MIT Licence. See LICENCE for details.
