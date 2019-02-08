@@ -2,6 +2,8 @@ import sys
 import subprocess
 import os
 
+HOST_TRIPLET = "i686-w64-mingw32"
+
 
 def findFileLocation(file_name, expected_subdir="/usr"):
     proc = subprocess.Popen(
@@ -10,14 +12,14 @@ def findFileLocation(file_name, expected_subdir="/usr"):
     loc_path = proc.communicate()[0]
 
     for p in loc_path.split("\n"):
-        if p.count(".dll"):
-            return p
+        if p.count(".dll") and p.count(HOST_TRIPLET):
+            return p.replace("win32", "posix")
 
 
 def getDepsOfLib(lib_path):
     #print "Getting deps of", lib_path
     proc_objdump = subprocess.Popen(
-        ["i686-w64-mingw32-objdump", "-p", lib_path], stdout=subprocess.PIPE, shell=False)
+        ["{0}-objdump".format(HOST_TRIPLET), "-p", lib_path], stdout=subprocess.PIPE, shell=False)
     proc_grep = subprocess.Popen(
         ["grep", "\\.dll"], stdin=proc_objdump.stdout, stdout=subprocess.PIPE, shell=False)
     proc_awk = subprocess.Popen(
