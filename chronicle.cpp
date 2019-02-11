@@ -74,6 +74,8 @@ string audioFileExtension = ".wav";
 
 unsigned int inputAudioDeviceId = audio.getDefaultInputDevice();
 
+cmdOpts opts;
+
 bool silent_flag = 0;
 
 int main(int argc, char *argv[])
@@ -105,7 +107,7 @@ int main(int argc, char *argv[])
 
 	/* Parse cmd-line arguments */
 	{
-		cmdOpts opts = parse_options(argc, argv);
+		opts = parse_options(argc, argv);
 
 		// See if we're running in debug mode
 
@@ -293,11 +295,17 @@ int main(int argc, char *argv[])
 	logger->debug("Output directory: " + output_directory.string());
 
 	string windowTitle = "Chronicle v" + SOFTWARE_VERSION;
-	initCurses(windowTitle);
+	if (!opts.no_term)
+	{
+		initCurses(windowTitle);
+	}
 
 	doRecord(output_directory, fileNameFormat);
 
-	closeCurses();
+	if (!opts.no_term)
+	{
+		closeCurses();
+	}
 	return 0;
 }
 
@@ -348,7 +356,10 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		}
 	}
 
-	updateAudioDevice(deviceInfo.name, rp.sampleRate, rp.channelCount);
+	if (!opts.no_term)
+	{
+		updateAudioDevice(deviceInfo.name, rp.sampleRate, rp.channelCount);
+	}
 
 	// Set up signal handling; fixes #1
 	{
@@ -415,7 +426,10 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 
 		boost::filesystem::space_info diskSpace = boost::filesystem::space(directory);
 		long diskSpaceAvailableGB = diskSpace.available / 1073741824; // bytes to GB
-		updateHardDriveSpace(diskSpaceAvailableGB, fileSizeMB);
+		if (!opts.no_term)
+		{
+			updateHardDriveSpace(diskSpaceAvailableGB, fileSizeMB);
+		}
 
 		// Maintenance
 		removeOldAudioFiles(audioFileAgeLimit, directory);
@@ -446,7 +460,10 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 
 		try
 		{
-			updateRecordingToPath(audioFileFullPath.generic_string());
+			if (!opts.no_term)
+			{
+				updateRecordingToPath(audioFileFullPath.generic_string());
+			}
 			logger->debug("Updated recording output path: {}", audioFileFullPath.generic_string());
 			audio.openStream(NULL, &params, RTAUDIO_SINT16, rp.sampleRate, &(rp.bufferLength), &cb_record, &(rp.channelCount));
 			logger->debug("Opened audio stream");
@@ -517,7 +534,10 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 		(framesPeak > 1) ? sprintf(label, "%02.2f dB", level) : sprintf(label, "  -INF dB");
 
 		// TODO: Rather than calling this for every channel individually it would be nicer to just pass an array of values representing all of the channels...
-		updateAudioMeter(ch, abs(silenceThresholdDB), abs(silenceThresholdDB) - abs(level), label);
+		if (!opts.no_term)
+		{
+			updateAudioMeter(ch, abs(silenceThresholdDB), abs(silenceThresholdDB) - abs(level), label);
+		}
 	}
 	return 0;
 }

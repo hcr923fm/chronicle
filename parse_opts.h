@@ -17,6 +17,7 @@ struct cmdOpts
     string max_age_unit = "";
     string audio_format = "";
     int input_device = -1;
+    bool no_term = false;
     bool is_debug = false;
 };
 
