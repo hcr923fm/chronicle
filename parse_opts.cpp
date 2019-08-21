@@ -101,6 +101,14 @@ cmdOpts parse_options(int argc, char *argv[])
             }
         }
 
+        /* --no-term */
+
+        else if (!strcmp(argv[i], "--no-term"))
+        {
+            opts.no_term = true;
+            i++;
+        }
+
         /* --debug */
         else if (!strcmp(argv[i], "--debug"))
         {
