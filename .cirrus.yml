@@ -158,16 +158,14 @@ win32_build_task:
     PATH: '$PATH:/usr/local'
     CHRONICLE_TRIPLET: ${CHRONICLE_NAME}-${CHRONICLE_VERSION}-win32
     CMAKE_SYSTEM_NAME: "Windows"
-    CMAKE_C_COMPILER: "i686-w64-mingw32-gcc"
-    CMAKE_CXX_COMPILER: "i686-w64-mingw32-g++"
   container:
     image: ubuntu:latest
-
-  submodules_script: git submodule sync --recursive && git submodule update --init --recursive
 
   apt_script:
     - chmod +x .ci/mingw32-32/*.sh
     - .ci/mingw32-32/apt-script.sh
+
+  submodules_script: git submodule sync --recursive && git submodule update --init --recursive
 
   lame_download_cache:
     folder: lame-3.100
