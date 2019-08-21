@@ -11,12 +11,12 @@ linux_build_task:
 
   env:
     CHRONICLE_TRIPLET: ${CHRONICLE_NAME}-${CHRONICLE_VERSION}-linux
-
-  submodules_script: git submodule sync --recursive && git submodule update --init --recursive
   
   apt_script:
     - chmod +x .ci/linux/*.sh # I know, I dev on Windows -_-
     - .ci/linux/apt-deps.sh
+
+  submodules_script: git submodule sync --recursive && git submodule update --init --recursive
 
   boost_cache:
     folder: boost_1_68_0
@@ -62,12 +62,12 @@ win64_build_task:
     CMAKE_CXX_COMPILER: "x86_64-w64-mingw32-g++"
   container:
     image: ubuntu:latest
-
-  submodules_script: git submodule sync --recursive && git submodule update --init --recursive
   
   apt_script:
     - chmod +x .ci/mingw32-64/*.sh
     - .ci/mingw32-64/apt-script.sh
+
+  submodules_script: git submodule sync --recursive && git submodule update --init --recursive
 
   lame_download_cache:
     folder: lame-3.100
