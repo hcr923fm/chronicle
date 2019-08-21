@@ -1,3 +1,4 @@
 cd rtaudio-5.0.0
-make
+mkdir __build
+cmake ..
 make install

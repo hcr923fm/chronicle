@@ -19,6 +19,8 @@ if (UNIX)
     else()
             message(FATAL_ERROR "Could not find libmp3lame! Exiting...")
     endif()
+else()
+    message(STATUS "Not looking for LAME library")
 endif()
 
 find_library(SNDFILE_LIB sndfile)
@@ -29,13 +31,13 @@ else()
 endif()
 
 #find_package(PkgConfig REQUIRED)
-find_package(RtAudio REQUIRED)
+find_library(RTAUDIO_LIB rtaudio)
 #pkg_check_modules(RtAudio REQUIRED IMPORTED_TARGET rtaudio)
-if (RtAudio_FOUND)
+if (RTAUDIO_LIB OR rtaudio_FOUND)
     message(STATUS "Found RtAudio: ${RtAudio_VERSION}")
 else()
     message(FATAL_ERROR "Could not find RtAudio! Exiting...")
-    endif()
+endif()
 
 find_package(Boost REQUIRED filesystem)
 if(Boost_FILESYSTEM_FOUND)
@@ -60,8 +62,12 @@ spdlog_enable_warnings(chronicle)
 target_link_libraries(chronicle PRIVATE
 spdlog::spdlog_header_only
 #PkgConfig::RtAudio
-RtAudio::rtaudio
+#RtAudio::rtaudio
+${RTAUDIO_LIB}
 ${SNDFILE_LIB}
-#${LAME_LIB}
 ${Boost_LIBRARIES}
 ncurses)
+
+if(UNIX)
+    target_link_libraries(chronicle PRIVATE ${LAME_LIB})
+endif()
