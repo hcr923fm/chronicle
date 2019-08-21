@@ -141,6 +141,12 @@ int main(int argc, char *argv[])
 			unsigned int devices = audio.getDeviceCount();
 			RtAudio::DeviceInfo deviceInfo;
 
+			if (devices < 1)
+			{
+				cout << "No devices found! Exiting..." << endl;
+				exit(0);
+			}
+
 			for (unsigned int i = 0; i < devices; i++)
 			{
 				deviceInfo = audio.getDeviceInfo(i);
