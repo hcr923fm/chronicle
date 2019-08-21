@@ -1,6 +1,13 @@
 
 # Changelog - Chronicle
 
+## Will be 1.0.3
+### Fixed
+* Fixed issue where using `-l` with no available audio devices would throw an error.
+
+### Changed
+* Switched to CMake-based build system.
+
 ## v1.0.2
 ### Fixed
 * Fixed issue where help string would print incorrectly
