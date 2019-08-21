@@ -24,21 +24,21 @@ linux_build_task:
   boost_build_script:
     - .ci/linux/boost-install.sh
   
-  lame_cache:
-    folder: lame-3.100
-    populate_script:
-      - .ci/linux/lame-download.sh
+  # lame_cache:
+  #   folder: lame-3.100
+  #   populate_script:
+  #     - .ci/linux/lame-download.sh
   
-  lame_build_script:
-    - .ci/linux/lame-install.sh
+  # lame_build_script:
+  #   - .ci/linux/lame-install.sh
 
-  rtaudio_cache: 
-    folder: rtaudio-5.0.0
-    populate_script:
-      - .ci/linux/rtaudio-download.sh
+  # rtaudio_cache: 
+  #   folder: rtaudio-5.0.0
+  #   populate_script:
+  #     - .ci/linux/rtaudio-download.sh
 
-  rtaudio_build_script:
-    - .ci/linux/rtaudio-install.sh
+  # rtaudio_build_script:
+  #   - .ci/linux/rtaudio-install.sh
 
   build_script:
     - .ci/linux/chronicle-build.sh
@@ -55,6 +55,9 @@ win64_build_task:
     PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
     PATH: '$PATH:/usr/local'
     CHRONICLE_TRIPLET: ${CHRONICLE_NAME}-${CHRONICLE_VERSION}-win64
+    CMAKE_SYSTEM_NAME: "Windows"
+    CMAKE_C_COMPILER: "x86_64-w64-mingw32-gcc"
+    CMAKE_CXX_COMPILER: "x86_64-w64-mingw32-g++"
   container:
     image: ubuntu:latest
 
@@ -150,6 +153,9 @@ win32_build_task:
     PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
     PATH: '$PATH:/usr/local'
     CHRONICLE_TRIPLET: ${CHRONICLE_NAME}-${CHRONICLE_VERSION}-win32
+    CMAKE_SYSTEM_NAME: "Windows"
+    CMAKE_C_COMPILER: "i686-w64-mingw32-gcc"
+    CMAKE_CXX_COMPILER: "i686-w64-mingw32-g++"
   container:
     image: ubuntu:latest
 

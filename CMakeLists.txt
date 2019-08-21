@@ -12,11 +12,13 @@ lame
 #add_subdirectory(rtaudio)
 add_subdirectory(spdlog)
 
-find_library(LAME_LIB libmp3lame.a)
-if(LAME_LIB OR lame_FOUND)
-    message(STATUS "Found libmp3lame")
-else()
-    message(FATAL_ERROR "Could not find libmp3lame! Exiting...")
+if (UNIX)
+    find_library(LAME_LIB libmp3lame.a)
+    if(LAME_LIB OR lame_FOUND)
+            message(STATUS "Found libmp3lame")
+    else()
+            message(FATAL_ERROR "Could not find libmp3lame! Exiting...")
+    endif()
 endif()
 
 find_library(SNDFILE_LIB sndfile)
@@ -60,6 +62,6 @@ spdlog::spdlog_header_only
 #PkgConfig::RtAudio
 RtAudio::rtaudio
 ${SNDFILE_LIB}
-${LAME_LIB}
+#${LAME_LIB}
 ${Boost_LIBRARIES}
 ncurses)
