@@ -12,6 +12,8 @@ linux_build_task:
   env:
     CHRONICLE_TRIPLET: ${CHRONICLE_NAME}-${CHRONICLE_VERSION}-linux
 
+  submodules_script: git submodule sync --recursive && git submodule update --init --recursive
+  
   apt_script:
     - chmod +x .ci/linux/*.sh # I know, I dev on Windows -_-
     - .ci/linux/apt-deps.sh
@@ -61,6 +63,8 @@ win64_build_task:
   container:
     image: ubuntu:latest
 
+  submodules_script: git submodule sync --recursive && git submodule update --init --recursive
+  
   apt_script:
     - chmod +x .ci/mingw32-64/*.sh
     - .ci/mingw32-64/apt-script.sh
@@ -158,6 +162,8 @@ win32_build_task:
     CMAKE_CXX_COMPILER: "i686-w64-mingw32-g++"
   container:
     image: ubuntu:latest
+
+  submodules_script: git submodule sync --recursive && git submodule update --init --recursive
 
   apt_script:
     - chmod +x .ci/mingw32-32/*.sh
