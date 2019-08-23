@@ -16,6 +16,14 @@ linux_build_task:
     - chmod +x .ci/linux/*.sh # I know, I dev on Windows -_-
     - .ci/linux/apt-deps.sh
 
+  cmake_cache:
+    folder: cmake-3.15.2-Linux-x86_64
+    populate_script:
+      - wget https://github.com/Kitware/CMake/releases/download/v3.15.2/cmake-3.15.2-Linux-x86_64.tar.gz
+      - tar xf cmake-3.15.2-Linux-x86_64.tar.gz
+  
+  cmake_install: cp -r cmake-3.15.2-Linux-x86_64/* /
+
   submodules_script: git submodule sync --recursive && git submodule update --init --recursive
 
   boost_cache:
@@ -57,15 +65,20 @@ win64_build_task:
     PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
     PATH: '$PATH:/usr/local'
     CHRONICLE_TRIPLET: ${CHRONICLE_NAME}-${CHRONICLE_VERSION}-win64
-    CMAKE_SYSTEM_NAME: "Windows"
-    CMAKE_C_COMPILER: "x86_64-w64-mingw32-gcc"
-    CMAKE_CXX_COMPILER: "x86_64-w64-mingw32-g++"
   container:
     image: ubuntu:latest
   
   apt_script:
     - chmod +x .ci/mingw32-64/*.sh
     - .ci/mingw32-64/apt-script.sh
+
+  cmake_cache:
+    folder: cmake-3.15.2-Linux-x86_64
+    populate_script:
+      - wget https://github.com/Kitware/CMake/releases/download/v3.15.2/cmake-3.15.2-Linux-x86_64.tar.gz
+      - tar xf cmake-3.15.2-Linux-x86_64.tar.gz
+  
+  cmake_install: cp -r cmake-3.15.2-Linux-x86_64/* /
 
   submodules_script: git submodule sync --recursive && git submodule update --init --recursive
 
@@ -157,13 +170,20 @@ win32_build_task:
     PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
     PATH: '$PATH:/usr/local'
     CHRONICLE_TRIPLET: ${CHRONICLE_NAME}-${CHRONICLE_VERSION}-win32
-    CMAKE_SYSTEM_NAME: "Windows"
   container:
     image: ubuntu:latest
 
   apt_script:
     - chmod +x .ci/mingw32-32/*.sh
     - .ci/mingw32-32/apt-script.sh
+
+  cmake_cache:
+    folder: cmake-3.15.2-Linux-x86_64
+    populate_script:
+      - wget https://github.com/Kitware/CMake/releases/download/v3.15.2/cmake-3.15.2-Linux-x86_64.tar.gz
+      - tar xf cmake-3.15.2-Linux-x86_64.tar.gz
+  
+  cmake_install: cp -r cmake-3.15.2-Linux-x86_64/* /
 
   submodules_script: git submodule sync --recursive && git submodule update --init --recursive
 

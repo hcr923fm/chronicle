@@ -1,14 +1,16 @@
 cmake_minimum_required(VERSION 3.7)
 project (chronicle CXX)
 
-set (CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 include_directories("$PROJECT_SOURCE_DIR"
 lame
+/usr/x86_64-w64-mingw32/include/boost-1_68
+/usr/i686_64-w64-mingw32/include/boost-1_68
 )
-
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -DSPDLOG_COMPILED_LIB -D_WIN32_WINNT=0x600 -D_ISOC99_SOURCE -Wl,--trace")
 #add_subdirectory(rtaudio)
 add_subdirectory(spdlog)
 
@@ -58,9 +60,9 @@ screen.cpp
 )
 
 spdlog_enable_warnings(chronicle)
-
-target_link_libraries(chronicle PRIVATE
-spdlog::spdlog_header_only
+                                                                                                                                                                                                                                             target_link_libraries(chronicle PRIVATE
+#spdlog::spdlog_header_only
+spdlog::spdlog
 #PkgConfig::RtAudio
 #RtAudio::rtaudio
 ${RTAUDIO_LIB}
