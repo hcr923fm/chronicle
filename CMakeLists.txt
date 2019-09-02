@@ -10,7 +10,7 @@ lame
 /usr/x86_64-w64-mingw32/include/boost-1_68
 /usr/i686_64-w64-mingw32/include/boost-1_68
 )
-set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -DSPDLOG_COMPILED_LIB -D_WIN32_WINNT=0x600 -D_ISOC99_SOURCE -Wl,--trace")
+add_compile_options(-DSPDLOG_COMPILED_LIB -D_WIN32_WINNT=0x600 -D_ISOC99_SOURCE -Wl,--trace)
 #add_subdirectory(rtaudio)
 add_subdirectory(spdlog)
 

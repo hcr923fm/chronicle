@@ -2,8 +2,8 @@ SET(CMAKE_SYSTEM_NAME Windows)
 set(CMAKE_SYSTEM_PROCESSOR AMD64)
 include(CMakeForceCompiler)
 
-set(CMAKE_C_COMPILER /usr/bin/x86_64-w64-mingw32-gcc)
-set(CMAKE_CXX_COMPILER /usr/bin/x86_64-w64-mingw32-g++)
+set(CMAKE_C_COMPILER /usr/bin/x86_64-w64-mingw32-gcc-posix)
+set(CMAKE_CXX_COMPILER /usr/bin/x86_64-w64-mingw32-g++-posix)
 SET(BOOST_ROOT /usr/x86_64-w64-mingw32/include/boost-1_68)
 SET(BOOST_LIBRARYDIR /usr/x86_64-w64-mingw32/lib)
 #set(Boost_USE_STATIC_LIBS ON) # only find static libs
