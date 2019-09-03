@@ -13,9 +13,11 @@ linux_build_task:
     CHRONICLE_TRIPLET: ${CHRONICLE_NAME}-${CHRONICLE_VERSION}-linux
   
   apt_script:
-    - chmod +x .ci/linux/*.sh # I know, I dev on Windows -_-
-    - .ci/linux/apt-deps.sh
+    - apt-get update -qq
+    - apt-get install libncurses5-dev libsndfile1-dev libasound2 libasound2-dev libflac-dev libvorbis-dev libogg-dev git build-essential libtool libtool-bin wget python python-pip libmp3lame-dev librtaudio-dev -qq -y
 
+  submodules_script: git submodule sync --recursive && git submodule update --init --recursive
+  
   cmake_cache:
     folder: cmake-3.15.2-Linux-x86_64
     populate_script:
@@ -24,15 +26,17 @@ linux_build_task:
   
   cmake_install_script: cp -r cmake-3.15.2-Linux-x86_64/* /
 
-  submodules_script: git submodule sync --recursive && git submodule update --init --recursive
-
   boost_cache:
     folder: boost_1_68_0
     populate_script:
-      - .ci/linux/boost-download.sh
+      - wget https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.gz
+      - tar xf boost_1_68_0.tar.gz
+      - cd boost_1_68_0
+      - ./bootstrap.sh --with-libraries=system,filesystem
   
   boost_build_script:
-    - .ci/linux/boost-install.sh
+    - cd boost_1_68_0
+    - ./b2 install
   
   # lame_cache:
   #   folder: lame-3.100
@@ -51,12 +55,15 @@ linux_build_task:
   #   - .ci/linux/rtaudio-install.sh
 
   build_script:
-    - .ci/linux/chronicle-build.sh
+    - mkdir -p ${CHRONICLE_TRIPLET}
+    - cd ${CHRONICLE_TRIPLET}
+    - cmake ..
+    - cmake --build .
 
-  dist_script:
-    - pip install --upgrade b2
-    - .ci/linux/chronicle-create-dist-archives.sh
-    - .ci/linux/chronicle-create-bb-upload.sh
+  # dist_script:
+  #   - pip install --upgrade b2
+    # - .ci/linux/chronicle-create-dist-archives.sh
+    # - .ci/linux/chronicle-create-bb-upload.sh
 
 win64_build_task:
   # Most sources need to be built from scratch, since the mingw version of pkg-config ignores PKG_CONFIG_PATH
