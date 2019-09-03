@@ -14,11 +14,13 @@ add_compile_options(-DSPDLOG_COMPILED_LIB -D_WIN32_WINNT=0x600 -D_ISOC99_SOURCE 
 #add_subdirectory(rtaudio)
 add_subdirectory(spdlog)
 
-#if (UNIX)
+
 find_library(LAME_LIB libmp3lame.a)
-#else()
-#    message(STATUS "Not looking for LAME library")
-#endif()
+if (LAME_LIB OR lame_FOUND)
+    message(STATUS "Found LAME")
+else()
+    message(FATAL_ERROR "Could not find lame! Exiting...")
+endif()
 
 find_library(SNDFILE_LIB sndfile)
 if (SNDFILE_LIB OR sndfile_FOUND)
@@ -55,16 +57,13 @@ screen.cpp
 )
 
 spdlog_enable_warnings(chronicle)
-                                                                                                                                                                                                                                             target_link_libraries(chronicle PRIVATE
+target_link_libraries(chronicle PRIVATE
 #spdlog::spdlog_header_only
 spdlog::spdlog
+${SNDFILE_LIB}
+${LAME_LIB}
 #PkgConfig::RtAudio
 #RtAudio::rtaudio
 ${RTAUDIO_LIB}
-${SNDFILE_LIB}
 ${Boost_LIBRARIES}
 ncurses)
-
-if(UNIX)
-    target_link_libraries(chronicle PRIVATE ${LAME_LIB})
-endif()
