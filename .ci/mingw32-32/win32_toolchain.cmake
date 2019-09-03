@@ -4,12 +4,10 @@ include(CMakeForceCompiler)
 
 set(CMAKE_C_COMPILER /usr/bin/i686-w64-mingw32-gcc-posix)
 set(CMAKE_CXX_COMPILER /usr/bin/i686-w64-mingw32-g++-posix)
+set(CMAKE_PREFIX_PATH /usr/i686-w64-mingw32)
 SET(BOOST_ROOT /usr/i686-w64-mingw32/include/boost-1_68)
 SET(BOOST_LIBRARYDIR /usr/i686-w64-mingw32/lib)
-#set(Boost_USE_STATIC_LIBS ON) # only find static libs
-#set(Boost_USE_MULTITHREADED ON)
 set(Boost_ARCHITECTURE "-i686")
-#set(Boost_USE_STATIC_RUNTIME ON)
 set(Boost_USE_DEBUG_RUNTIME OFF)
 SET(CMAKE_FIND_ROOT_PATH /usr/i686-w64-mingw32 /usr/i686-w64-mingw32/include/boost-1_68)
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
