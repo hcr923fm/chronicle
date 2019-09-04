@@ -10,7 +10,7 @@ lame
 /usr/x86_64-w64-mingw32/include/boost-1_68
 /usr/i686_64-w64-mingw32/include/boost-1_68
 )
-add_compile_options(-DSPDLOG_COMPILED_LIB -D_WIN32_WINNT=0x600 -D_ISOC99_SOURCE -Wl,--trace)
+add_compile_options(-DSPDLOG_COMPILED_LIB -D_WIN32_WINNT=0x600 -D_ISOC99_SOURCE -lole32 -lwinmm -ldsound -Wl,--trace)
 #add_subdirectory(rtaudio)
 add_subdirectory(spdlog)
 

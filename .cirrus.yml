@@ -37,22 +37,6 @@ linux_build_task:
   boost_build_script:
     - cd boost_1_68_0
     - ./b2 install
-  
-  # lame_cache:
-  #   folder: lame-3.100
-  #   populate_script:
-  #     - .ci/linux/lame-download.sh
-  
-  # lame_build_script:
-  #   - .ci/linux/lame-install.sh
-
-  # rtaudio_cache: 
-  #   folder: rtaudio-5.0.0
-  #   populate_script:
-  #     - .ci/linux/rtaudio-download.sh
-
-  # rtaudio_build_script:
-  #   - .ci/linux/rtaudio-install.sh
 
   build_script:
     - mkdir -p ${CHRONICLE_TRIPLET}
@@ -65,19 +49,23 @@ linux_build_task:
     # - .ci/linux/chronicle-create-dist-archives.sh
     # - .ci/linux/chronicle-create-bb-upload.sh
 
-win64_build_task:
+win_build_task:
   # Most sources need to be built from scratch, since the mingw version of pkg-config ignores PKG_CONFIG_PATH
   env:
     # Let's do it just for conveniences' sake
     PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
     PATH: '$PATH:/usr/local'
-    CHRONICLE_TRIPLET: ${CHRONICLE_NAME}-${CHRONICLE_VERSION}-win64
+    CHRONICLE_TRIPLET: ${CHRONICLE_NAME}-${CHRONICLE_VERSION}
+    matrix:
+      - COMPILER_TRIPLET: x86_64-w64-mingw32
+      - COMPILER_TRIPLET: i686-w64-mingw32
   container:
     image: ubuntu:latest
-  
+
   apt_script:
-    - chmod +x .ci/mingw32-64/*.sh
-    - .ci/mingw32-64/apt-script.sh
+    - apt-get update && apt-get install mingw-w64 mingw-w64-tools pkg-config git libtool libtool-bin build-essential wget autoconf automake python python-pip zip -y
+    - update-alternatives --set ${COMPILER_TRIPLET}-gcc /usr/bin/${COMPILER_TRIPLET}-gcc-posix
+    - update-alternatives --set ${COMPILER_TRIPLET}-g++ /usr/bin/${COMPILER_TRIPLET}-g++-posix
 
   cmake_cache:
     folder: cmake-3.15.2-Linux-x86_64
@@ -92,185 +80,121 @@ win64_build_task:
   lame_download_cache:
     folder: lame-3.100
     populate_script:
-      - .ci/mingw32-64/lame-download-script.sh
+      - wget https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
+      ar xf lame-*
     
   lame_build_script:
-    - .ci/mingw32-64/lame-install-script.sh
+    - cd lame-3.100
+    - ./configure --disable-decoder --disable-shared --enable-static --host=${COMPILER_TRIPLET} --prefix=/usr/${COMPILER_TRIPLET}
+    - make
+    - make install
 
   libogg_download_cache:
     folder: libogg-1.3.3
     populate_script:
-      - .ci/mingw32-64/libogg-download.sh
+      - wget http://downloads.xiph.org/releases/ogg/libogg-1.3.3.tar.gz
+      - tar xf libogg-1.3.3.tar.gz
 
   libogg_install_script:
-    - .ci/mingw32-64/libogg-install.sh
+    - cd libogg-1.3.3
+    - ./configure --host=${COMPILER_TRIPLET} --prefix=/usr/${COMPILER_TRIPLET}
+    - make && make install
 
   libvorbis_download_cache:
     folder: libvorbis-1.3.6
     populate_script:
-      - .ci/mingw32-64/libvorbis-download.sh
+      - wget http://downloads.xiph.org/releases/vorbis/libvorbis-1.3.6.tar.gz
+      - tar xf libvorbis-1.3.6.tar.gz
 
   libvorbis_install_script:
-    - .ci/mingw32-64/libvorbis-install.sh
+    - cd libvorbis-1.3.6
+    - ./configure --host=${COMPILER_TRIPLET} --prefix=/usr/${COMPILER_TRIPLET}
+    - make && make install
 
   libflac_download_cache:
     folder: flac-1.3.2
     populate_script:
-      - .ci/mingw32-64/libflac-download.sh
+      - wget http://downloads.xiph.org/releases/flac/flac-1.3.2.tar.xz
+      - tar xJf flac-1.3.2.tar.xz
 
   libflac_install_script:
-    - .ci/mingw32-64/libflac-install.sh
+    - cd flac-1.3.2
+    - ./configure --host=${COMPILER_TRIPLET} --prefix=/usr/${COMPILER_TRIPLET}
+    - make && make install
 
   libspeex_download_cache:
     folder: speex-1.2.0
     populate_script:
-      - .ci/mingw32-64/libspeex-download.sh
+      - wget http://downloads.xiph.org/releases/speex/speex-1.2.0.tar.gz
+      - tar xf speex-1.2.0.tar.gz
 
   libspeex_install_script:
-    - .ci/mingw32-64/libspeex-install.sh
+    - cd speex-1.2.0
+    - ./configure --host=${COMPILER_TRIPLET} --prefix=/usr/${COMPILER_TRIPLET}
+    - make && make install
   
   libsndfile_download_cache:
     folder: libsndfile-1.0.28
     populate_script:
-      - .ci/mingw32-64/libsndfile-download-script.sh
+      - wget http://www.mega-nerd.com/libsndfile/files/libsndfile-1.0.28.tar.gz
+      - tar xf libsndfile-1.0.28.tar.gz
 
   libsndfile_build_script:
-    - .ci/mingw32-64/libsndfile-install-script.sh
+    - cd libsndfile-1.0.28
+    - ./configure --host=${COMPILER_TRIPLET} --disable-static --prefix=/usr/${COMPILER_TRIPLET}
+    - make
+    - make install
 
   rtaudio_download_cache: 
     folder: rtaudio
     populate_script:
-      - .ci/mingw32-64/rtaudio-download-script.sh
+      - wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.1.0.tar.gz
+      - tar xf rtaudio-5.1.0.tar.gz
 
   rtaudio_build_script:
   # Depends on libsndfile
-    - .ci/mingw32-64/rtaudio-install-script.sh
+    - cd rtaudio
+    - ./autogen.sh --no-configure
+    - export CFLAGS=-Wno-unused-but-set-variable # We need this for the RtAudio build
+    - ./configure CXX=/usr/bin/${COMPILER_TRIPLET}-g++ --host=${COMPILER_TRIPLET} --disable-shared --prefix=/usr/${COMPILER_TRIPLET}
+    - make
+    - make install
 
   ncurses_download_cache:
     folder: ncurses-6.1
     populate_script:
-      - .ci/mingw32-64/ncurses-download-script.sh
+      - wget ftp://ftp.invisible-island.net/ncurses/ncurses-6.1.tar.gz
+      - tar xf ncurses-6.1.tar.gz
   
   ncurses_build_script:
-    - .ci/mingw32-64/ncurses-install-script.sh
+    - cd ncurses-6.1
+    - ./configure --enable-term-driver --enable-sp-funcs --host=${COMPILER_TRIPLET} --with-build-cc=gcc --with-pkg-config-libdir=${PKG_CONFIG_PATH} --enable-pc-files --prefix=/usr/${COMPILER_TRIPLET}
+    - make
+    - make install
 
   boost_download_cache:
     folder: boost_1_68_0
     populate_script:
-      - .ci/mingw32-64/boost-download-script.sh
+      - wget https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.gz
+      - tar xf boost_1_68_0.tar.gz
+      - cd boost_1_68_0
+      - echo "using gcc : : ${COMPILER_TRIPLET}-gcc ;" > user-config.jam
 
   boost_build_script:
-    - .ci/mingw32-64/boost-install-script.sh
+    - cd boost_1_68_0
+    - ./bootstrap.sh --with-libraries=system,filesystem --prefix=/usr/${COMPILER_TRIPLET}
+    - if [[ $COMPILER_TRIPLET == "x86_64"* ]]; then export ADDRESS_MODEL=64; else export ADDRESS_MODEL=32; fi;
+    - ./b2 --user-config=user-config.jam --build-type=complete --layout=versioned toolset=gcc target-os=windows link=static release address-model=$ADDRESS_MODEL architecture=x86 install
 
   build_script:
-    - .ci/mingw32-64/chronicle-build.sh
+    - mkdir -p ${CHRONICLE_TRIPLET}
+    - cd ${CHRONICLE_TRIPLET}
+    # ../configure --host=${COMPILER_TRIPLET} --with-boost=/usr/${COMPILER_TRIPLET}/include/boost-1_68 --with-boost-libdir=/usr/${COMPILER_TRIPLET}/lib --prefix=/usr/${COMPILER_TRIPLET}
+    - CPPFLAGS="-D_ISOC99_SOURCE -lole32 -lwinmm -ldsound -Wl,--trace"
+    - cmake -DCMAKE_TOOLCHAIN_FILE=../.ci/mingw32/${COMPILER_TRIPLET}.cmake -v ..
+    - cmake --build . -v
 
-  dist_script:
-    - pip install b2
-    - .ci/mingw32-64/chronicle-create-dist-archives.sh
-    - .ci/mingw32-64/chronicle-create-bb-upload.sh
-    
-win32_build_task:
-  # Most sources need to be built from scratch, since the mingw version of pkg-config ignores PKG_CONFIG_PATH
-  env:
-    # Let's do it just for conveniences' sake
-    PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
-    PATH: '$PATH:/usr/local'
-    CHRONICLE_TRIPLET: ${CHRONICLE_NAME}-${CHRONICLE_VERSION}-win32
-  container:
-    image: ubuntu:latest
-
-  apt_script:
-    - chmod +x .ci/mingw32-32/*.sh
-    - .ci/mingw32-32/apt-script.sh
-
-  cmake_cache:
-    folder: cmake-3.15.2-Linux-x86_64
-    populate_script:
-      - wget https://github.com/Kitware/CMake/releases/download/v3.15.2/cmake-3.15.2-Linux-x86_64.tar.gz
-      - tar xf cmake-3.15.2-Linux-x86_64.tar.gz
-  
-  cmake_install_script: cp -r cmake-3.15.2-Linux-x86_64/* /
-
-  submodules_script: git submodule sync --recursive && git submodule update --init --recursive
-
-  lame_download_cache:
-    folder: lame-3.100
-    populate_script:
-      - .ci/mingw32-32/lame-download-script.sh
-    
-  lame_build_script:
-    - .ci/mingw32-32/lame-install-script.sh
-
-  libogg_download_cache:
-    folder: libogg-1.3.3
-    populate_script:
-      - .ci/mingw32-32/libogg-download.sh
-
-  libogg_install_script:
-    - .ci/mingw32-32/libogg-install.sh
-
-  libvorbis_download_cache:
-    folder: libvorbis-1.3.6
-    populate_script:
-      - .ci/mingw32-32/libvorbis-download.sh
-
-  libvorbis_install_script:
-    - .ci/mingw32-32/libvorbis-install.sh
-
-  libflac_download_cache:
-    folder: flac-1.3.2
-    populate_script:
-      - .ci/mingw32-32/libflac-download.sh
-
-  libflac_install_script:
-    - .ci/mingw32-32/libflac-install.sh
-
-  libspeex_download_cache:
-    folder: speex-1.2.0
-    populate_script:
-      - .ci/mingw32-32/libspeex-download.sh
-
-  libspeex_install_script:
-    - .ci/mingw32-32/libspeex-install.sh
-  
-  libsndfile_download_cache:
-    folder: libsndfile-1.0.28
-    populate_script:
-      - .ci/mingw32-32/libsndfile-download-script.sh
-
-  libsndfile_build_script:
-    - .ci/mingw32-32/libsndfile-install-script.sh
-
-  rtaudio_download_cache: 
-    folder: rtaudio
-    populate_script:
-      - .ci/mingw32-32/rtaudio-download-script.sh
-
-  rtaudio_build_script:
-  # Depends on libsndfile
-    - .ci/mingw32-32/rtaudio-install-script.sh
-
-  ncurses_download_cache:
-    folder: ncurses-6.1
-    populate_script:
-      - .ci/mingw32-32/ncurses-download-script.sh
-  
-  ncurses_build_script:
-    - .ci/mingw32-32/ncurses-install-script.sh
-
-  boost_download_cache:
-    folder: boost_1_68_0
-    populate_script:
-      - .ci/mingw32-32/boost-download-script.sh
-
-  boost_build_script:
-    - .ci/mingw32-32/boost-install-script.sh
-
-  build_script:
-    - .ci/mingw32-32/chronicle-build.sh
-
-  dist_script:
-    - pip install b2
-    - .ci/mingw32-32/chronicle-create-dist-archives.sh
-    - .ci/mingw32-32/chronicle-create-bb-upload.sh
+  # dist_script:
+  #   - pip install b2
+  #   - .ci/mingw32-32/chronicle-create-dist-archives.sh
+  #   - .ci/mingw32-32/chronicle-create-bb-upload.sh
