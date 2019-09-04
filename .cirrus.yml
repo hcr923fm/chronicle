@@ -155,7 +155,7 @@ win_build_task:
   # Depends on libsndfile
     - cd rtaudio-5.1.0
     - mkdir __build && cd __build
-    - cmake .. -DCMAKE_TOOLCHAIN_FILE=../.ci/mingw32/${COMPILER_TRIPLET}.cmake -DRTAUDIO_API_DS=ON -DRTAUDIO_API_JACK=OFF -DCMAKE_INSTALL_PREFIX=/usr/${COMPILER_TRIPLET}
+    - cmake .. -DCMAKE_TOOLCHAIN_FILE=../.ci/mingw32.cmake -DRTAUDIO_API_DS=ON -DRTAUDIO_API_JACK=OFF -DCMAKE_INSTALL_PREFIX=/usr/${COMPILER_TRIPLET}
     - cmake --build .
     - cmake --install .
 
@@ -190,7 +190,7 @@ win_build_task:
     - cd ${CHRONICLE_TRIPLET}
     # ../configure --host=${COMPILER_TRIPLET} --with-boost=/usr/${COMPILER_TRIPLET}/include/boost-1_68 --with-boost-libdir=/usr/${COMPILER_TRIPLET}/lib --prefix=/usr/${COMPILER_TRIPLET}
     - CPPFLAGS="-D_ISOC99_SOURCE -lole32 -lwinmm -ldsound -Wl,--trace"
-    - cmake -DCMAKE_TOOLCHAIN_FILE=../.ci/mingw32/${COMPILER_TRIPLET}.cmake -v ..
+    - cmake -DCMAKE_TOOLCHAIN_FILE=../.ci/mingw32.cmake -v ..
     - cmake --build . -v
 
   # dist_script:

@@ -5,6 +5,11 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+if(NOT ${COMPILER_TRIPLET} OR ${COMPILER_TRIPLET} STREQUAL "")
+    message(WARNING "COMPILER_TRIPLET not found; Setting manually to x86_64-w64-mingw32")
+    set(COMPILER_TRIPLET "x86_64-w64-mingw32")
+endif()
+
 include_directories("$PROJECT_SOURCE_DIR"
 lame)
 
