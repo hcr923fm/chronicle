@@ -64,15 +64,15 @@ parse_opts.cpp
 screen.cpp
 )
 
-
 spdlog_enable_warnings(chronicle)
 
-if (WIN32)
-    target_link_libraries(chronicle PRIVATE
-    winmm
-    ole32
-    dsound)
-endif()
+#if (WIN32)
+    #target_link_libraries(chronicle PRIVATE
+    #winmm
+    #ole32
+    #dsound
+    #)
+#endif()
 
 target_link_libraries(chronicle PRIVATE
 #spdlog::spdlog_header_only
