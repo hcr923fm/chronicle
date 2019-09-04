@@ -6,18 +6,20 @@ else ()
     set(CMAKE_SYSTEM_PROCESSOR x86)
 endif()
 
+#message(STATUS "Using toolchain for platform: ${COMPILER_TRIPLET}")
+
 include(CMakeForceCompiler)
 
-set(CMAKE_C_COMPILER /usr/bin/${COMPILER_TRIPLET}-gcc-posix)
-set(CMAKE_CXX_COMPILER /usr/bin/${COMPILER_TRIPLET}-g++-posix)
+set(CMAKE_C_COMPILER /usr/bin/${COMPILER_TRIPLET}-gcc)
+set(CMAKE_CXX_COMPILER /usr/bin/${COMPILER_TRIPLET}-g++)
 set(CMAKE_PREFIX_PATH /usr/${COMPILER_TRIPLET})
 
 SET(BOOST_ROOT /usr/${COMPILER_TRIPLET}/include/boost-1_68)
 SET(BOOST_LIBRARYDIR /usr/${COMPILER_TRIPLET}/lib)
 
-if (${COMPILER_TRIPLET} STREQUAL "x86_64-w64-mingw32")
+if(COMPILER_TRIPLET STREQUAL "x86_64-w64-mingw32")
     set(Boost_ARCHITECTURE "-x64")
-else ()
+else()
     set(Boost_ARCHITECTURE "-i686")
 endif()
 
