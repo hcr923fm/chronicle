@@ -81,7 +81,7 @@ win_build_task:
     folder: lame-3.100
     populate_script:
       - wget https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
-      ar xf lame-*
+      - tar xf lame-*
     
   lame_build_script:
     - cd lame-3.100
