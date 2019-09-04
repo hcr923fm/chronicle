@@ -153,7 +153,7 @@ win_build_task:
 
   rtaudio_build_script:
   # Depends on libsndfile
-    - cd rtaudio
+    - cd rtaudio-5.1.0
     - ./autogen.sh --no-configure
     - export CFLAGS=-Wno-unused-but-set-variable # We need this for the RtAudio build
     - ./configure CXX=/usr/bin/${COMPILER_TRIPLET}-g++ --host=${COMPILER_TRIPLET} --disable-shared --prefix=/usr/${COMPILER_TRIPLET}
