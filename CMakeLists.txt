@@ -60,8 +60,11 @@ spdlog_enable_warnings(chronicle)
 target_link_libraries(chronicle PRIVATE
 #spdlog::spdlog_header_only
 spdlog::spdlog
-${SNDFILE_LIB}
 ${LAME_LIB}
+${SNDFILE_LIB}
+winmm
+ole32
+dsound
 #PkgConfig::RtAudio
 #RtAudio::rtaudio
 ${RTAUDIO_LIB}
