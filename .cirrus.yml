@@ -154,11 +154,9 @@ win_build_task:
   rtaudio_build_script:
   # Depends on libsndfile
     - cd rtaudio-5.1.0
-    - ./autogen.sh --no-configure
-    - export CFLAGS=-Wno-unused-but-set-variable # We need this for the RtAudio build
-    - ./configure CXX=/usr/bin/${COMPILER_TRIPLET}-g++ --host=${COMPILER_TRIPLET} --disable-shared --prefix=/usr/${COMPILER_TRIPLET}
-    - make
-    - make install
+    - cmake .. -DCMAKE_TOOLCHAIN_FILE=../../../chronicle/.ci/mingw32/${COMPILER_TRIPLET}.cmake -DRTAUDIO_API_DS=ON -DRTAUDIO_API_JACK=OFF -DCMAKE_INSTALL_PREFIX=/usr/${COMPILER_TRIPLET}
+    - cmake --build .
+    - cmake --install .
 
   ncurses_download_cache:
     folder: ncurses-6.1

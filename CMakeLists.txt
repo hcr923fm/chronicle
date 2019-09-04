@@ -6,14 +6,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 include_directories("$PROJECT_SOURCE_DIR"
-lame
-/usr/x86_64-w64-mingw32/include/boost-1_68
-/usr/i686_64-w64-mingw32/include/boost-1_68
-)
+lame)
+
+if (WIN32)
+    include_directories(/usr/${COMPILER_TRIPLET}/include/boost-1_68
+    /usr/${COMPILER_TRIPLET}/include
+    )
+endif()
+
 add_compile_options(-DSPDLOG_COMPILED_LIB -D_WIN32_WINNT=0x600 -D_ISOC99_SOURCE -lole32 -lwinmm -ldsound -Wl,--trace)
 #add_subdirectory(rtaudio)
 add_subdirectory(spdlog)
-
 
 find_library(LAME_LIB libmp3lame.a)
 if (LAME_LIB OR lame_FOUND)
@@ -56,15 +59,21 @@ parse_opts.cpp
 screen.cpp
 )
 
+
 spdlog_enable_warnings(chronicle)
+
+if (WIN32)
+    target_link_libraries(chronicle PRIVATE
+    winmm
+    ole32
+    dsound)
+endif()
+
 target_link_libraries(chronicle PRIVATE
 #spdlog::spdlog_header_only
 spdlog::spdlog
 ${LAME_LIB}
 ${SNDFILE_LIB}
-winmm
-ole32
-dsound
 #PkgConfig::RtAudio
 #RtAudio::rtaudio
 ${RTAUDIO_LIB}
