@@ -154,7 +154,7 @@ win_build_task:
   rtaudio_build_script:
   # Depends on libsndfile
     - cd rtaudio-5.1.0
-    - cmake .. -DCMAKE_TOOLCHAIN_FILE=../../../chronicle/.ci/mingw32/${COMPILER_TRIPLET}.cmake -DRTAUDIO_API_DS=ON -DRTAUDIO_API_JACK=OFF -DCMAKE_INSTALL_PREFIX=/usr/${COMPILER_TRIPLET}
+    - cmake .. -DCMAKE_TOOLCHAIN_FILE=../.ci/mingw32/${COMPILER_TRIPLET}.cmake -DRTAUDIO_API_DS=ON -DRTAUDIO_API_JACK=OFF -DCMAKE_INSTALL_PREFIX=/usr/${COMPILER_TRIPLET}
     - cmake --build .
     - cmake --install .
 
