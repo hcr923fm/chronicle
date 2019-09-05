@@ -214,9 +214,9 @@ win_build_task:
     path: __build/chronicle-win*-*.*
 
 # publish_task:
-  - depends_on:
-    - linux_build_task
-    - win_build_task
+  # - depends_on:
+  #   - linux_build_task
+  #   - win_build_task
 #   - only_if: $CIRRUS_BRANCH == 'master'
 #   - script:
 #     - .ci/mingw32-32/chronicle-create-bb-upload.sh
