@@ -188,8 +188,8 @@ win_build_task:
   spdlog_download_cache:
     folder: spdlog-1.3.1
     populate_script:
-    - wget https://github.com/gabime/spdlog/archive/v1.3.1.tar.gz
-    - tar xf v1.3.1.tar.gz
+      - wget https://github.com/gabime/spdlog/archive/v1.3.1.tar.gz
+      - tar xf v1.3.1.tar.gz
   
   spdlog_install_script:
     - cd spdlog-1.3.1
