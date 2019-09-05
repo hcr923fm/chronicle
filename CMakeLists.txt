@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-if(NOT ${COMPILER_TRIPLET} OR ${COMPILER_TRIPLET} STREQUAL "")
+if(NOT $ENV{COMPILER_TRIPLET} OR $ENV{COMPILER_TRIPLET} STREQUAL "")
     message(WARNING "COMPILER_TRIPLET not found; Setting manually to x86_64-w64-mingw32")
     set(COMPILER_TRIPLET "x86_64-w64-mingw32")
 endif()
@@ -14,14 +14,15 @@ include_directories("$PROJECT_SOURCE_DIR"
 lame)
 
 if (WIN32)
-    include_directories(/usr/${COMPILER_TRIPLET}/include/boost-1_68
-    /usr/${COMPILER_TRIPLET}/include
+    include_directories(/usr/$ENV{COMPILER_TRIPLET}/include/boost-1_68
+    /usr/$ENV{COMPILER_TRIPLET}/include
     )
 endif()
 
 add_compile_options(-DSPDLOG_COMPILED_LIB -D_WIN32_WINNT=0x600 -D_ISOC99_SOURCE -lole32 -lwinmm -ldsound -Wl,--trace)
 #add_subdirectory(rtaudio)
-add_subdirectory(spdlog)
+#add_subdirectory(spdlog)
+find_package(spdlog REQUIRED)
 
 find_library(LAME_LIB libmp3lame.a)
 if (LAME_LIB OR lame_FOUND)
@@ -64,23 +65,45 @@ parse_opts.cpp
 screen.cpp
 )
 
-spdlog_enable_warnings(chronicle)
-
-#if (WIN32)
-    #target_link_libraries(chronicle PRIVATE
-    #winmm
-    #ole32
-    #dsound
-    #)
-#endif()
-
 target_link_libraries(chronicle PRIVATE
-#spdlog::spdlog_header_only
 spdlog::spdlog
 ${LAME_LIB}
 ${SNDFILE_LIB}
-#PkgConfig::RtAudio
-#RtAudio::rtaudio
 ${RTAUDIO_LIB}
 ${Boost_LIBRARIES}
 ncurses)
+
+# add_custom_command(TARGET chronicle POST_BUILD
+# COMMAND python $<TARGET_FILE_DIR:chronicle>/../.ci/mingw32/list_full_deps.py $<TARGET_FILE:chronicle> OUTPUT_VARIABLE DEP_LIBS
+# VERBATIM
+# )
+
+# set(CPACK_PACKAGE_NAME "chronicle")
+# SET(CPACK_GENERATOR "STGZ;TGZ;TZ;ZIP")
+# set(CPACK_PROJECT_NAME chronicle)
+# SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+# set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+# SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENCE.md")
+# SET(CPACK_INCLUDE_TOPLEVEL_DIRECTORY 1)
+# SET(CPACK_PACKAGE_EXECUTABLES chronicle.exe;Chronicle)
+# set(CPACK_PACKAGE_VENDOR "Cal McLean")
+# set(CPACK_PACKAGE_CONTACT "calmcl1@aol.com")
+# set(CPACK_SOURCE_PACKAGE_FILE_NAME "chronicle-src")
+# SET(CPACK_SOURCE_GENERATOR "TGZ;TZ")
+# set (CPACK_SOURCE_IGNORE_FILES \.git/;\.git.*;\.ci/;\.cirrus\.yml;__build;\.vscode)
+# include(CPack)
+
+# list(APPEND DEPS "")
+# IF(WIN32)
+#     #list(APPEND EXTERNAL_LIBS=)
+#     install(TARGETS chronicle COMPONENT RUNTIME DESTINATION .)
+#     # getDeps()
+#     # install(CODE "execute_process(COMMAND ../copydeps.sh ${CPACK_PACKAGE_DIRECTORY})" COMPONENT RUNTIME)
+#     # install(CODE "MESSAGE(STATUS \"CMakePackDirL \${CPACK_PACKAGE_DIRECTORY}\")" COMPONENT RUNTIME)
+#     # install(CODE "set(DIRHERE \"${CMAKE_CURRENT_SOURCE_DIR}\")")
+#     # install(SCRIPT test.cmake COMPONENT RUNTIME)
+#     # install(FILES ${DEPS} DESTINATION . COMPONENT RUNTIME)
+# ENDIF()
+
+
+# #include(InstallRequiredSystemLibraries)

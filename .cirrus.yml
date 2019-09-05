@@ -9,14 +9,9 @@ linux_build_task:
   container:
     image: gcc:latest
 
-  env:
-    CHRONICLE_TRIPLET: ${CHRONICLE_NAME}-${CHRONICLE_VERSION}-linux
-  
   apt_script:
     - apt-get update -qq
     - apt-get install libncurses5-dev libsndfile1-dev libasound2 libasound2-dev libflac-dev libvorbis-dev libogg-dev git build-essential libtool libtool-bin wget python python-pip libmp3lame-dev librtaudio-dev -qq -y
-    - update-alternatives --set x86_64-w64-mingw32-gcc /usr/bin/x86_64-w64-mingw32-gcc-posix
-    - update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
 
   submodules_script: git submodule sync --recursive && git submodule update --init --recursive
   
@@ -41,15 +36,19 @@ linux_build_task:
     - ./b2 install
 
   build_script:
-    - mkdir -p ${CHRONICLE_TRIPLET}
-    - cd ${CHRONICLE_TRIPLET}
+    - mkdir -p __build
+    - cd __build
     - cmake ..
     - cmake --build .
 
-  # dist_script:
-  #   - pip install --upgrade b2
-    # - .ci/linux/chronicle-create-dist-archives.sh
-    # - .ci/linux/chronicle-create-bb-upload.sh
+  dist_script:
+    - pip install b2
+    - .ci/chronicle-create-dist-archives.sh
+    # - .ci/mingw32-32/chronicle-create-bb-upload.sh
+
+  package_artifacts:
+    path: __build/chronicle-linux-*.*
+
 
 win_build_task:
   # Most sources need to be built from scratch, since the mingw version of pkg-config ignores PKG_CONFIG_PATH
@@ -57,7 +56,6 @@ win_build_task:
     # Let's do it just for conveniences' sake
     PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
     PATH: '$PATH:/usr/local'
-    CHRONICLE_TRIPLET: ${CHRONICLE_NAME}-${CHRONICLE_VERSION}
     matrix:
       - COMPILER_TRIPLET: x86_64-w64-mingw32
       - COMPILER_TRIPLET: i686-w64-mingw32
@@ -74,7 +72,7 @@ win_build_task:
     populate_script:
       - wget https://github.com/Kitware/CMake/releases/download/v3.15.2/cmake-3.15.2-Linux-x86_64.tar.gz
       - tar xf cmake-3.15.2-Linux-x86_64.tar.gz
-  
+
   cmake_install_script: cp -r cmake-3.15.2-Linux-x86_64/* /
 
   submodules_script: git submodule sync --recursive && git submodule update --init --recursive
@@ -121,7 +119,7 @@ win_build_task:
 
   libflac_install_script:
     - cd flac-1.3.2
-    - ./configure --host=${COMPILER_TRIPLET} --prefix=/usr/${COMPILER_TRIPLET}
+    - ./configure --disable-thorough-tests --host=${COMPILER_TRIPLET} --prefix=/usr/${COMPILER_TRIPLET}
     - make && make install
 
   libspeex_download_cache:
@@ -157,7 +155,7 @@ win_build_task:
   # Depends on libsndfile
     - cd rtaudio-5.1.0
     - mkdir __build && cd __build
-    - cmake .. -DCMAKE_TOOLCHAIN_FILE=../../.ci/mingw32.cmake -DRTAUDIO_API_DS=ON -DRTAUDIO_API_JACK=OFF -DCMAKE_INSTALL_PREFIX=/usr/${COMPILER_TRIPLET}
+    - cmake .. -DCMAKE_TOOLCHAIN_FILE=../../.ci/mingw32.cmake -DRTAUDIO_API_DS=ON -DRTAUDIO_API_WASAPI=ON -DRTAUDIO_API_JACK=OFF -DCMAKE_INSTALL_PREFIX=/usr/${COMPILER_TRIPLET}
     - cmake --build .
     - cmake --install .
 
@@ -187,15 +185,25 @@ win_build_task:
     - if [[ $COMPILER_TRIPLET == "x86_64"* ]]; then export ADDRESS_MODEL=64; else export ADDRESS_MODEL=32; fi;
     - ./b2 --user-config=user-config.jam --build-type=complete --layout=versioned toolset=gcc target-os=windows link=static release address-model=$ADDRESS_MODEL architecture=x86 install
 
+  spdlog_download_script:
+    - wget https://github.com/gabime/spdlog/archive/v1.3.1.tar.gz
+    - tar xf v1.3.1.tar.gz
+    - cd spdlog-1.3.1
+    - mkdir build && cd build
+    - cmake .. -DCMAKE_TOOLCHAIN_FILE=../../.ci/mingw32.cmake -DSPDLOG_BUILD_EXAMPLES=OFF -DSPDLOG_BUILD_BENCH=OFF -DSPDLOG_BUILD_TESTS=OFF -DCMAKE_INSTALL_PREFIX=/usr/${COMPILER_TRIPLET}
+    - make -j
+
   build_script:
-    - mkdir -p ${CHRONICLE_TRIPLET}
-    - cd ${CHRONICLE_TRIPLET}
-    # ../configure --host=${COMPILER_TRIPLET} --with-boost=/usr/${COMPILER_TRIPLET}/include/boost-1_68 --with-boost-libdir=/usr/${COMPILER_TRIPLET}/lib --prefix=/usr/${COMPILER_TRIPLET}
+    - mkdir -p __build
+    - cd __build
     - CPPFLAGS="-D_ISOC99_SOURCE -lole32 -lwinmm -ldsound -Wl,--trace"
-    - cmake -DCMAKE_TOOLCHAIN_FILE=../.ci/mingw32.cmake -v ..
+    - cmake .. -DCMAKE_TOOLCHAIN_FILE=../.ci/mingw32.cmake
     - cmake --build . -v
 
-  # dist_script:
-  #   - pip install b2
-  #   - .ci/mingw32-32/chronicle-create-dist-archives.sh
-  #   - .ci/mingw32-32/chronicle-create-bb-upload.sh
+  dist_script:
+    - pip install b2
+    - .ci/chronicle-create-dist-archives.sh
+    # - .ci/mingw32-32/chronicle-create-bb-upload.sh
+
+  package_artifacts:
+    path: __build/chronicle-win*-*.*

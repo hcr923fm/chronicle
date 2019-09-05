@@ -10,7 +10,8 @@ typedef int64_t __int64;
 #include "RtAudio.h"
 //#include "spdlog/spdlog.h"
 //#include "spdlog/sinks/rotating_file_sink.h"
-#include "spdlog/src/spdlog.cpp"
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/rotating_file_sink.h"
 //#include <shine/layer3.h>
 #include "lame/lame.h"
 
