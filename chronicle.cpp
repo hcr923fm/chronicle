@@ -300,7 +300,7 @@ int main(int argc, char *argv[])
 
 	logger->debug("Output directory: " + output_directory.string());
 
-	string windowTitle = "Chronicle v" + SOFTWARE_VERSION;
+	string windowTitle = "Chronicle v" + SOFTWARE_VERSION_MAJOR + "." + SOFTWARE_VERSION_MINOR + "." + SOFTWARE_VERSION_PATCH;
 	if (!opts.no_term)
 	{
 		initCurses(windowTitle);
