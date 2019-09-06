@@ -60,7 +60,7 @@ linux_build_task:
     # - .ci/mingw32-32/chronicle-create-bb-upload.sh
 
   package_artifacts:
-    path: __build/chronicle-linux-*.*
+    path: __build/chronicle-*-linux.*
 
 
 win_build_task:
@@ -225,12 +225,12 @@ win_build_task:
     # - .ci/mingw32-32/chronicle-create-bb-upload.sh
 
   package_artifacts:
-    path: __build/chronicle-win*-*.*
+    path: __build/chronicle-*-win*.*
 
-# publish_task:
-  # - depends_on:
-  #   - linux_build_task
-  #   - win_build_task
-#   - only_if: $CIRRUS_BRANCH == 'master'
-#   - script:
-#     - .ci/mingw32-32/chronicle-create-bb-upload.sh
+publish_task:
+  - depends_on:
+    - linux_build_task
+    - win_build_task
+  - only_if: $CIRRUS_BRANCH == 'master'
+  - script:
+    - .ci/mingw32-32/chronicle-create-bb-upload.sh

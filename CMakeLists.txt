@@ -5,13 +5,13 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-if((NOT $ENV{COMPILER_TRIPLET} OR $ENV{COMPILER_TRIPLET} STREQUAL "") AND ${CMAKE_CROSSCOMPILING})
-    message(WARNING "COMPILER_TRIPLET not found; Setting manually to x86_64-w64-mingw32")
-    set(COMPILER_TRIPLET "x86_64-w64-mingw32")
-endif()
-
 include_directories("$PROJECT_SOURCE_DIR"
-lame)
+lame
+)
+
+IF (UNIX AND NOT WIN32)
+    include_directories(/usr/include/rtaudio)
+endif()
 
 if (WIN32)
     include_directories(/usr/$ENV{COMPILER_TRIPLET}/include/boost-1_68
