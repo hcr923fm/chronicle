@@ -23,7 +23,7 @@ linux_build_task:
 
   boost_cache:
     folder: boost_1_68_0
-    fingerprint_script: echo $CIRRUS_OS-CIRRUS_TASK_NAME
+    fingerprint_script: echo $CIRRUS_OS-$CIRRUS_TASK_NAME
     populate_script:
       - wget https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.gz
       - tar xf boost_1_68_0.tar.gz
@@ -36,7 +36,7 @@ linux_build_task:
 
   spdlog_download_cache:
     folder: spdlog-1.3.1
-    fingerprint_script: echo $CIRRUS_OS-CIRRUS_TASK_NAME
+    fingerprint_script: echo $CIRRUS_OS-$CIRRUS_TASK_NAME
     populate_script:
       - wget https://github.com/gabime/spdlog/archive/v1.3.1.tar.gz
       - tar xf v1.3.1.tar.gz
@@ -83,7 +83,7 @@ win_build_task:
 
   cmake_cache:
     folder: cmake-3.15.2-Linux-x86_64
-    fingerprint_script: echo $CIRRUS_OS-CIRRUS_TASK_NAME-$COMPILER_TRIPLET
+    fingerprint_script: echo $CIRRUS_OS-$CIRRUS_TASK_NAME-$COMPILER_TRIPLET
     populate_script:
       - wget https://github.com/Kitware/CMake/releases/download/v3.15.2/cmake-3.15.2-Linux-x86_64.tar.gz
       - tar xf cmake-3.15.2-Linux-x86_64.tar.gz
@@ -94,7 +94,7 @@ win_build_task:
 
   lame_download_cache:
     folder: lame-3.100
-    fingerprint_script: echo $CIRRUS_OS-CIRRUS_TASK_NAME-$COMPILER_TRIPLET
+    fingerprint_script: echo $CIRRUS_OS-$CIRRUS_TASK_NAME-$COMPILER_TRIPLET
     populate_script:
       - wget https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
       - tar xf lame-*
@@ -107,7 +107,7 @@ win_build_task:
 
   libogg_download_cache:
     folder: libogg-1.3.3
-    fingerprint_script: echo $CIRRUS_OS-CIRRUS_TASK_NAME-$COMPILER_TRIPLET
+    fingerprint_script: echo $CIRRUS_OS-$CIRRUS_TASK_NAME-$COMPILER_TRIPLET
     populate_script:
       - wget http://downloads.xiph.org/releases/ogg/libogg-1.3.3.tar.gz
       - tar xf libogg-1.3.3.tar.gz
@@ -119,7 +119,7 @@ win_build_task:
 
   libvorbis_download_cache:
     folder: libvorbis-1.3.6
-    fingerprint_script: echo $CIRRUS_OS-CIRRUS_TASK_NAME-$COMPILER_TRIPLET
+    fingerprint_script: echo $CIRRUS_OS-$CIRRUS_TASK_NAME-$COMPILER_TRIPLET
     populate_script:
       - wget http://downloads.xiph.org/releases/vorbis/libvorbis-1.3.6.tar.gz
       - tar xf libvorbis-1.3.6.tar.gz
@@ -131,7 +131,7 @@ win_build_task:
 
   libflac_download_cache:
     folder: flac-1.3.2
-    fingerprint_script: echo $CIRRUS_OS-CIRRUS_TASK_NAME-$COMPILER_TRIPLET
+    fingerprint_script: echo $CIRRUS_OS-$CIRRUS_TASK_NAME-$COMPILER_TRIPLET
     populate_script:
       - wget http://downloads.xiph.org/releases/flac/flac-1.3.2.tar.xz
       - tar xJf flac-1.3.2.tar.xz
@@ -143,7 +143,7 @@ win_build_task:
 
   libspeex_download_cache:
     folder: speex-1.2.0
-    fingerprint_script: echo $CIRRUS_OS-CIRRUS_TASK_NAME-$COMPILER_TRIPLET
+    fingerprint_script: echo $CIRRUS_OS-$CIRRUS_TASK_NAME-$COMPILER_TRIPLET
     populate_script:
       - wget http://downloads.xiph.org/releases/speex/speex-1.2.0.tar.gz
       - tar xf speex-1.2.0.tar.gz
@@ -155,7 +155,7 @@ win_build_task:
   
   libsndfile_download_cache:
     folder: libsndfile-1.0.28
-    fingerprint_script: echo $CIRRUS_OS-CIRRUS_TASK_NAME-$COMPILER_TRIPLET
+    fingerprint_script: echo $CIRRUS_OS-$CIRRUS_TASK_NAME-$COMPILER_TRIPLET
     populate_script:
       - wget http://www.mega-nerd.com/libsndfile/files/libsndfile-1.0.28.tar.gz
       - tar xf libsndfile-1.0.28.tar.gz
@@ -168,7 +168,7 @@ win_build_task:
 
   rtaudio_download_cache: 
     folder: rtaudio
-    fingerprint_script: echo $CIRRUS_OS-CIRRUS_TASK_NAME-$COMPILER_TRIPLET
+    fingerprint_script: echo $CIRRUS_OS-$CIRRUS_TASK_NAME-$COMPILER_TRIPLET
     populate_script:
       - wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.1.0.tar.gz
       - tar xf rtaudio-5.1.0.tar.gz
@@ -183,7 +183,7 @@ win_build_task:
 
   ncurses_download_cache:
     folder: ncurses-6.1
-    fingerprint_script: echo $CIRRUS_OS-CIRRUS_TASK_NAME-$COMPILER_TRIPLET
+    fingerprint_script: echo $CIRRUS_OS-$CIRRUS_TASK_NAME-$COMPILER_TRIPLET
     populate_script:
       - wget ftp://ftp.invisible-island.net/ncurses/ncurses-6.1.tar.gz
       - tar xf ncurses-6.1.tar.gz
@@ -196,7 +196,7 @@ win_build_task:
 
   boost_download_cache:
     folder: boost_1_68_0
-    fingerprint_script: echo $CIRRUS_OS-CIRRUS_TASK_NAME-$COMPILER_TRIPLET
+    fingerprint_script: echo $CIRRUS_OS-$CIRRUS_TASK_NAME-$COMPILER_TRIPLET
     populate_script:
       - wget https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.gz
       - tar xf boost_1_68_0.tar.gz
@@ -211,7 +211,7 @@ win_build_task:
 
   spdlog_download_cache:
     folder: spdlog-1.3.1
-    fingerprint_script: echo $CIRRUS_OS-CIRRUS_TASK_NAME-$COMPILER_TRIPLET
+    fingerprint_script: echo $CIRRUS_OS-$CIRRUS_TASK_NAME-$COMPILER_TRIPLET
     populate_script:
       - wget https://github.com/gabime/spdlog/archive/v1.3.1.tar.gz
       - tar xf v1.3.1.tar.gz
