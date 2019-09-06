@@ -15,7 +15,7 @@ CHRONICLE_PATCH_VERSION=`awk '/PATCH/ {print $5}' ../version.h | sed 's/[^0-9]//
 export CHRONICLE_TRIPLET=chronicle-${CHRONICLE_MAJOR_VERSION}.${CHRONICLE_MINOR_VERSION}.${CHRONICLE_PATCH_VERSION}-${XCOMP_PLATOFRM}
 mkdir -p ${CHRONICLE_TRIPLET}
 
-dep_paths=`python ../.ci/list_full_deps.py chronicle${EXEC_FILEEXT} ${COMPILER_TRIPLET}`
+dep_paths=`python ../.ci/list_full_deps.py chronicle${EXEC_FILEEXT}`
 
 for dep_path in $dep_paths
 do
@@ -29,7 +29,7 @@ do
     fi
 done
 
-cp chronicle.exe ${CHRONICLE_TRIPLET}
+cp chronicle${EXEC_FILEEXT} ${CHRONICLE_TRIPLET}
 cp ../LICENCE.md ${CHRONICLE_TRIPLET}
 cp ../README.md ${CHRONICLE_TRIPLET}
 cp ../CHANGELOG.md ${CHRONICLE_TRIPLET}
