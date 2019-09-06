@@ -4,6 +4,7 @@
 typedef int64_t __int64;
 #endif
 
+#include "version.h"
 #include "screen.h"
 #include "parse_opts.h"
 // #include "RtAudio.h"
@@ -33,9 +34,6 @@ extern "C"
 #include <cstring>
 
 using namespace std;
-
-string const SOFTWARE_NAME = "chronicle";
-string const SOFTWARE_VERSION = "1.0.2";
 
 // So, you've decided to make some logger software...
 

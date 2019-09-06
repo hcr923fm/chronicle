@@ -1,6 +1,10 @@
 
 # Changelog - Chronicle
 
+## Will be v1.0.3
+### Added
+* Switched to CMake build system, massively reduced per-architecture customization
+
 ## v1.0.2
 ### Fixed
 * Fixed issue where help string would print incorrectly

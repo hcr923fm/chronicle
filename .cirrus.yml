@@ -1,6 +1,4 @@
 env:
-  CHRONICLE_NAME: chronicle
-  CHRONICLE_VERSION: 1.0.2
   BACKBLAZE_APP_KEY_ID: ENCRYPTED[95a37d7a31679c7fb32b03d05b33edb065dcf7f0f823e7fe721e3247e5f3668d4063591d5c733ade1fd7a32f5f859c5f]
   BACKBLAZE_APP_KEY: ENCRYPTED[770e70e48569f43396e50d0692a4c1abe64e4821c1ef816520c792ad6222c61641b7e56132e37896340f740720196604]
 
@@ -237,4 +235,5 @@ publish_task:
     - win_build
   only_if: $CIRRUS_BRANCH == 'master'
   publish_script:
+    - chmod +x .ci/*.sh
     - .ci/mingw32-32/chronicle-create-bb-upload.sh
