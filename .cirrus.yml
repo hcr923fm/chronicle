@@ -56,6 +56,7 @@ linux_build_task:
 
   dist_script:
     - pip install b2
+    - chmod +x .ci/*.sh
     - .ci/chronicle-create-dist-archives.sh
     # - .ci/mingw32-32/chronicle-create-bb-upload.sh
 
@@ -232,8 +233,8 @@ publish_task:
       image: gcc:latest
 
   depends_on:
-    - linux_build_task
-    - win_build_task
+    - linux_build
+    - win_build
   only_if: $CIRRUS_BRANCH == 'master'
   publish_script:
     - .ci/mingw32-32/chronicle-create-bb-upload.sh
