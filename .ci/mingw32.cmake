@@ -1,7 +1,8 @@
 SET(CMAKE_SYSTEM_NAME Windows)
 
 message(STATUS "Cross-compiling? " ${CMAKE_CROSSCOMPILING} " (Compiler triplet: " $ENV{COMPILER_TRIPLET} ")")
-if("$ENV{COMPILER_TRIPLET}" STREQUAL "" AND ${CMAKE_CROSSCOMPILING})
+
+if("$ENV{COMPILER_TRIPLET}" STREQUAL "" AND "${CMAKE_CROSSCOMPILING}")
     message(WARNING "COMPILER_TRIPLET not found; Setting manually to x86_64-w64-mingw32")
     set(COMPILER_TRIPLET "x86_64-w64-mingw32")
 endif()
