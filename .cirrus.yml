@@ -232,5 +232,5 @@ publish_task:
     - linux_build_task
     - win_build_task
   - only_if: $CIRRUS_BRANCH == 'master'
-  - script:
+  - publish_script:
     - .ci/mingw32-32/chronicle-create-bb-upload.sh
