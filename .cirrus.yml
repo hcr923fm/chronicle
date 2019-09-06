@@ -207,6 +207,7 @@ win_build_task:
 
   dist_script:
     - pip install b2
+    - chmod +x .ci/*.sh
     - .ci/chronicle-create-dist-archives.sh
     # - .ci/mingw32-32/chronicle-create-bb-upload.sh
 
