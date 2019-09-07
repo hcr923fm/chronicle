@@ -42,8 +42,9 @@ dep_paths = []
 # We'll iterate over the list of deps and find their actual file location
 for dep in deps:
     # print "Getting deps of", dep
-    dep_location = findFileLocation(
-        dep, "/usr/%s" % HOST_TRIPLET if HOST_TRIPLET else "/usr/")
+    # dep_location = findFileLocation(
+    #    dep, "/usr/%s" % HOST_TRIPLET if HOST_TRIPLET else "/usr/")
+    dep_location = findFileLocation(dep, "/usr")
 
     if dep_location:
         # print "Adding", dep_location, "to dep_paths"
