@@ -80,7 +80,7 @@ bool silent_flag = 0;
 
 int main(int argc, char *argv[])
 {
-	cout << SOFTWARE_NAME << " v" << SOFTWARE_VERSION << " Copyright (c) 2016-2017 Callum McLean" << endl
+	cout << SOFTWARE_NAME << " v" << SOFTWARE_VERSION_MAJOR << "." << SOFTWARE_VERSION_MINOR << "." << SOFTWARE_VERSION_PATCH << " Copyright (c) 2016-2017 Callum McLean" << endl
 		 << endl;
 
 	boost::filesystem::path output_directory;
@@ -300,7 +300,7 @@ int main(int argc, char *argv[])
 
 	logger->debug("Output directory: " + output_directory.string());
 
-	string windowTitle = "Chronicle v" + SOFTWARE_VERSION;
+	string windowTitle = "Chronicle v" + SOFTWARE_VERSION_MAJOR + "." + SOFTWARE_VERSION_MINOR + "." + SOFTWARE_VERSION_PATCH;
 	if (!opts.no_term)
 	{
 		initCurses(windowTitle);

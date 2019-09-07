@@ -8,7 +8,7 @@ LAME is used under the Lesser GNU Public Licence v2.1, available at https://www.
 
 MIT License
 
-Copyright (c) 2016-2018 Callum McLean
+Copyright (c) 2016-2019 Callum McLean
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
