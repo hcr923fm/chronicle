@@ -47,6 +47,7 @@ else()
     message(FATAL_ERROR "Could not find RtAudio! Exiting...")
 endif()
 
+
 find_package(Boost REQUIRED filesystem)
 if(Boost_FILESYSTEM_FOUND)
     message(STATUS "Found Boost filesystem...")
