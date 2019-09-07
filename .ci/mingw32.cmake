@@ -25,7 +25,7 @@ SET(BOOST_LIBRARYDIR "/usr/$ENV{COMPILER_TRIPLET}/lib")
 if($ENV{COMPILER_TRIPLET} STREQUAL "x86_64-w64-mingw32")
     set(Boost_ARCHITECTURE "-x64")
 else()
-    set(Boost_ARCHITECTURE "-i686")
+    set(Boost_ARCHITECTURE "-32")
 endif()
 
 set(Boost_USE_DEBUG_RUNTIME OFF)
