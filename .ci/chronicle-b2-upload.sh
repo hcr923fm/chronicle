@@ -1,3 +1,4 @@
+mkdir -p __build
 cd __build
 CHRONICLE_FILEEXTS=(tar.gz zip)
 CHRONICLE_BUILDS=(linux win32 win64)
