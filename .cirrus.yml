@@ -9,7 +9,7 @@ linux_build_task:
 
   apt_script:
     - apt-get update -qq
-    - apt-get install libncurses5-dev libsndfile1-dev libasound2 libasound2-dev libflac-dev libvorbis-dev libogg-dev git build-essential libtool libtool-bin wget python python-pip libmp3lame-dev librtaudio-dev zip -qq -y
+    - apt-get install libncurses5-dev libsndfile1-dev libasound2 libasound2-dev libflac-dev libvorbis-dev libogg-dev git build-essential python libtool libtool-bin wget libmp3lame-dev librtaudio-dev zip -qq -y
 
   submodules_script: git submodule sync --recursive && git submodule update --init --recursive
   
@@ -75,7 +75,7 @@ win_build_task:
     image: ubuntu:latest
 
   apt_script:
-    - apt-get update && apt-get install mingw-w64 mingw-w64-tools pkg-config git libtool libtool-bin build-essential wget autoconf automake python python-pip zip gcc-multilib g++-multilib -y
+    - apt-get update && apt-get install mingw-w64 mingw-w64-tools pkg-config git libtool libtool-bin build-essential wget autoconf automake python zip gcc-multilib g++-multilib -y
     - update-alternatives --set ${COMPILER_TRIPLET}-gcc /usr/bin/${COMPILER_TRIPLET}-gcc-posix
     - update-alternatives --set ${COMPILER_TRIPLET}-g++ /usr/bin/${COMPILER_TRIPLET}-g++-posix
 
@@ -244,6 +244,7 @@ publish_task:
     - win_build
   only_if: $CIRRUS_BRANCH == 'master'
   publish_script:
+    - apt update && apt install python python-pip -y
     - pip install b2
     - chmod +x .ci/*.sh
     - b2 authorize-account $BACKBLAZE_APP_KEY_ID $BACKBLAZE_APP_KEY
