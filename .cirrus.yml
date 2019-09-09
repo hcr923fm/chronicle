@@ -55,10 +55,8 @@ linux_build_task:
     - cmake --build .
 
   dist_script:
-    - pip install b2
     - chmod +x .ci/*.sh
     - .ci/chronicle-create-dist-archives.sh
-    # - .ci/mingw32-32/chronicle-create-bb-upload.sh
 
   package_artifacts:
     path: __build/chronicle-*-linux.*
@@ -231,10 +229,8 @@ win_build_task:
     - cmake --build . -v
 
   dist_script:
-    - pip install b2
     - chmod +x .ci/*.sh
     - .ci/chronicle-create-dist-archives.sh
-    # - .ci/mingw32-32/chronicle-create-bb-upload.sh
 
   package_artifacts:
     path: __build/chronicle-*-win*.*
@@ -248,5 +244,7 @@ publish_task:
     - win_build
   only_if: $CIRRUS_BRANCH == 'master'
   publish_script:
+    - pip install b2
     - chmod +x .ci/*.sh
-    - .ci/mingw32-32/chronicle-create-bb-upload.sh
+    - b2 authorize-account $BACKBLAZE_APP_KEY_ID $BACKBLAZE_APP_KEY
+    - .ci/chronicle-b2-upload.sh
