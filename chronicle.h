@@ -4,13 +4,20 @@
 typedef int64_t __int64;
 #endif
 
-
+#include "version.h"
+#include "screen.h"
+#include "parse_opts.h"
 #include "RtAudio.h"
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/rotating_file_sink.h"
+#include "lame/lame.h"
 
-extern "C"{
-	#include "sndfile.h"
+extern "C"
+{
+#include "sndfile.h"
 }
 
+#include <boost/version.hpp>
 #include <boost/filesystem.hpp>
 
 #include <iostream>
@@ -22,20 +29,27 @@ extern "C"{
 #include <csignal>
 #include <cstring>
 
-
-std::string const SOFTWARE_NAME = "chronicle";
-std::string const VERSION = "0.1.2rc1";
-
 using namespace std;
 
 // So, you've decided to make some logger software...
 
-int main(int argc, char* argv[]);
+struct recordingParameters
+{
+	unsigned int channelCount;
+	unsigned int sampleRate;
+	unsigned int bufferLength;
+};
+
+int main(int argc, char *argv[]);
 void doRecord(boost::filesystem::path directory, string fileNameFormat);
+
+float calculateHardDriveUsage(chrono::seconds duration, recordingParameters rp);
+
+recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice);
 
 chrono::time_point<chrono::system_clock> calculateRecordEndTimeFromNow();
 
-int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, double    me, RtAudioStreamStatus status, void *userData);
+int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, double me, RtAudioStreamStatus status, void *userData);
 void stopRecord();
 void signalHandler(int sigNum);
 

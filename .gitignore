@@ -36,10 +36,56 @@ includertaudio
 .vs
 *.db
 *.opendb
+*vcxproj*
 
 *.wav
 *.ogg
+*.mp3
 build/*
+*.tar.gz
 
 # Don't upload the libs in the directory, use the /libs instead
 libsndfile-1*
+chronicle.cpp.orig
+logs/
+
+# Autotools stuff
+configure
+.deps*
+autom4te*
+out*
+aclocal.m4
+config.*
+*.in
+*.old
+Makefile
+/compile
+/depcomp
+/install-sh
+/ltmain.sh
+/missing
+/confdefs.h
+/conftest.c
+/conftest.err
+/conftest.cpp
+/conftest.lst
+/libtool
+/stamp-h1
+/libtool.m4
+/lt~obsolete.m4
+/ltoptions.m4
+/ltsugar.m4
+/ltversion.m4
+/build-aux/compile
+/build-aux/depcomp
+/build-aux/install-sh
+/build-aux/libtool.m4
+/build-aux/lt~obsolete.m4
+/build-aux/ltmain.sh
+/build-aux/ltoptions.m4
+/build-aux/ltsugar.m4
+/build-aux/ltversion.m4
+/build-aux/missing
+chronicle-
+
+__build/
