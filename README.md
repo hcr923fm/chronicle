@@ -53,7 +53,7 @@ chronicle [-h | --help]
 chronicle [--licence]
 chronicle [-l | --list-devices ]
 chronicle [-d | --directory OUTPUT_DIRECTORY] [-f | --filename FORMAT] [-i | --input-device DEVICE_ID]
-          [[-a | --max-age MAX_FILE_AGE] | --no-delete] [-s | --audio-format [WAV | OGG | MP3]]
+          [[-a | --max-age MAX_FILE_AGE] | --no-delete] [-s | --audio-format [WAV | OGG | MP3 | FLAC]]
 
 Where:
     -h | --help          Prints this help message.
@@ -79,6 +79,7 @@ Where:
                                  OGG | Ogg Vorbis (.ogg)
                                  WAV | 16-bit PCM WAV (.wav)
                                  MP3 | MP3 CBR, 320kbps (.mp3)
+                                 FLAC| Free Lossless Audio Codec (.flac)
                              Defaults to WAV.
 ```
 

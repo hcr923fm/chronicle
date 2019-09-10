@@ -30,12 +30,12 @@ enum AudioFormat
 {
 	WAV,
 	OGG,
-	MP3
+	MP3,
+	FLAC
 };
 
 // Libsndfile stuff
 SNDFILE *mySnd;
-int sfSoundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 SF_INFO sfInfo;
 
 // LAME stuff
@@ -43,6 +43,9 @@ lame_t lame_enc;
 FILE *lameOutFile;
 
 // The rest
+AudioFormat destinationAudioFormat = AudioFormat::WAV;
+string audioFileExtension = ".wav";
+int sfSoundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 RtAudio audio;
 
 /* The data is cast to a short. sizeof(short) = 2 (bytes) = 16 bits.
@@ -68,9 +71,6 @@ const int silenceThresholdDB = -40;
 const float thresholdVal = (pow(10, silenceThresholdDB / 10)) * maxAudioVal;
 
 chrono::seconds audioFileAgeLimit = chrono::seconds(3628800);
-
-AudioFormat destinationAudioFormat = AudioFormat::WAV;
-string audioFileExtension = ".wav";
 
 unsigned int inputAudioDeviceId = audio.getDefaultInputDevice();
 
@@ -243,6 +243,12 @@ int main(int argc, char *argv[])
 				audioFileExtension = ".ogg";
 				destinationAudioFormat = AudioFormat::OGG;
 			}
+			else if (opts.audio_format == "FLAC" || opts.audio_format == "flac")
+			{
+				sfSoundFormat = SF_FORMAT_FLAC | SF_FORMAT_PCM_16;
+				audioFileExtension = ".flac";
+				destinationAudioFormat = AudioFormat::FLAC;
+			}
 			else if (opts.audio_format == "WAV" || opts.audio_format == "wav")
 			{
 				sfSoundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
@@ -258,7 +264,7 @@ int main(int argc, char *argv[])
 			{
 				cout << "Audio file format not supported:" << endl;
 				cout << opts.audio_format << endl;
-				cout << "Supported formats are: [ OGG | WAV | MP3 ]" << endl;
+				cout << "Supported formats are: [ OGG | WAV | MP3 | FLAC ]" << endl;
 				exit(1);
 			}
 		}
@@ -330,7 +336,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 	params.firstChannel = 0;
 
 	// Generate libsndfile information if we're using it
-	if (destinationAudioFormat != AudioFormat::MP3)
+	if (destinationAudioFormat == FLAC || destinationAudioFormat == OGG || destinationAudioFormat == WAV)
 	{
 		sfInfo.channels = rp.channelCount;
 		sfInfo.format = sfSoundFormat;
@@ -346,7 +352,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 	}
 
 	// Or setup the MP3 encoder
-	else
+	else if (destinationAudioFormat == MP3)
 	{
 		lame_enc = lame_init();
 		lame_set_in_samplerate(lame_enc, rp.sampleRate);
@@ -503,7 +509,7 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 	short *data = (short *)inputBuffer;
 	unsigned char MP3Buffer[8192];
 
-	if (destinationAudioFormat == WAV || destinationAudioFormat == OGG)
+	if (destinationAudioFormat == WAV || destinationAudioFormat == OGG || destinationAudioFormat == FLAC)
 	{
 		sf_writef_short(mySnd, data, nFrames);
 	}
@@ -593,7 +599,7 @@ float calculateHardDriveUsage(chrono::seconds duration, recordingParameters rp)
 	sz_in_mb = (bit_depth * sample_rate * channels * dur_in_secs) / 8 / 1000000
 	*/
 
-	if (destinationAudioFormat == WAV)
+	if (destinationAudioFormat == WAV || destinationAudioFormat == FLAC)
 	{
 		return (rp.sampleRate * 16.00 * rp.channelCount * duration.count()) / 8 / 1024 / 1024;
 	}
@@ -777,6 +783,7 @@ void printHelp()
 		 << "                     OGG | Ogg Vorbis (.ogg)" << endl
 		 << "                     WAV | 16-bit PCM WAV (.wav) (default)" << endl
 		 << "                     MP3 | 320kbps MP3 (.mp3)" << endl
+		 << "                     FLAC| Free Lossless Audio Codec (.flac)" << endl
 		 << "--debug              Enables debug logging" << endl
 		 << endl;
 }
