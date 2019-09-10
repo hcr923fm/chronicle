@@ -4,6 +4,7 @@
 ## Will be 1.0.3
 ### Added
 * Added support for using chronicle without a terminal
+* Added support for FLAC (currently VBR only) 
 
 ### Fixed
 * Fixed issue where using `-l` with no available audio devices would throw an error
