@@ -2,11 +2,14 @@
 # Changelog - Chronicle
 
 ## Will be 1.0.3
+### Added
+* Added support for using chronicle without a terminal
+
 ### Fixed
-* Fixed issue where using `-l` with no available audio devices would throw an error.
+* Fixed issue where using `-l` with no available audio devices would throw an error
 
 ### Changed
-* Switched to CMake-based build system.
+* Switched to CMake-based build system, removed most platform-dependent CI scripting
 
 ## v1.0.2
 ### Fixed
