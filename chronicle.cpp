@@ -717,6 +717,10 @@ void signalHandler(int sigNum)
 	logger->info("Received signal {}; shutting down...", sigNum);
 	stopRecord();
 	closeCurses();
+	if (!opts.count("no-term"))
+	{
+		closeCurses();
+	}
 	exit(sigNum);
 }
 
