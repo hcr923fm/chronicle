@@ -73,9 +73,12 @@ const float thresholdVal = (pow(10, silenceThresholdDB / 10)) * maxAudioVal;
 chrono::seconds audioFileAgeLimit = chrono::seconds(3628800);
 
 unsigned int inputAudioDeviceId = audio.getDefaultInputDevice();
+unsigned int inputAudioDeviceFirstChannel = 0;
+unsigned int inputAudioDeviceChannels = 2;
+unsigned int inputAudioDeviceSampleRate = 44100;
 
-cmdOpts opts;
-
+// cmdOpts opts;
+boost::program_options::variables_map opts;
 bool silent_flag = 0;
 
 int main(int argc, char *argv[])
@@ -84,7 +87,7 @@ int main(int argc, char *argv[])
 		 << endl;
 
 	boost::filesystem::path output_directory;
-	output_directory = boost::filesystem::current_path();
+	// output_directory = boost::filesystem::current_path();
 
 	string fileNameFormat = "%Y-%m-%d %H%M%S"; // Default strftime format for audio files. MinGW doesn't like %F...
 
@@ -93,7 +96,7 @@ int main(int argc, char *argv[])
 	{
 		boost::filesystem::create_directory("logs");
 		auto logger = spdlog::rotating_logger_mt("chronicle_log", "logs/chronicle.log", 1024 * 1024 * 5, 3);
-		logger->set_pattern("[%H:%M:%S %z] %l - %v");
+		logger->set_pattern("[%H:%M:%S %z] %l\t- %v");
 
 		logger->info("Chronicle started...");
 	}
@@ -107,11 +110,13 @@ int main(int argc, char *argv[])
 
 	/* Parse cmd-line arguments */
 	{
-		opts = parse_options(argc, argv);
+		// opts = parse_options(argc, argv);
+		opts = doAThing(argc, argv);
 
 		// See if we're running in debug mode
 
-		if (opts.is_debug)
+		// if (opts.is_debug)
+		if (opts.count("debug"))
 		{
 			logger->set_level(spdlog::level::debug);
 			logger->info("Log level: Debug");
@@ -124,19 +129,7 @@ int main(int argc, char *argv[])
 			logger->flush_on(spdlog::level::info);
 		}
 
-		/* Not recording, just querying - these options end with the program exiting */
-
-		if (opts.licence == true)
-		{
-			printLicence();
-			exit(0);
-		}
-		else if (opts.help == true)
-		{
-			printHelp();
-			exit(0);
-		}
-		else if (opts.list_devices == true)
+		if (opts.count("list-devices"))
 		{
 			/* List the input devices that are available and exit. */
 
@@ -154,7 +147,12 @@ int main(int argc, char *argv[])
 				deviceInfo = audio.getDeviceInfo(i);
 				if (deviceInfo.probed == true && deviceInfo.inputChannels != 0)
 				{
-					cout << "#" << i << ": " << deviceInfo.name << endl;
+					cout << "#" << i << ": " << deviceInfo.name;
+					if (deviceInfo.isDefaultInput)
+					{
+						cout << " (default)";
+					}
+					cout << endl;
 					cout << "    Channel count: " << deviceInfo.inputChannels << endl;
 				}
 			}
@@ -167,23 +165,23 @@ int main(int argc, char *argv[])
 		}
 
 		/* Check for conflicting options */
-		if ((opts.max_age_value != 0) && (opts.no_delete == true))
+		if (opts.count("no-delete") & opts.count("max-age") & !opts["max-age"].defaulted())
 		{
-			printf("Cannot supply --no-delete and --max-age together; they are incompatible");
+			printf("Cannot supply --no-delete and --max-age together; they are incompatible\n");
 			exit(1);
 		}
 
 		/* Validate and set recording options */
-		if (opts.directory != "")
+		if (opts.count("directory"))
 		{
-			boost::filesystem::path proposedDir = opts.directory;
+			boost::filesystem::path proposedDir = opts["directory"].as<string>();
 
 			output_directory = proposedDir;
 		}
 
-		if (opts.format != "")
+		if (opts.count("format"))
 		{
-			fileNameFormat = opts.format;
+			fileNameFormat = opts["format"].as<string>();
 
 			/* strftime seems to not produce anything when passed %F on MinGW-compiled versions,
 			Fixes #26 */
@@ -195,105 +193,196 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		if (opts.no_delete == true)
+		if (opts.count("no-delete"))
 		{
 			/* Effectively set the threshold for when files should be deleted
 				to be in the future */
 			audioFileAgeLimit == chrono::hours(-10);
 		}
 
-		if (opts.max_age_value != 0)
+		if (opts.count("max-age"))
 		{
+			string max_age_string = opts["max-age"].as<string>();
+			int max_age_val;
+			string max_age_unit;
+			try
+			{
+				max_age_val = stoi(max_age_string);
+			}
+			catch (invalid_argument e)
+			{
+				printf("Cannot identify a valid duration for --max-age (supplied value: %s )\n. See chronicle --help for more details.\n", max_age_string.c_str());
+				exit(1);
+			}
+
+			int unit_str_idx = max_age_string.find_first_of("smhdSMHD");
+			if (unit_str_idx == string::npos)
+			{
+				printf("Cannot identify a valid duration for --max-age (supplied value: %s )\n. See chronicle --help for more details.\n", max_age_string.c_str());
+				exit(1);
+			}
+
+			max_age_unit = max_age_string.substr(unit_str_idx, 0);
 
 			/* Allow the user to specify age limit in units other than seconds,
 			Fixes #12 */
 			chrono::seconds age_seconds;
-			if (opts.max_age_unit == "s")
+			// if (opts.max_age_unit == "s")
+			if (max_age_unit == "s" || max_age_unit == "S")
 			{
-				age_seconds = chrono::seconds(opts.max_age_value);
+				age_seconds = chrono::seconds(max_age_val);
 			}
-			else if (opts.max_age_unit == "m")
+			if (max_age_unit == "m" || max_age_unit == "M")
 			{
-				age_seconds = chrono::minutes(opts.max_age_value);
+				age_seconds = chrono::minutes(max_age_val);
 			}
-			else if (opts.max_age_unit == "h")
+			if (max_age_unit == "h" || max_age_unit == "H")
 			{
-				age_seconds = chrono::hours(opts.max_age_value);
+				age_seconds = chrono::hours(max_age_val);
 			}
-			else if (opts.max_age_unit == "d")
+			if (max_age_unit == "d" || max_age_unit == "D")
 			{
-				age_seconds = chrono::hours(opts.max_age_value * 24);
+				age_seconds = chrono::hours(max_age_val * 24);
 			}
 
-			if (opts.max_age_value < 1)
+			// if (opts.max_age_value < 1)
+			if (max_age_val == 1 & (max_age_unit == "s" || max_age_unit == "S"))
 			{
 				cout << "The specified file age limit must be greater than 1 second:";
-				cout << opts.max_age_value << endl;
+				cout << max_age_val << endl;
 				exit(1);
 			}
 
 			audioFileAgeLimit = age_seconds;
 		}
 
-		if (opts.audio_format != "")
+		// if (opts.audio_format != "")
+		if (opts.count("audio-format"))
 		{
-			if (opts.audio_format == "OGG" || opts.audio_format == "ogg")
+			string audio_format_string = opts["audio-format"].as<string>();
+			logger->debug("Found proposed audio format: {}", audio_format_string);
+			// if (opts.audio_format == "OGG" || opts.audio_format == "ogg")
+			if (audio_format_string == "OGG" || audio_format_string == "ogg")
 			{
 				sfSoundFormat = SF_FORMAT_OGG | SF_FORMAT_VORBIS;
 				audioFileExtension = ".ogg";
 				destinationAudioFormat = AudioFormat::OGG;
 			}
-			else if (opts.audio_format == "FLAC" || opts.audio_format == "flac")
+			else if (audio_format_string == "FLAC" || audio_format_string == "flac")
 			{
 				sfSoundFormat = SF_FORMAT_FLAC | SF_FORMAT_PCM_16;
 				audioFileExtension = ".flac";
 				destinationAudioFormat = AudioFormat::FLAC;
 			}
-			else if (opts.audio_format == "WAV" || opts.audio_format == "wav")
+			else if (audio_format_string == "WAV" || audio_format_string == "wav")
 			{
 				sfSoundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 				audioFileExtension = ".wav";
 				destinationAudioFormat = AudioFormat::WAV;
 			}
-			else if (opts.audio_format == "MP3" || opts.audio_format == "mp3")
+			else if (audio_format_string == "MP3" || audio_format_string == "mp3")
 			{
 				audioFileExtension = ".mp3";
 				destinationAudioFormat = AudioFormat::MP3;
 			}
 			else
 			{
-				cout << "Audio file format not supported:" << endl;
-				cout << opts.audio_format << endl;
-				cout << "Supported formats are: [ OGG | WAV | MP3 | FLAC ]" << endl;
+				printf("Supplied audio file format not supported: %s\n", audio_format_string.c_str());
+				printf("Supported formats are: [ OGG | WAV | MP3 | FLAC ]\n");
 				exit(1);
 			}
+			logger->info("\tUsing audio format: {}", audio_format_string);
 		}
 
-		if (opts.input_device != -1)
+		// if (opts.input_device != -1)
+		if (opts.count("input-device"))
 		{
 			RtAudio::DeviceInfo proposedDeviceInfo;
+			int input_device_id = opts["input-device"].as<int>();
+			logger->debug("Found proposed input device ID: {}", input_device_id);
 
 			/* Does a device exist with the provided ID? */
-			if (opts.input_device > (audio.getDeviceCount() - 1))
+			if (input_device_id > (audio.getDeviceCount() - 1))
 			{
-				cout << "No audio device found with ID " << opts.input_device << endl;
-				cout << "Use:" << endl;
-				cout << "    chronicle --list-devices" << endl;
-				cout << "To find a list of available device IDs." << endl;
+				printf("No audio device found with ID %ul\n", input_device_id);
+				printf("Use chronicle --list-devices to find a list of available device IDs.\n");
 				exit(1);
 			}
 
 			/* Is the device an input device? */
-			cout << "Getting device info" << endl;
-			proposedDeviceInfo = audio.getDeviceInfo(opts.input_device);
+			logger->debug("Getting info for device ID %l", input_device_id);
+			proposedDeviceInfo = audio.getDeviceInfo(input_device_id);
 			if (proposedDeviceInfo.inputChannels == 0)
 			{
-				cout << "The specified audio device is not an input device:" << endl;
-				cout << "#" << opts.input_device << ": " << proposedDeviceInfo.name << endl;
+				printf("The specified audio device is not an input device: %ul : %s\n", input_device_id, proposedDeviceInfo.name.c_str());
 				exit(1);
 			}
 
-			inputAudioDeviceId = opts.input_device;
+			inputAudioDeviceId = input_device_id;
+		}
+
+		if (opts.count("device-first-channel"))
+		{
+			int proposed_first_channel = opts["device-first-channel"].as<int>();
+			logger->debug("Found proposed device first channel: {}", proposed_first_channel);
+
+			RtAudio::DeviceInfo device_info = audio.getDeviceInfo(inputAudioDeviceId);
+			logger->debug("\t{} input channels available, {} requested as first", device_info.inputChannels, proposed_first_channel);
+
+			if (device_info.inputChannels - 1 < proposed_first_channel)
+			{
+				printf("Option device-first-channel has been specified as %lu, but device %lu (%s) only has %lu input channels\n",
+					   proposed_first_channel, inputAudioDeviceId, device_info.name.c_str(), device_info.inputChannels);
+				exit(1);
+			}
+
+			inputAudioDeviceFirstChannel = proposed_first_channel;
+		}
+
+		if (opts.count("device-channels"))
+		{
+			int proposed_device_channels = opts["device-channels"].as<int>();
+			logger->debug("Found proposed device channel count: {}", proposed_device_channels);
+
+			RtAudio::DeviceInfo device_info = audio.getDeviceInfo(inputAudioDeviceId);
+			logger->debug("\t{} input channels available, {}-{} requested for use", device_info.inputChannels, inputAudioDeviceFirstChannel, proposed_device_channels + inputAudioDeviceFirstChannel);
+
+			if (inputAudioDeviceFirstChannel + proposed_device_channels > device_info.inputChannels)
+			{
+				printf("Option device-channels has been specified as %lu, but device %lu (%s) only has %lu input channels (first channel: %lu)\n",
+					   proposed_device_channels, inputAudioDeviceId, device_info.name.c_str(), device_info.inputChannels, inputAudioDeviceFirstChannel);
+				exit(1);
+			}
+
+			inputAudioDeviceChannels = proposed_device_channels;
+		}
+
+		if (opts.count("sample-rate"))
+		{
+			int proposed_sample_rate = opts["sample-rate"].as<int>();
+			logger->debug("Found proposed sample rate: {}", proposed_sample_rate);
+
+			RtAudio::DeviceInfo device_info = audio.getDeviceInfo(inputAudioDeviceId);
+			unsigned int matching_rate = 0;
+			for (auto it : device_info.sampleRates)
+			{
+				logger->debug("\ttesting supported sample rate {}", it);
+				if (it == proposed_sample_rate)
+				{
+					matching_rate = proposed_sample_rate;
+					logger->debug("\tsuccess!");
+					break;
+				}
+			}
+
+			if (!matching_rate)
+			{
+				printf("Device %lu (%s) does not support specified sample rate: %lu\n", inputAudioDeviceId,
+					   device_info.name.c_str(), proposed_sample_rate);
+				exit(1);
+			}
+
+			inputAudioDeviceSampleRate = matching_rate;
 		}
 	}
 
@@ -306,15 +395,16 @@ int main(int argc, char *argv[])
 
 	logger->debug("Output directory: " + output_directory.string());
 
-	string windowTitle = "Chronicle v" + SOFTWARE_VERSION_MAJOR + "." + SOFTWARE_VERSION_MINOR + "." + SOFTWARE_VERSION_PATCH;
-	if (!opts.no_term)
+	// if (!opts.no_term)
+	if (!opts.count("no-term"))
 	{
+		string windowTitle = "Chronicle v" + SOFTWARE_VERSION_MAJOR + "." + SOFTWARE_VERSION_MINOR + "." + SOFTWARE_VERSION_PATCH;
 		initCurses(windowTitle);
 	}
 
 	doRecord(output_directory, fileNameFormat);
 
-	if (!opts.no_term)
+	if (!opts.count("no-term"))
 	{
 		closeCurses();
 	}
@@ -368,7 +458,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		}
 	}
 
-	if (!opts.no_term)
+	if (!opts.count("no-term"))
 	{
 		updateAudioDevice(deviceInfo.name, rp.sampleRate, rp.channelCount);
 	}
@@ -438,7 +528,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 
 		boost::filesystem::space_info diskSpace = boost::filesystem::space(directory);
 		long diskSpaceAvailableGB = diskSpace.available / 1073741824; // bytes to GB
-		if (!opts.no_term)
+		if (!opts.count("no-term"))
 		{
 			updateHardDriveSpace(diskSpaceAvailableGB, fileSizeMB);
 		}
@@ -472,12 +562,12 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 
 		try
 		{
-			if (!opts.no_term)
+			if (!opts.count("no-term"))
 			{
 				updateRecordingToPath(audioFileFullPath.generic_string());
 			}
 			logger->debug("Updated recording output path: {}", audioFileFullPath.generic_string());
-			audio.openStream(NULL, &params, RTAUDIO_SINT16, rp.sampleRate, &(rp.bufferLength), &cb_record, &(rp.channelCount));
+			audio.openStream(NULL, &params, RTAUDIO_SINT16, rp.sampleRate, &(rp.bufferLength), &cb_record, &(rp.channelCount), NULL, &onRtAudioError);
 			logger->debug("Opened audio stream");
 			audio.startStream();
 			logger->info("Started new recording");
@@ -546,7 +636,7 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 		(framesPeak > 1) ? sprintf(label, "%02.2f dB", level) : sprintf(label, "  -INF dB");
 
 		// TODO: Rather than calling this for every channel individually it would be nicer to just pass an array of values representing all of the channels...
-		if (!opts.no_term)
+		if (!opts.count("no-term"))
 		{
 			updateAudioMeter(ch, abs(silenceThresholdDB), abs(silenceThresholdDB) - abs(level), label);
 		}
@@ -628,14 +718,6 @@ recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice)
 	(recordingDevice.inputChannels == 1) ? rp.channelCount = 1 : rp.channelCount = 2;
 	logger->debug("Input device has {} channels, using {}", recordingDevice.inputChannels, rp.channelCount);
 
-	// /* Set sample rate - prefer 44100 */
-	// if (recordingDevice.preferredSampleRate == 44100)
-	// {
-	// 	logger->debug("Devices' preferred sample rate is 44100 Hz, using this");
-	// 	rp.sampleRate = 44100;
-	// }
-	// else
-	// {
 	for (std::vector<unsigned int>::const_iterator i = recordingDevice.sampleRates.begin(); i != recordingDevice.sampleRates.end() + 1; i++)
 	{
 
@@ -653,7 +735,6 @@ recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice)
 		rp.sampleRate = recordingDevice.preferredSampleRate;
 		logger->warn("Could not set sample rate at 44.1 kHz, using preferred sample rate: {}", rp.sampleRate);
 	}
-	// }
 
 	logger->debug("Using sample rate: {}", rp.sampleRate);
 
@@ -716,7 +797,6 @@ void signalHandler(int sigNum)
 	auto logger = spdlog::get("chronicle_log");
 	logger->info("Received signal {}; shutting down...", sigNum);
 	stopRecord();
-	closeCurses();
 	if (!opts.count("no-term"))
 	{
 		closeCurses();
@@ -724,70 +804,47 @@ void signalHandler(int sigNum)
 	exit(sigNum);
 }
 
-void printLicence()
+void onRtAudioError(RtAudioError::Type type, const string &errorText)
 {
-	const char LICENCE[] =
-		R"(
-Chronicle is distributed under the MIT Licence.
-See LICENCE for details of the licences used.
-Chronicle uses the following libraries internally:
-
-    libsndfile
-        Copyright (C) 1999-2016 Erik de Castro Lopo <erikd@mega-nerd.com>
-        Licenced under the LGPL as a dynamically linked library.
-        The version of libsndfile that is distributed with this software has not
-        been modified from the version available at
-        http://www.mega-nerd.com/libsndfile/
-        
-    RtAudio
-        Copyright (c) Gary P. Scavone, McGill University
-        Licenced under the the RtAudio licence.
-        https://www.music.mcgill.ca/~gary/rtaudio/
-
-	Boost
-		Licenced under the Boost Software Licence.
-
-	LAME
-		Licenced under the LGPL v2.1. Courtesy of www.mp3dev.org
-)";
-
-	cout << LICENCE << endl;
+	auto logger = spdlog::get("chronicle_log");
+	logger->error("Got RtAudio error of type {}: {}", type, errorText);
+	signalHandler(1);
 }
 
-void printHelp()
-{
-	cout << "Usage: " << endl
-		 << "chronicle [-h | --help]" << endl
-		 << "chronicle [--licence]" << endl
-		 << "chronicle [-l | --list-devices ]" << endl
-		 << "chronicle [-d | --directory OUTPUT_DIRECTORY] [-f | --filename FORMAT] [-i | --input-device DEVICE_ID] " << endl
-		 << "          [[-a | --max-age MAX_FILE_AGE] | --no-delete] [-s | --audio-format [WAV | OGG]]" << endl
-		 << endl
-		 << "Where:" << endl
-		 << "-h | --help          Prints this help message." << endl
-		 << "--licence            Prints the licence information for this software and libraries that it uses." << endl
-		 << "-l | --list-devices  Lists the available input devices with their IDs." << endl
-		 << "-d | --directory     Sets the directory to save the logged audio to. A trailing slash is not required, but may" << endl
-		 << "                     be added. On Windows, if using a trailing slash, use a trailing double-slash." << endl
-		 << "                     Defaults to current directory." << endl
-		 << "-f | --format        strftime-compatible format to use when naming the audio files." << endl
-		 << "                     Defaults to %F %H%M%S ." << endl
-		 << "-i | --input-device  The ID number of the input device to record from. A list of input devices and their ID" << endl
-		 << "                     numbers can be obtained with `chronicle -l`." << endl
-		 << "                     If unspecified, the system default audio recording device will be used." << endl
-		 << "-a | --max-age       Sets the maximum age before audio files will be automatically deleted." << endl
-		 << "                     Use the format <length><unit>, where unit is < s| m | h | d > for" << endl
-		 << "                     seconds, minutes, hours and days, respectively." << endl
-		 << "                     So, to specify 25 hours, pass '-a 25h' ." << endl
-		 << "                     Defaults to 42 days, in accordance with OFCOM rules." << endl
-		 << "--no-delete          If passed, Chronicle will not delete old audio files, so they can be manually managed." << endl
-		 << "                     Incompatible with --max-age." << endl
-		 << "-s | --audio-format  Sets the audio format to use for the recorded audio files." << endl
-		 << "                     Acceptable parameters are:" << endl
-		 << "                     OGG | Ogg Vorbis (.ogg)" << endl
-		 << "                     WAV | 16-bit PCM WAV (.wav) (default)" << endl
-		 << "                     MP3 | 320kbps MP3 (.mp3)" << endl
-		 << "                     FLAC| Free Lossless Audio Codec (.flac)" << endl
-		 << "--debug              Enables debug logging" << endl
-		 << endl;
-}
+// void printHelp()
+// {
+// 	cout << "Usage: " << endl
+// 		 << "chronicle [-h | --help]" << endl
+// 		 << "chronicle [--licence]" << endl
+// 		 << "chronicle [-l | --list-devices ]" << endl
+// 		 << "chronicle [-d | --directory OUTPUT_DIRECTORY] [-f | --filename FORMAT] [-i | --input-device DEVICE_ID] " << endl
+// 		 << "          [[-a | --max-age MAX_FILE_AGE] | --no-delete] [-s | --audio-format [WAV | OGG]]" << endl
+// 		 << endl
+// 		 << "Where:" << endl
+// 		 << "-h | --help          Prints this help message." << endl
+// 		 << "--licence            Prints the licence information for this software and libraries that it uses." << endl
+// 		 << "-l | --list-devices  Lists the available input devices with their IDs." << endl
+// 		 << "-d | --directory     Sets the directory to save the logged audio to. A trailing slash is not required, but may" << endl
+// 		 << "                     be added. On Windows, if using a trailing slash, use a trailing double-slash." << endl
+// 		 << "                     Defaults to current directory." << endl
+// 		 << "-f | --format        strftime-compatible format to use when naming the audio files." << endl
+// 		 << "                     Defaults to %F %H%M%S ." << endl
+// 		 << "-i | --input-device  The ID number of the input device to record from. A list of input devices and their ID" << endl
+// 		 << "                     numbers can be obtained with `chronicle -l`." << endl
+// 		 << "                     If unspecified, the system default audio recording device will be used." << endl
+// 		 << "-a | --max-age       Sets the maximum age before audio files will be automatically deleted." << endl
+// 		 << "                     Use the format <length><unit>, where unit is < s| m | h | d > for" << endl
+// 		 << "                     seconds, minutes, hours and days, respectively." << endl
+// 		 << "                     So, to specify 25 hours, pass '-a 25h' ." << endl
+// 		 << "                     Defaults to 42 days, in accordance with OFCOM rules." << endl
+// 		 << "--no-delete          If passed, Chronicle will not delete old audio files, so they can be manually managed." << endl
+// 		 << "                     Incompatible with --max-age." << endl
+// 		 << "-s | --audio-format  Sets the audio format to use for the recorded audio files." << endl
+// 		 << "                     Acceptable parameters are:" << endl
+// 		 << "                     OGG | Ogg Vorbis (.ogg)" << endl
+// 		 << "                     WAV | 16-bit PCM WAV (.wav) (default)" << endl
+// 		 << "                     MP3 | 320kbps MP3 (.mp3)" << endl
+// 		 << "                     FLAC| Free Lossless Audio Codec (.flac)" << endl
+// 		 << "--debug              Enables debug logging" << endl
+// 		 << endl;
+// }

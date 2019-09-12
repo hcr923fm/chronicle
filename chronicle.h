@@ -19,6 +19,7 @@ extern "C"
 
 #include <boost/version.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/program_options.hpp>
 
 #include <iostream>
 #include <cstdlib>
@@ -52,8 +53,8 @@ chrono::time_point<chrono::system_clock> calculateRecordEndTimeFromNow();
 int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, double me, RtAudioStreamStatus status, void *userData);
 void stopRecord();
 void signalHandler(int sigNum);
+void onRtAudioError(RtAudioError::Type type, const string &errorText);
 
 void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory);
 
-void printLicence();
-void printHelp();
+// void printHelp();

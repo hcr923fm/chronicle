@@ -48,7 +48,7 @@ else()
 endif()
 
 set(Boost_DEBUG ON)
-find_package(Boost REQUIRED filesystem)
+find_package(Boost REQUIRED filesystem program_options)
 if(Boost_FILESYSTEM_FOUND)
     message(STATUS "Found Boost filesystem...")
     if (Boost_FILESYSTEM_LIBRARY)

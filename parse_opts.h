@@ -2,6 +2,8 @@
 #define __PARSE_OPTS__H
 #include <string>
 #include <cstring>
+#include <boost/program_options.hpp>
+#include <boost/filesystem.hpp>
 
 using namespace std;
 
@@ -19,8 +21,12 @@ struct cmdOpts
     int input_device = -1;
     bool no_term = false;
     bool is_debug = false;
+    unsigned int device_first_channel = 0;
+    unsigned int device_channel_count = 2;
 };
 
 cmdOpts parse_options(int argc, char *argv[]);
+boost::program_options::variables_map doAThing(int argc, char *argv[]);
+void printLicence();
 
 #endif //__PARSE_OPTS__H
