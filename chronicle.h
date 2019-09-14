@@ -37,6 +37,7 @@ using namespace std;
 struct recordingParameters
 {
 	unsigned int channelCount;
+	unsigned int firstChannel;
 	unsigned int sampleRate;
 	unsigned int bufferLength;
 };

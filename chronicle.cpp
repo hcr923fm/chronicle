@@ -74,7 +74,7 @@ chrono::seconds audioFileAgeLimit = chrono::seconds(3628800);
 
 unsigned int inputAudioDeviceId = audio.getDefaultInputDevice();
 unsigned int inputAudioDeviceFirstChannel = 0;
-unsigned int inputAudioDeviceChannels = 2;
+unsigned int inputAudioDeviceChannelCount = 2;
 unsigned int inputAudioDeviceSampleRate = 44100;
 
 // cmdOpts opts;
@@ -114,8 +114,6 @@ int main(int argc, char *argv[])
 		opts = doAThing(argc, argv);
 
 		// See if we're running in debug mode
-
-		// if (opts.is_debug)
 		if (opts.count("debug"))
 		{
 			logger->set_level(spdlog::level::debug);
@@ -354,7 +352,7 @@ int main(int argc, char *argv[])
 				exit(1);
 			}
 
-			inputAudioDeviceChannels = proposed_device_channels;
+			inputAudioDeviceChannelCount = proposed_device_channels;
 		}
 
 		if (opts.count("sample-rate"))
@@ -423,7 +421,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 
 	params.deviceId = inputAudioDeviceId;
 	params.nChannels = rp.channelCount;
-	params.firstChannel = 0;
+	params.firstChannel = rp.firstChannel;
 
 	// Generate libsndfile information if we're using it
 	if (destinationAudioFormat == FLAC || destinationAudioFormat == OGG || destinationAudioFormat == WAV)
@@ -715,26 +713,12 @@ recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice)
 	auto logger = spdlog::get("chronicle_log");
 	recordingParameters rp;
 
-	(recordingDevice.inputChannels == 1) ? rp.channelCount = 1 : rp.channelCount = 2;
+	// (recordingDevice.inputChannels == 1) ? rp.channelCount = 1 : rp.channelCount = 2;
+	rp.channelCount = inputAudioDeviceChannelCount;
+	rp.firstChannel = inputAudioDeviceChannelCount;
 	logger->debug("Input device has {} channels, using {}", recordingDevice.inputChannels, rp.channelCount);
 
-	for (std::vector<unsigned int>::const_iterator i = recordingDevice.sampleRates.begin(); i != recordingDevice.sampleRates.end() + 1; i++)
-	{
-
-		logger->debug("Device supports sample rate {}", *i);
-		if (*i == 44100)
-		{
-			logger->debug("Device can accept sample rate of 44.1kHz, using this");
-			rp.sampleRate = 44100;
-			break;
-		}
-	}
-
-	if (rp.sampleRate != 44100)
-	{
-		rp.sampleRate = recordingDevice.preferredSampleRate;
-		logger->warn("Could not set sample rate at 44.1 kHz, using preferred sample rate: {}", rp.sampleRate);
-	}
+	rp.sampleRate = inputAudioDeviceSampleRate;
 
 	logger->debug("Using sample rate: {}", rp.sampleRate);
 
