@@ -23,7 +23,7 @@ linux_build_task:
 
   boost_cache:
     folder: boost_1_68_0
-    fingerprint_script: echo $CIRRUS_OS-$CIRRUS_TASK_NAME
+    fingerprint_script: echo boost-$CIRRUS_TASK_NAME-system-filesystem-program_options
     populate_script:
       - wget https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.gz
       - tar xf boost_1_68_0.tar.gz
@@ -194,7 +194,7 @@ win_build_task:
 
   boost_download_cache:
     folder: boost_1_68_0
-    fingerprint_script: echo $CIRRUS_OS-$CIRRUS_TASK_NAME-$COMPILER_TRIPLET
+    fingerprint_script: echo boost-$CIRRUS_TASK_NAME-system-filesystem-program_options
     populate_script:
       - wget https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.gz
       - tar xf boost_1_68_0.tar.gz
