@@ -2,7 +2,6 @@ env:
   BACKBLAZE_APP_KEY_ID: ENCRYPTED[95a37d7a31679c7fb32b03d05b33edb065dcf7f0f823e7fe721e3247e5f3668d4063591d5c733ade1fd7a32f5f859c5f]
   BACKBLAZE_APP_KEY: ENCRYPTED[770e70e48569f43396e50d0692a4c1abe64e4821c1ef816520c792ad6222c61641b7e56132e37896340f740720196604]
 
-
 linux_build_task:
   container:
     image: gcc:latest
@@ -12,13 +11,13 @@ linux_build_task:
     - apt-get install libncurses5-dev libsndfile1-dev libasound2 libasound2-dev libflac-dev libvorbis-dev libogg-dev git build-essential python libtool libtool-bin wget libmp3lame-dev librtaudio-dev zip -qq -y
 
   submodules_script: git submodule sync --recursive && git submodule update --init --recursive
-  
+
   cmake_cache:
     folder: cmake-3.15.2-Linux-x86_64
     populate_script:
       - wget https://github.com/Kitware/CMake/releases/download/v3.15.2/cmake-3.15.2-Linux-x86_64.tar.gz
       - tar xf cmake-3.15.2-Linux-x86_64.tar.gz
-  
+
   cmake_install_script: cp -r cmake-3.15.2-Linux-x86_64/* /
 
   boost_cache:
@@ -29,7 +28,7 @@ linux_build_task:
       - tar xf boost_1_68_0.tar.gz
       - cd boost_1_68_0
       - ./bootstrap.sh --with-libraries=system,filesystem,program_options
-  
+
   boost_build_script:
     - cd boost_1_68_0
     - ./b2 install
@@ -40,7 +39,7 @@ linux_build_task:
     populate_script:
       - wget https://github.com/gabime/spdlog/archive/v1.3.1.tar.gz
       - tar xf v1.3.1.tar.gz
-  
+
   spdlog_install_script:
     - cd spdlog-1.3.1
     - mkdir -p __build && cd __build
@@ -61,13 +60,12 @@ linux_build_task:
   package_artifacts:
     path: __build/chronicle-*-linux.*
 
-
 win_build_task:
   # Most sources need to be built from scratch, since the mingw version of pkg-config ignores PKG_CONFIG_PATH
   env:
     # Let's do it just for conveniences' sake
     PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
-    PATH: '$PATH:/usr/local'
+    PATH: "$PATH:/usr/local"
     matrix:
       - COMPILER_TRIPLET: x86_64-w64-mingw32
       - COMPILER_TRIPLET: i686-w64-mingw32
@@ -96,7 +94,7 @@ win_build_task:
     populate_script:
       - wget https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
       - tar xf lame-*
-    
+
   lame_build_script:
     - cd lame-3.100
     - ./configure --disable-decoder --disable-shared --enable-static --host=${COMPILER_TRIPLET} --prefix=/usr/${COMPILER_TRIPLET}
@@ -150,7 +148,7 @@ win_build_task:
     - cd speex-1.2.0
     - ./configure --host=${COMPILER_TRIPLET} --prefix=/usr/${COMPILER_TRIPLET}
     - make && make install
-  
+
   libsndfile_download_cache:
     folder: libsndfile-1.0.28
     fingerprint_script: echo $CIRRUS_OS-$CIRRUS_TASK_NAME-$COMPILER_TRIPLET
@@ -164,7 +162,7 @@ win_build_task:
     - make
     - make install
 
-  rtaudio_download_cache: 
+  rtaudio_download_cache:
     folder: rtaudio
     fingerprint_script: echo $CIRRUS_OS-$CIRRUS_TASK_NAME-$COMPILER_TRIPLET
     populate_script:
@@ -172,7 +170,7 @@ win_build_task:
       - tar xf rtaudio-5.1.0.tar.gz
 
   rtaudio_build_script:
-  # Depends on libsndfile
+    # Depends on libsndfile
     - cd rtaudio-5.1.0
     - mkdir -p __build && cd __build
     - cmake .. -DCMAKE_TOOLCHAIN_FILE=../../.ci/mingw32.cmake -DRTAUDIO_API_DS=ON -DRTAUDIO_API_WASAPI=ON -DRTAUDIO_API_JACK=OFF -DCMAKE_INSTALL_PREFIX=/usr/${COMPILER_TRIPLET}
@@ -185,7 +183,7 @@ win_build_task:
     populate_script:
       - wget ftp://ftp.invisible-island.net/ncurses/ncurses-6.1.tar.gz
       - tar xf ncurses-6.1.tar.gz
-  
+
   ncurses_build_script:
     - cd ncurses-6.1
     - ./configure --enable-term-driver --enable-sp-funcs --host=${COMPILER_TRIPLET} --with-build-cc=gcc --with-pkg-config-libdir=${PKG_CONFIG_PATH} --enable-pc-files --prefix=/usr/${COMPILER_TRIPLET}
@@ -205,7 +203,7 @@ win_build_task:
     - cd boost_1_68_0
     - ./bootstrap.sh --with-libraries=system,filesystem,program_options --prefix=/usr/${COMPILER_TRIPLET}
     - if [[ $COMPILER_TRIPLET == "x86_64"* ]]; then export ADDRESS_MODEL=64; else export ADDRESS_MODEL=32; fi;
-    - ./b2 --user-config=user-config.jam --build-type=complete --layout=versioned toolset=gcc target-os=windows link=static release address-model=$ADDRESS_MODEL architecture=x86 install
+    - ./b2 --user-config=user-config.jam --build-type=complete --layout=versioned toolset=gcc target-os=windows link=shared release address-model=$ADDRESS_MODEL architecture=x86 install
 
   spdlog_download_cache:
     folder: spdlog-1.3.1
@@ -213,7 +211,7 @@ win_build_task:
     populate_script:
       - wget https://github.com/gabime/spdlog/archive/v1.3.1.tar.gz
       - tar xf v1.3.1.tar.gz
-  
+
   spdlog_install_script:
     - cd spdlog-1.3.1
     - mkdir -p __build && cd __build
@@ -237,7 +235,7 @@ win_build_task:
 
 publish_task:
   container:
-      image: gcc:latest
+    image: gcc:latest
 
   depends_on:
     - linux_build
