@@ -203,7 +203,7 @@ win_build_task:
     - cd boost_1_68_0
     - ./bootstrap.sh --with-libraries=system,filesystem,program_options --prefix=/usr/${COMPILER_TRIPLET}
     - if [[ $COMPILER_TRIPLET == "x86_64"* ]]; then export ADDRESS_MODEL=64; else export ADDRESS_MODEL=32; fi;
-    - ./b2 --user-config=user-config.jam --build-type=complete --layout=versioned toolset=gcc target-os=windows link=shared release address-model=$ADDRESS_MODEL architecture=x86 install
+    - ./b2 --user-config=user-config.jam --build-type=complete --layout=versioned toolset=gcc target-os=windows link=static release address-model=${ADDRESS_MODEL} architecture=x86 install
 
   spdlog_download_cache:
     folder: spdlog-1.3.1
