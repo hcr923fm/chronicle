@@ -185,7 +185,7 @@ win_build_task:
     - make install
 
   boost_build_script:
-    - wget https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_65_0.tar.gz
+    - wget https://dl.bintray.com/boostorg/release/1.65.0/source/boost_1_65_0.tar.gz
     - tar xf boost_1_65_0.tar.gz
     - cd boost_1_65_0
     - 'echo "using gcc : : ${COMPILER_TRIPLET}-gcc ;" > user-config.jam'
