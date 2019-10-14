@@ -25,8 +25,7 @@ struct cmdOpts
     unsigned int device_channel_count = 2;
 };
 
-cmdOpts parse_options(int argc, char *argv[]);
-boost::program_options::variables_map doAThing(int argc, char *argv[]);
+boost::program_options::variables_map parse_cmd_opts(int argc, char *argv[]);
 void printLicence();
 
 #endif //__PARSE_OPTS__H
