@@ -191,13 +191,6 @@ int main(int argc, char *argv[])
 				}
 			}
 
-			if (opts.count("no-delete"))
-			{
-				/* Effectively set the threshold for when files should be deleted
-				to be in the future */
-				audioFileAgeLimit == chrono::hours(-10);
-			}
-
 			if (opts.count("max-age"))
 			{
 				string max_age_string = opts["max-age"].as<string>();
@@ -382,6 +375,11 @@ int main(int argc, char *argv[])
 
 				inputAudioDeviceSampleRate = matching_rate;
 			}
+
+			if (opts.count("no-term"))
+			{
+				UI_IS_ENABLED = false;
+			}
 		}
 	}
 	/* Make sure that audio devices exist before continuing... */
@@ -393,19 +391,12 @@ int main(int argc, char *argv[])
 
 	logger->debug("Output directory: " + output_directory.string());
 
-	// if (!opts.no_term)
-	if (!opts.count("no-term"))
-	{
-		string windowTitle = "Chronicle v" + SOFTWARE_VERSION_MAJOR + "." + SOFTWARE_VERSION_MINOR + "." + SOFTWARE_VERSION_PATCH;
-		initCurses(windowTitle);
-	}
+	string windowTitle = "Chronicle v" + SOFTWARE_VERSION_MAJOR + "." + SOFTWARE_VERSION_MINOR + "." + SOFTWARE_VERSION_PATCH;
+	initCurses(windowTitle);
 
 	doRecord(output_directory, fileNameFormat);
 
-	if (!opts.count("no-term"))
-	{
-		closeCurses();
-	}
+	closeCurses();
 	return 0;
 }
 
@@ -456,10 +447,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		}
 	}
 
-	if (!opts.count("no-term"))
-	{
-		updateAudioDevice(deviceInfo.name, rp.sampleRate, rp.channelCount);
-	}
+	updateAudioDevice(deviceInfo.name, rp.sampleRate, rp.channelCount);
 
 	// Set up signal handling; fixes #1
 	{
@@ -526,13 +514,13 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 
 		boost::filesystem::space_info diskSpace = boost::filesystem::space(directory);
 		long diskSpaceAvailableGB = diskSpace.available / 1073741824; // bytes to GB
-		if (!opts.count("no-term"))
-		{
-			updateHardDriveSpace(diskSpaceAvailableGB, fileSizeMB);
-		}
+		updateHardDriveSpace(diskSpaceAvailableGB, fileSizeMB);
 
 		// Maintenance
-		removeOldAudioFiles(audioFileAgeLimit, directory);
+		if (!opts.count("no-delete"))
+		{
+			removeOldAudioFiles(audioFileAgeLimit, directory);
+		}
 
 		// Open audio file for writing
 		if (destinationAudioFormat != MP3)
@@ -560,10 +548,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 
 		try
 		{
-			if (!opts.count("no-term"))
-			{
-				updateRecordingToPath(audioFileFullPath.generic_string());
-			}
+			updateRecordingToPath(audioFileFullPath.generic_string());
 			logger->debug("Updated recording output path: {}", audioFileFullPath.generic_string());
 			audio.openStream(NULL, &params, RTAUDIO_SINT16, rp.sampleRate, &(rp.bufferLength), &cb_record, &(rp.channelCount), NULL, &onRtAudioError);
 			logger->debug("Opened audio stream");
@@ -634,10 +619,7 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 		(framesPeak > 1) ? sprintf(label, "%02.2f dB", level) : sprintf(label, "  -INF dB");
 
 		// TODO: Rather than calling this for every channel individually it would be nicer to just pass an array of values representing all of the channels...
-		if (!opts.count("no-term"))
-		{
-			updateAudioMeter(ch, abs(silenceThresholdDB), abs(silenceThresholdDB) - abs(level), label);
-		}
+		updateAudioMeter(ch, abs(silenceThresholdDB), abs(silenceThresholdDB) - abs(level), label);
 	}
 	return 0;
 }
@@ -781,10 +763,7 @@ void signalHandler(int sigNum)
 	auto logger = spdlog::get("chronicle_log");
 	logger->info("Received signal {}; shutting down...", sigNum);
 	stopRecord();
-	if (!opts.count("no-term"))
-	{
-		closeCurses();
-	}
+	closeCurses();
 	exit(sigNum);
 }
 

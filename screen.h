@@ -23,4 +23,6 @@ void updateAudioDevice(string audioDevice, int sampleRate, int channelCount);
 void updateAudioMeter(int channelNum, float maxVal, float currentVal, string volumeLabel);
 void updateHardDriveSpace(long spaceAvailBeforeGB, long fileSizeMB);
 
+bool UI_IS_ENABLED;
+
 #endif //__SCREEN_H__
