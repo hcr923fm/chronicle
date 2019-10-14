@@ -21,16 +21,16 @@ linux_build_task:
   cmake_install_script: cp -r cmake-3.15.2-Linux-x86_64/* /
 
   boost_cache:
-    folder: boost_1_68_0
+    folder: boost_1_65_0
     fingerprint_script: echo boost-$CIRRUS_TASK_NAME-system-filesystem-program_options
     populate_script:
-      - wget https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.gz
+      - wget https://dl.bintray.com/boostorg/release/1.65.0/source/boost_1_65_0.tar.gz
       - tar xf boost_1_68_0.tar.gz
       - cd boost_1_68_0
       - ./bootstrap.sh --with-libraries=system,filesystem,program_options
 
   boost_build_script:
-    - cd boost_1_68_0
+    - cd boost_1_65_0
     - ./b2 install
 
   spdlog_download_cache:
@@ -191,9 +191,9 @@ win_build_task:
     - make install
 
   boost_build_script:
-    - wget https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.tar.gz
-    - tar xf boost_1_68_0.tar.gz
-    - cd boost_1_68_0
+    - wget https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_65_0.tar.gz
+    - tar xf boost_1_65_0.tar.gz
+    - cd boost_1_65_0
     - 'echo "using gcc : : ${COMPILER_TRIPLET}-gcc ;" > user-config.jam'
     - ./bootstrap.sh --with-libraries=system,filesystem,program_options --prefix=/usr/${COMPILER_TRIPLET}
     - if [[ $COMPILER_TRIPLET == "x86_64"* ]]; then export ADDRESS_MODEL=64; else export ADDRESS_MODEL=32; fi;
