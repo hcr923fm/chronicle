@@ -20,17 +20,11 @@ linux_build_task:
 
   cmake_install_script: cp -r cmake-3.15.2-Linux-x86_64/* /
 
-  boost_cache:
-    folder: boost_1_65_0
-    fingerprint_script: echo boost-$CIRRUS_TASK_NAME-system-filesystem-program_options
-    populate_script:
-      - wget https://dl.bintray.com/boostorg/release/1.65.0/source/boost_1_65_0.tar.gz
-      - tar xf boost_1_68_0.tar.gz
-      - cd boost_1_68_0
-      - ./bootstrap.sh --with-libraries=system,filesystem,program_options
-
   boost_build_script:
+    - wget https://dl.bintray.com/boostorg/release/1.65.0/source/boost_1_65_0.tar.gz
+    - tar xf boost_1_65_0.tar.gz
     - cd boost_1_65_0
+    - ./bootstrap.sh --with-libraries=system,filesystem,program_options
     - ./b2 install
 
   spdlog_download_cache:
