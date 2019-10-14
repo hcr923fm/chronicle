@@ -22,7 +22,7 @@ do
         fi
 
         CHRONICLE_FILE_NAME="chronicle-${CHRONICLE_VERSION}-${bld}.${ext}"
-        CHRONICLE_URL="https://api.cirrus-ci.com/v1/artifact/github/hcr923fm/chronicle/${PLATFORM}_build/package/__build/${CHRONICLE_FILE_NAME}?branch=x-compile"
+        CHRONICLE_URL="https://api.cirrus-ci.com/v1/artifact/github/hcr923fm/chronicle/${PLATFORM}_build/package/__build/${CHRONICLE_FILE_NAME}"
         echo Downloading ${CHRONICLE_URL}
 
         wget ${CHRONICLE_URL} -O ${CHRONICLE_FILE_NAME}
