@@ -19,7 +19,7 @@ if (WIN32)
     )
 endif()
 
-add_compile_options(-DSPDLOG_COMPILED_LIB -D_WIN32_WINNT=0x600 -D_ISOC99_SOURCE -lole32 -lwinmm -ldsound -Wl,--trace)
+add_compile_options(-DSPDLOG_COMPILED_LIB -D_WIN32_WINNT=0x600 -D_ISOC99_SOURCE -lole32 -lwinmm -ldsound -Wl,--trace,--as-needed)
 #add_subdirectory(rtaudio)
 #add_subdirectory(spdlog)
 find_package(spdlog REQUIRED)
@@ -65,8 +65,6 @@ add_executable(chronicle chronicle.cpp
 parse_opts.cpp
 screen.cpp
 )
-
-SET_TARGET_PROPERTIES(chronicle PROPERTIES LINK_FLAGS "-Wl,--as-needed")
 
 target_link_libraries(chronicle PRIVATE
 spdlog::spdlog

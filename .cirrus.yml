@@ -210,7 +210,6 @@ win_build_task:
   build_script:
     - mkdir -p __build
     - cd __build
-    - CPPFLAGS="-D_ISOC99_SOURCE -lole32 -lwinmm -ldsound -Wl,--trace"
     - cmake .. -DCMAKE_TOOLCHAIN_FILE=../.ci/mingw32.cmake
     - cmake --build . -v
 
