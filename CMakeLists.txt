@@ -14,7 +14,7 @@ IF (UNIX AND NOT WIN32)
 endif()
 
 if (WIN32)
-    include_directories(/usr/$ENV{COMPILER_TRIPLET}/include/boost-1_68
+    include_directories(/usr/$ENV{COMPILER_TRIPLET}/include/boost-1_65
     /usr/$ENV{COMPILER_TRIPLET}/include
     )
 endif()
