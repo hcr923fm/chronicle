@@ -66,6 +66,8 @@ parse_opts.cpp
 screen.cpp
 )
 
+SET_TARGET_PROPERTIES(chronicle PROPERTIES LINK_FLAGS "-Wl,--as-needed")
+
 target_link_libraries(chronicle PRIVATE
 spdlog::spdlog
 ${LAME_LIB}

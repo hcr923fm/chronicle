@@ -17,7 +17,7 @@ Linux users can also [download the binaries](https://github.com/hcr923fm/chronic
 * RtAudio, (`librtaudio-dev`) @5.0.0
 * libsndfile, which is in most package managers (`libsndfile1-dev`)
 * Boost, which is in most package managers (`libboost-all-dev`) @1.65.0+
-* ncurses, which is available in most package managers (`libncurses5-dev`)
+* ncurses, which is available in most package managers (`libncurses6-dev`) @6.0+
 * LAME encoding library, which is in most package managers (`libmp3lame-dev`) @1.3.0+
 
 #### Compiling from scratch
