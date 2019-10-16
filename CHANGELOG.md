@@ -1,7 +1,7 @@
 
 # Changelog - Chronicle
 
-## 1.0.3
+## 1.1.0
 ### Added
 * Added support for using chronicle without a terminal
 * Added support for FLAC (currently VBR only)
