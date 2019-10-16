@@ -34,8 +34,9 @@ void initCurses(string windowTitle)
     if (NC_UI_IS_ENABLED)
     {
         initscr();
-        cbreak(); // To disable the buffering of typed characters by the TTY driver and get a character-at-a-time input
-        noecho(); // To suppress the automatic echoing of typed characters
+        cbreak();    // To disable the buffering of typed characters by the TTY driver and get a character-at-a-time input
+        noecho();    // To suppress the automatic echoing of typed characters
+        curs_set(0); // Hide the cursor
         mainWindow = newwin(LINES, COLS, 0, 0);
         calculateWindowPositions();
 
@@ -189,6 +190,11 @@ void onWindowResize()
         resizeterm(x, y);
         endwin();
         wrefresh(mainWindow);
+
+        initscr();
+        cbreak();    // To disable the buffering of typed characters by the TTY driver and get a character-at-a-time input
+        noecho();    // To suppress the automatic echoing of typed characters
+        curs_set(0); // Hide the cursor
 
         calculateWindowPositions();
         setWindowTitle(windowTitleCache);
