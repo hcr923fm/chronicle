@@ -7,7 +7,7 @@
 * Added support for FLAC (currently VBR only)
 * Added support to specify samplerate
 * Added support to select channels on multi-channel devices
-* Added support to resize the window reasonably well
+* Added support to resize the window reasonably well (Unix only, this is not supported on Windows, as SIGWINCH does not exist)
 
 ### Fixed
 * Fixed issue where using `-l` with no available audio devices would throw an error

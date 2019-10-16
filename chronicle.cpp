@@ -466,7 +466,9 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 	{
 		signal(SIGINT, signalShutdownHandler);
 		signal(SIGABRT, signalShutdownHandler);
+#if !defined(WIN32) || !defined(_WIN32) || !defined(__WIN32__)
 		signal(SIGWINCH, signalWinResizeHandler);
+#endif
 		//signal(SIGBREAK, signalHandler);
 		//signal(, handleWindowRedraw); // TODO: HANDLE TERMINAL RESIZE
 	}
@@ -487,7 +489,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		char audioFileName[81];
 		time_t now_tt = chrono::system_clock::to_time_t(chrono::system_clock::now());
 		struct tm now_tm;
-#if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__))
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 		localtime_s(&now_tm, &now_tt); // Use localtime_s on windows
 #else
 		localtime_r(&now_tt, &now_tm); // Use localtime_r on POSIX
