@@ -61,9 +61,10 @@ else()
 endif()
 
 
-add_executable(chronicle chronicle.cpp
+add_executable(chronicle 
 parse_opts.cpp
 screen.cpp
+chronicle.cpp
 )
 
 target_link_libraries(chronicle PRIVATE

@@ -77,7 +77,6 @@ unsigned int inputAudioDeviceFirstChannel = 0;
 unsigned int inputAudioDeviceChannelCount = 2;
 unsigned int inputAudioDeviceSampleRate = 44100;
 
-// cmdOpts opts;
 boost::program_options::variables_map opts;
 bool silent_flag = 0;
 
@@ -87,7 +86,6 @@ int main(int argc, char *argv[])
 		 << endl;
 
 	boost::filesystem::path output_directory;
-	// output_directory = boost::filesystem::current_path();
 
 	string fileNameFormat = "%Y-%m-%d %H%M%S"; // Default strftime format for audio files. MinGW doesn't like %F...
 
@@ -378,7 +376,11 @@ int main(int argc, char *argv[])
 
 			if (opts.count("no-term"))
 			{
-				UI_IS_ENABLED = false;
+				NC_UI_IS_ENABLED = false;
+			}
+			else
+			{
+				NC_UI_IS_ENABLED = true;
 			}
 		}
 	}
@@ -451,8 +453,9 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 
 	// Set up signal handling; fixes #1
 	{
-		signal(SIGINT, signalHandler);
-		signal(SIGABRT, signalHandler);
+		signal(SIGINT, signalShutdownHandler);
+		signal(SIGABRT, signalShutdownHandler);
+		signal(SIGWINCH, signalWinResizeHandler);
 		//signal(SIGBREAK, signalHandler);
 		//signal(, handleWindowRedraw); // TODO: HANDLE TERMINAL RESIZE
 	}
@@ -758,7 +761,14 @@ void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory)
 	}
 }
 
-void signalHandler(int sigNum)
+void signalWinResizeHandler(int sigNum)
+{
+	auto logger = spdlog::get("chronicle_log");
+	logger->info("Handling window resize");
+	onWindowResize();
+}
+
+void signalShutdownHandler(int sigNum)
 {
 	auto logger = spdlog::get("chronicle_log");
 	logger->info("Received signal {}; shutting down...", sigNum);
@@ -771,7 +781,7 @@ void onRtAudioError(RtAudioError::Type type, const string &errorText)
 {
 	auto logger = spdlog::get("chronicle_log");
 	logger->error("Got RtAudio error of type {}: {}", type, errorText);
-	signalHandler(1);
+	signalShutdownHandler(1);
 }
 
 // void printHelp()
