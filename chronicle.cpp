@@ -197,6 +197,7 @@ int main(int argc, char *argv[])
 				try
 				{
 					max_age_val = stoi(max_age_string);
+					logger->debug("Found max age value: {}", max_age_val);
 				}
 				catch (invalid_argument e)
 				{
@@ -211,7 +212,8 @@ int main(int argc, char *argv[])
 					exit(1);
 				}
 
-				max_age_unit = max_age_string.substr(unit_str_idx, 0);
+				max_age_unit = max_age_string.substr(unit_str_idx, 1);
+				logger->debug("Found max age unit: {}", max_age_unit);
 
 				/* Allow the user to specify age limit in units other than seconds,
 			Fixes #12 */
@@ -296,7 +298,7 @@ int main(int argc, char *argv[])
 				}
 
 				/* Is the device an input device? */
-				logger->debug("Getting info for device ID %l", input_device_id);
+				logger->debug("Getting info for device ID {}", input_device_id);
 				proposedDeviceInfo = audio.getDeviceInfo(input_device_id);
 				if (proposedDeviceInfo.inputChannels == 0)
 				{
@@ -337,7 +339,7 @@ int main(int argc, char *argv[])
 				}
 
 				RtAudio::DeviceInfo device_info = audio.getDeviceInfo(inputAudioDeviceId);
-				logger->debug("\t%s input channels available, %i-%i requested for use", device_info.inputChannels, inputAudioDeviceFirstChannel, proposed_device_channels + inputAudioDeviceFirstChannel);
+				logger->debug("\t{} input channels available, {}-{} requested for use", device_info.inputChannels, inputAudioDeviceFirstChannel, proposed_device_channels + inputAudioDeviceFirstChannel - 1);
 
 				if (inputAudioDeviceFirstChannel + proposed_device_channels > device_info.inputChannels)
 				{
@@ -747,6 +749,8 @@ void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory)
 	audio files older than a certain age
 	*/
 
+	auto logger = spdlog::get("chronicle_log");
+	logger->debug("Removing old audio files (max age is {} seconds)", audioFileAgeLimit.count());
 	chrono::system_clock::time_point nowChrono, oldestTimeChrono, fileMTime;
 	nowChrono = chrono::system_clock::now();
 	oldestTimeChrono = nowChrono - age;
@@ -763,6 +767,7 @@ void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory)
 
 		if ((fileMTime < oldestTimeChrono) & (dirEntry.path().extension() == audioFileExtension))
 		{
+			logger->debug("\tDeleting file older than max age (age is {}s): {}", chrono::duration_cast<chrono::seconds>(nowChrono - fileMTime).count(), dirEntry.path().c_str());
 			boost::filesystem::remove(dirEntry.path());
 		}
 
