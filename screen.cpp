@@ -20,9 +20,18 @@ int POS_AUDIOMETER_LABEL_Y;
 
 int POS_HDSPACE_X;
 
+string windowTitleCache;
+string audioDeviceCache;
+string recordingPathCache;
+long HDSpaceAvailableCache;
+long fileSizeCache;
+int sampleRateCache;
+int channelCountCache;
+
+bool NC_UI_IS_ENABLED;
 void initCurses(string windowTitle)
 {
-    if (UI_IS_ENABLED)
+    if (NC_UI_IS_ENABLED)
     {
         initscr();
         cbreak(); // To disable the buffering of typed characters by the TTY driver and get a character-at-a-time input
@@ -31,15 +40,10 @@ void initCurses(string windowTitle)
         calculateWindowPositions();
 
         /* Add the border and window title */
-        wborder(mainWindow, 0, 0, 0, 0, 0, 0, 0, 0);
-
-        string paddedWindowTitle = " " + windowTitle + " ";
-        wmove(mainWindow, 0, (COLS - paddedWindowTitle.length()) / 2);
-        wprintw(mainWindow, paddedWindowTitle.c_str());
+        setBorderAndDividers();
+        setWindowTitle(windowTitle);
 
         /* Draw the horizontal line above the 'status bar' */
-        wmove(mainWindow, LINES - 3, 1);
-        whline(mainWindow, ACS_HLINE, COLS - 2);
 
         start_color();
         wrefresh(mainWindow);
@@ -48,7 +52,7 @@ void initCurses(string windowTitle)
 
 void closeCurses()
 {
-    if (UI_IS_ENABLED)
+    if (NC_UI_IS_ENABLED)
     {
         endwin();
     }
@@ -56,7 +60,7 @@ void closeCurses()
 
 void calculateWindowPositions()
 {
-    if (UI_IS_ENABLED)
+    if (NC_UI_IS_ENABLED)
     {
         /* Stuff that goes on the status bar */
         POS_STATUSBAR_Y = LINES - 2;
@@ -77,10 +81,28 @@ void calculateWindowPositions()
     }
 }
 
+void setWindowTitle(string windowTitle)
+{
+    windowTitleCache = windowTitle;
+
+    string paddedWindowTitle = " " + windowTitleCache + " ";
+    wmove(mainWindow, 0, (COLS - paddedWindowTitle.length()) / 2);
+    wprintw(mainWindow, paddedWindowTitle.c_str());
+}
+
+void setBorderAndDividers()
+{
+    wborder(mainWindow, 0, 0, 0, 0, 0, 0, 0, 0);
+    wmove(mainWindow, LINES - 3, 1);
+    whline(mainWindow, ACS_HLINE, COLS - 2);
+    wrefresh(mainWindow);
+}
+
 void updateRecordingToPath(string filePath)
 {
-    if (UI_IS_ENABLED)
+    if (NC_UI_IS_ENABLED)
     {
+        recordingPathCache = filePath;
         string recordingTo = "Recording to: " + filePath;
         wmove(mainWindow, POS_FNAME_Y, POS_FNAME_X);
         wprintw(mainWindow, recordingTo.c_str());
@@ -91,21 +113,25 @@ void updateRecordingToPath(string filePath)
 
 void updateAudioDevice(string audioDevice, int sampleRate, int channelCount)
 {
-    if (UI_IS_ENABLED)
+    if (NC_UI_IS_ENABLED)
     {
         /* Draw audio device name */
         wmove(mainWindow, POS_STATUSBAR_Y, POS_AUDIO_DEVICE_X);
-        wprintw(mainWindow, audioDevice.c_str());
+        audioDeviceCache = audioDevice;
+        wprintw(mainWindow, audioDeviceCache.c_str());
         //wrefresh(mainWindow);
 
         /* Draw sample rate */
         wmove(mainWindow, POS_STATUSBAR_Y, POS_SAMPLERATE_X);
-        string sampleRateStr = to_string(sampleRate) + " Hz";
+        sampleRateCache = sampleRate;
+        string sampleRateStr = sampleRateCache + " Hz";
+
         wprintw(mainWindow, sampleRateStr.c_str());
 
         /* Draw channel count */
         wmove(mainWindow, POS_STATUSBAR_Y, POS_CHANNELCOUNT_X);
-        string channelCountStr = to_string(channelCount) + " Channels";
+        channelCountCache = channelCount;
+        string channelCountStr = to_string(channelCountCache) + " Channels";
         wprintw(mainWindow, channelCountStr.c_str());
 
         /* Draw channel meter start and end bars */
@@ -123,7 +149,7 @@ void updateAudioDevice(string audioDevice, int sampleRate, int channelCount)
 
 void updateAudioMeter(int channelNum, float maxVal, float currentVal, string volumeLabel)
 {
-    if (UI_IS_ENABLED)
+    if (NC_UI_IS_ENABLED)
     {
         int potentialBarWidth = (POS_AUDIOMETER_MAXWIDTH - 3) * (currentVal / maxVal);
         int clippedBarWidth = min(POS_AUDIOMETER_MAXWIDTH - 3, max(2, potentialBarWidth));
@@ -140,12 +166,35 @@ void updateAudioMeter(int channelNum, float maxVal, float currentVal, string vol
 
 void updateHardDriveSpace(long spaceAvailBeforeGB, long fileSizeMB)
 {
-    if (UI_IS_ENABLED)
+    if (NC_UI_IS_ENABLED)
     {
         wmove(mainWindow, POS_STATUSBAR_Y, POS_HDSPACE_X);
 
-        string spaceStr = "Space available: " + to_string(spaceAvailBeforeGB) + " GB; Audio file size: " + to_string(fileSizeMB) + " MB";
+        HDSpaceAvailableCache = spaceAvailBeforeGB;
+        fileSizeCache = fileSizeMB;
+        string spaceStr = "Space available: " + to_string(HDSpaceAvailableCache) + " GB; Audio file size: " + to_string(fileSizeCache) + " MB";
         wprintw(mainWindow, spaceStr.c_str());
         wrefresh(mainWindow);
+    }
+}
+
+void onWindowResize()
+{
+    if (NC_UI_IS_ENABLED)
+    {
+        int x;
+        int y;
+
+        getmaxyx(mainWindow, y, x);
+        resizeterm(x, y);
+        endwin();
+        wrefresh(mainWindow);
+
+        calculateWindowPositions();
+        setWindowTitle(windowTitleCache);
+        setBorderAndDividers();
+        updateAudioDevice(audioDeviceCache, sampleRateCache, channelCountCache);
+        updateHardDriveSpace(HDSpaceAvailableCache, fileSizeCache);
+        updateRecordingToPath(recordingPathCache);
     }
 }
