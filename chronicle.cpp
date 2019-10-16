@@ -216,7 +216,6 @@ int main(int argc, char *argv[])
 				/* Allow the user to specify age limit in units other than seconds,
 			Fixes #12 */
 				chrono::seconds age_seconds;
-				// if (opts.max_age_unit == "s")
 				if (max_age_unit == "s" || max_age_unit == "S")
 				{
 					age_seconds = chrono::seconds(max_age_val);
@@ -234,7 +233,6 @@ int main(int argc, char *argv[])
 					age_seconds = chrono::hours(max_age_val * 24);
 				}
 
-				// if (opts.max_age_value < 1)
 				if (max_age_val == 1 & (max_age_unit == "s" || max_age_unit == "S"))
 				{
 					cout << "The specified file age limit must be greater than 1 second:";
@@ -245,7 +243,6 @@ int main(int argc, char *argv[])
 				audioFileAgeLimit = age_seconds;
 			}
 
-			// if (opts.audio_format != "")
 			if (opts.count("audio-format"))
 			{
 				string audio_format_string = opts["audio-format"].as<string>();
@@ -320,7 +317,7 @@ int main(int argc, char *argv[])
 
 				if (device_info.inputChannels - 1 < proposed_first_channel)
 				{
-					printf("Option device-first-channel has been specified as %lu, but device %lu (%s) only has %lu input channels\n",
+					printf("Option device-first-channel has been specified as %i, but device %i (%s) only has %i input channels\n",
 						   proposed_first_channel, inputAudioDeviceId, device_info.name.c_str(), device_info.inputChannels);
 					exit(1);
 				}
@@ -333,17 +330,29 @@ int main(int argc, char *argv[])
 				int proposed_device_channels = opts["device-channels"].as<int>();
 				logger->debug("Found proposed device channel count: {}", proposed_device_channels);
 
+				if (proposed_device_channels < 1)
+				{
+					printf("Invalid device channel count: %i", proposed_device_channels);
+					exit(1);
+				}
+
 				RtAudio::DeviceInfo device_info = audio.getDeviceInfo(inputAudioDeviceId);
-				logger->debug("\t{} input channels available, {}-{} requested for use", device_info.inputChannels, inputAudioDeviceFirstChannel, proposed_device_channels + inputAudioDeviceFirstChannel);
+				logger->debug("\t%s input channels available, %i-%i requested for use", device_info.inputChannels, inputAudioDeviceFirstChannel, proposed_device_channels + inputAudioDeviceFirstChannel);
 
 				if (inputAudioDeviceFirstChannel + proposed_device_channels > device_info.inputChannels)
 				{
-					printf("Option device-channels has been specified as %lu, but device %lu (%s) only has %lu input channels (first channel: %lu)\n",
+					printf("Option device-channels has been specified as %i, but device %i (%s) only has %i input channels (first channel: %i)\n",
 						   proposed_device_channels, inputAudioDeviceId, device_info.name.c_str(), device_info.inputChannels, inputAudioDeviceFirstChannel);
 					exit(1);
 				}
 
 				inputAudioDeviceChannelCount = proposed_device_channels;
+			}
+
+			if (opts["device-channels"].as<int>() > 2 && destinationAudioFormat == AudioFormat::MP3)
+			{
+				printf("Cannot use more than 2 channels when recording MP3!\n");
+				exit(1);
 			}
 
 			if (opts.count("sample-rate"))
@@ -366,7 +375,7 @@ int main(int argc, char *argv[])
 
 				if (!matching_rate)
 				{
-					printf("Device %lu (%s) does not support specified sample rate: %lu\n", inputAudioDeviceId,
+					printf("Device %i (%s) does not support specified sample rate: %i\n", inputAudioDeviceId,
 						   device_info.name.c_str(), proposed_sample_rate);
 					exit(1);
 				}
@@ -501,7 +510,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		}
 		catch (boost::filesystem::filesystem_error &e)
 		{
-			printf(e.what());
+			printf("%s", e.what());
 			logger->critical("Could not create directory: {}", e.what());
 			exit(1);
 		}
