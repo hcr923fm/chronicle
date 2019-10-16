@@ -7,6 +7,7 @@
 * Added support for FLAC (currently VBR only)
 * Added support to specify samplerate
 * Added support to select channels on multi-channel devices
+* Added support to resize the window reasonably well
 
 ### Fixed
 * Fixed issue where using `-l` with no available audio devices would throw an error
