@@ -769,7 +769,7 @@ void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory)
 
 		if ((fileMTime < oldestTimeChrono) & (dirEntry.path().extension() == audioFileExtension))
 		{
-			logger->debug("\tDeleting file older than max age (age is {}s): {}", chrono::duration_cast<chrono::seconds>(nowChrono - fileMTime).count(), dirEntry.path().c_str());
+			logger->debug("\tDeleting file older than max age (age is {}s): {}", chrono::duration_cast<chrono::seconds>(nowChrono - fileMTime).count(), dirEntry.path().string());
 			boost::filesystem::remove(dirEntry.path());
 		}
 
