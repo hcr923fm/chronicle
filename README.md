@@ -9,9 +9,9 @@ At the moment, it records audio from specified input to an audio file, on the ho
 
 ### How do I use Chronicle?
 
-If run without any command-line switches, chronicle will record the first two channels of the default soundcard to WAV in the local directory.
+If run without any command-line switches, chronicle will record the first two channels of the default soundcard to WAV in the local directory. Audio will be retained for 1000 hours (as per OfCom regulations).
 
-However, you can easily specify which audio device to use, which channels to record, the audio format, and more through a number of command-line flags.
+However, you can easily specify which audio device to use, which channels to record, the audio format, audio file retention age, and more through a number of command-line flags.
 
 For a list, use `chronicle --help`.
 
