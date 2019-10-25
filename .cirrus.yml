@@ -225,44 +225,44 @@ win_machine_build_task:
     image: cirrusci/windowsservercore:2019
     os_version: 2019
 
-    choco_script:
-      - cinst -y git cmake wget tartool make
+  choco_script:
+    - cinst -y git cmake wget tartool make
 
-    vcpkg_script:
-      - git clone https://github.com/Microsoft/vcpkg.git
-      - cd vcpkg
-      - ps: .\bootstrap-vcpkg.bat
-      - ps: .\vcpkg integrate install
+  vcpkg_script:
+    - git clone https://github.com/Microsoft/vcpkg.git
+    - cd vcpkg
+    - ps: .\bootstrap-vcpkg.bat
+    - ps: .\vcpkg integrate install
 
-    deps_script:
-      - cd vcpkg
-      - .\vcpkg install libsndfile libflac libvorbis libogg spdlog
+  deps_script:
+    - cd vcpkg
+    - .\vcpkg install libsndfile libflac libvorbis libogg spdlog
 
-    lame_download_script:
-      - ps: wget https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
-      - ps: tartool xf lame-3.100.tar.gz ./
-      - cd lame-3.100
-      - ./configure --disable-decoder --disable-shared --enable-static
-      - make -j4
-      - make install
+  lame_download_script:
+    - ps: wget https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
+    - ps: tartool xf lame-3.100.tar.gz ./
+    - cd lame-3.100
+    - ./configure --disable-decoder --disable-shared --enable-static
+    - make -j4
+    - make install
 
-    rtaudio_download_script:
-      - ps: wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.1.0.tar.gz
-      - ps: tartool xf rtaudio-5.1.0.tar.gz ./
-      - cd rtaudio-5.1.0
-      - mkdir -p __build && cd __build
-      - cmake .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake
-      - cmake --build .
-      - cmake --install .
+  rtaudio_download_script:
+    - ps: wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.1.0.tar.gz
+    - ps: tartool xf rtaudio-5.1.0.tar.gz ./
+    - cd rtaudio-5.1.0
+    - mkdir -p __build && cd __build
+    - cmake .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake
+    - cmake --build .
+    - cmake --install .
 
-    build_script:
-      - mkdir -p __build
-      - cd __build
-      - cmake .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake
-      - cmake --build . -v
+  build_script:
+    - mkdir -p __build
+    - cd __build
+    - cmake .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake
+    - cmake --build . -v
 
-    package_artifacts:
-      path: __build
+  package_artifacts:
+    path: __build
 
 publish_task:
   container:
