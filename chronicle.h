@@ -53,7 +53,8 @@ chrono::time_point<chrono::system_clock> calculateRecordEndTimeFromNow();
 
 int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, double me, RtAudioStreamStatus status, void *userData);
 void stopRecord();
-void signalHandler(int sigNum);
+void signalShutdownHandler(int sigNum);
+void signalWinResizeHandler(int sigNum);
 void onRtAudioError(RtAudioError::Type type, const string &errorText);
 
 void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory);

@@ -7,6 +7,14 @@ Chronicle is an audio logger, designed for radio station use.
 
 At the moment, it records audio from specified input to an audio file, on the hour, every hour. Once the recordings have become outdated, they will be deleted. As such, it is a full rotating logger.
 
+### How do I use Chronicle?
+
+If run without any command-line switches, chronicle will record the first two channels of the default soundcard to WAV in the local directory. Audio will be retained for 1000 hours (as per OfCom regulations).
+
+However, you can easily specify which audio device to use, which channels to record, the audio format, audio file retention age, and more through a number of command-line flags.
+
+For a list, use `chronicle --help`.
+
 ## Getting Chronicle
 ### Windows x32 and x64
 Windows users (both 32 and 64 bit) can simply download the latest compiled binaries from the [Releases](https://github.com/hcr923fm/chronicle/releases/latest) page. Simply extract and run. Hooray!

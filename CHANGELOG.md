@@ -1,15 +1,18 @@
 
 # Changelog - Chronicle
 
-## Will be 1.0.3
+## 1.1.0
 ### Added
 * Added support for using chronicle without a terminal
 * Added support for FLAC (currently VBR only)
 * Added support to specify samplerate
 * Added support to select channels on multi-channel devices
+* Added support to resize the window reasonably well (Unix only, this is not supported on Windows, as SIGWINCH does not exist)
 
 ### Fixed
 * Fixed issue where using `-l` with no available audio devices would throw an error
+* Corrected error warning string formatting
+* Disallowed user from attempting to record more than two channels when using MP3
 
 ### Changed
 * Switched to CMake-based build system, removed most platform-dependent CI scripting
