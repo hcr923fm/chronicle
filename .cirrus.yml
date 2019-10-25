@@ -226,7 +226,7 @@ win_machine_build_task:
     os_version: 2019
 
   choco_script:
-    - cinst -y git cmake wget tartool make
+    - cinst -y -r git cmake wget tartool make choco install visualstudio2017community
 
   vcpkg_script:
     - git clone https://github.com/Microsoft/vcpkg.git
