@@ -470,7 +470,6 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		signal(SIGWINCH, signalWinResizeHandler);
 #endif
 		//signal(SIGBREAK, signalHandler);
-		//signal(, handleWindowRedraw); // TODO: HANDLE TERMINAL RESIZE
 	}
 
 	// Main record loop begins
@@ -573,7 +572,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		}
 		catch (RtAudioError &e)
 		{
-			logger->critical("Could not open stream: {}", e.getMessage());
+			logger->critical("Could not open stream: {} ( {} )", e.getMessage(), e.getType());
 			exit(0);
 		}
 
