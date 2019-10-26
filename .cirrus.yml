@@ -20,6 +20,9 @@ win_machine_build_task:
   #   - cd vcpkg
   #   - .\vcpkg install libsndfile libflac libvorbis libogg spdlog
 
+  nuget_install_script:
+    - ps: Install-PackageProvider -Name "Nuget" -RequiredVersion "2.8.5.216" -Force
+
   nuget_script:
     - ps: Install-Package libsndfile-msvc-x64
     - ps: Install-Package FLAC.WindowsRuntime
