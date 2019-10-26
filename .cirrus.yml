@@ -4,11 +4,14 @@ env:
 
 win_machine_build_task:
   windows_container:
-    image: cirrusci/windowsservercore:2019
+    image: cirrusci/windowsservercore:cmake
     os_version: 2019
 
   choco_script:
     - cinst -y -r git cmake wget tartool make #visualstudio2017community
+
+  docker_vcpkg_test:
+    - vcpkg version
 
   # vcpkg_script:
   #   - git clone https://github.com/Microsoft/vcpkg.git
