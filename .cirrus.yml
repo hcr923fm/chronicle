@@ -7,32 +7,31 @@ win_machine_build_task:
     image: cirrusci/windowsservercore:cmake
     os_version: 2019
 
+  # In this image, cmake and git are already installed, as well as VS 2017
+
   choco_script:
-    - cinst -y -r git cmake wget tartool make #visualstudio2017community
+    - cinst -y -r git wget tartool make #visualstudio2017community cmake
 
-  docker_vcpkg_test_script:
-    - vcpkg version
+  vcpkg_script:
+    - git clone https://github.com/Microsoft/vcpkg.git
+    - cd vcpkg
+    - ps: .\bootstrap-vcpkg.bat
+    - ps: .\vcpkg integrate install
 
-  # vcpkg_script:
-  #   - git clone https://github.com/Microsoft/vcpkg.git
-  #   - cd vcpkg
-  #   - ps: .\bootstrap-vcpkg.bat
-  #   - ps: .\vcpkg integrate install
+  deps_script:
+    - cd vcpkg
+    - .\vcpkg install libsndfile libflac libvorbis libogg spdlog
 
-  # deps_script:
-  #   - cd vcpkg
-  #   - .\vcpkg install libsndfile libflac libvorbis libogg spdlog
+  # nuget_install_script:
+  #   - ps: "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12"
+  #   - ps: Install-PackageProvider -Name "Nuget" -MinimumVersion "2.8.5.216" -Force
 
-  nuget_install_script:
-    - ps: "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12"
-    - ps: Install-PackageProvider -Name "Nuget" -MinimumVersion "2.8.5.216" -Force
-
-  nuget_script:
-    - ps: Install-Package libsndfile-msvc-x64
-    - ps: Install-Package FLAC.WindowsRuntime
-    - ps: Install-Package vorbis-msvc-x64
-    - ps: Install-Package libogg
-    - ps: Install-Package spdlog.native
+  # nuget_script:
+  #   - ps: Install-Package libsndfile-msvc-x64
+  #   - ps: Install-Package FLAC.WindowsRuntime
+  #   - ps: Install-Package vorbis-msvc-x64
+  #   - ps: Install-Package libogg
+  #   - ps: Install-Package spdlog.native
 
   lame_download_script:
     - ps: wget https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
