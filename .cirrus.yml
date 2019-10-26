@@ -10,7 +10,7 @@ win_machine_build_task:
   choco_script:
     - cinst -y -r git cmake wget tartool make #visualstudio2017community
 
-  docker_vcpkg_test:
+  docker_vcpkg_test_script:
     - vcpkg version
 
   # vcpkg_script:
