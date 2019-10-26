@@ -9,9 +9,6 @@ win_machine_build_task:
 
   # In this image, cmake and git are already installed, as well as VS 2017
 
-  choco_script:
-    - cinst -y -r git wget tartool make #visualstudio2017community cmake
-
   vcpkg_script:
     - git clone https://github.com/Microsoft/vcpkg.git
     - cd vcpkg
@@ -21,6 +18,9 @@ win_machine_build_task:
   deps_script:
     - cd vcpkg
     - .\vcpkg install libsndfile libflac libvorbis libogg spdlog
+
+  choco_script:
+    - cinst -y -r wget tartool make #visualstudio2017community cmake git
 
   # nuget_install_script:
   #   - ps: "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12"
