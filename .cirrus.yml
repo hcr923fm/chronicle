@@ -47,7 +47,7 @@ win_machine_build_task:
 
   rtaudio_download_script:
     - ps: aria2c http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.1.0.tar.gz
-    - ps: tartool xf rtaudio-5.1.0.tar.gz ./
+    - ps: tartool rtaudio-5.1.0.tar.gz ./
     - cd rtaudio-5.1.0
     - mkdir -p __build && cd __build
     - cmake .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake
