@@ -35,7 +35,7 @@ win_machine_build_task:
 
   lame_download_script:
     - ps: aria2c https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
-    - ps: tartool xf lame-3.100.tar.gz ./
+    - ps: tartool lame-3.100.tar.gz ./
     - cd lame-3.100
     - ps: ((Get-Content -path .\Makefile.MSVC -Raw) -replace '/machine:I386','/machine:X64') | Set-Content -path .\Makefile.MSVC64 # Setup for x64
     - ps: cp configMS.h config.h -Force
