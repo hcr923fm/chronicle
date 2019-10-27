@@ -36,6 +36,7 @@ win_machine_build_task:
   lame_download_script:
     - aria2c https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
     - 7z x lame-3.100.tar.gz
+    - 7z x lame-3.100.tar
     - cd lame-3.100
     - ps: ((Get-Content -path .\Makefile.MSVC -Raw) -replace '/machine:I386','/machine:X64') | Set-Content -path .\Makefile.MSVC64 # Setup for x64
     - cp configMS.h config.h -Force
@@ -48,6 +49,7 @@ win_machine_build_task:
   rtaudio_download_script:
     - aria2c http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.1.0.tar.gz
     - 7z x rtaudio-5.1.0.tar.gz
+    - 7z x rtaudio-5.1.0.tar
     - cd rtaudio-5.1.0
     - mkdir -p __build && cd __build
     - cmake .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake
