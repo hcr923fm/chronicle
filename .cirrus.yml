@@ -20,7 +20,7 @@ win_machine_build_task:
     - .\vcpkg install libsndfile libflac libvorbis libogg spdlog
 
   choco_script:
-    - cinst -y -r wget tartool make #visualstudio2017community cmake git
+    - cinst -y -r tartool make aria2 #visualstudio2017community cmake git
 
   # nuget_install_script:
   #   - ps: "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12"
@@ -34,7 +34,7 @@ win_machine_build_task:
   #   - ps: Install-Package spdlog.native
 
   lame_download_script:
-    - ps: wget https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
+    - ps: aria2c https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
     - ps: tartool xf lame-3.100.tar.gz ./
     - cd lame-3.100
     - ps: ((Get-Content -path .\Makefile.MSVC -Raw) -replace '/machine:I386','/machine:X64') | Set-Content -path .\Makefile.MSVC64 # Setup for x64
@@ -46,7 +46,7 @@ win_machine_build_task:
     # - make install
 
   rtaudio_download_script:
-    - ps: wget http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.1.0.tar.gz
+    - ps: aria2c http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.1.0.tar.gz
     - ps: tartool xf rtaudio-5.1.0.tar.gz ./
     - cd rtaudio-5.1.0
     - mkdir -p __build && cd __build
