@@ -20,7 +20,7 @@ win_machine_build_task:
     - .\vcpkg install libsndfile libflac libvorbis libogg spdlog
 
   choco_script:
-    - cinst -y -r tartool make aria2 7zip #visualstudio2017community cmake git
+    - cinst -y -r make aria2 7zip #visualstudio2017community cmake git
 
   # nuget_install_script:
   #   - ps: "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12"
