@@ -9,6 +9,9 @@ win_machine_build_task:
 
   # In this image, cmake and git are already installed, as well as VS 2017 and vs2017 nativedesktop workload
 
+  choco_script:
+    - cinst -y -r make aria2 7zip
+
   vcpkg_script:
     - git clone https://github.com/Microsoft/vcpkg.git
     - cd vcpkg
@@ -18,9 +21,6 @@ win_machine_build_task:
   deps_script:
     - cd vcpkg
     - .\vcpkg install libsndfile libflac libvorbis libogg spdlog
-
-  choco_script:
-    - cinst -y -r make aria2 7zip #visualstudio2017community cmake git
 
   lame_download_script:
     - aria2c https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
