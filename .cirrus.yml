@@ -22,17 +22,6 @@ win_machine_build_task:
   choco_script:
     - cinst -y -r make aria2 7zip #visualstudio2017community cmake git
 
-  # nuget_install_script:
-  #   - ps: "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12"
-  #   - ps: Install-PackageProvider -Name "Nuget" -MinimumVersion "2.8.5.216" -Force
-
-  # nuget_script:
-  #   - ps: Install-Package libsndfile-msvc-x64
-  #   - ps: Install-Package FLAC.WindowsRuntime
-  #   - ps: Install-Package vorbis-msvc-x64
-  #   - ps: Install-Package libogg
-  #   - ps: Install-Package spdlog.native
-
   lame_download_script:
     - aria2c https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
     - 7z x lame-3.100.tar.gz
