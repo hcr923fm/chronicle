@@ -4,7 +4,7 @@ env:
 
 win_machine_build_task:
   windows_container:
-    image: cirrusci/windowsservercore:cmake
+    dockerfile: .ci/Dockerfile
     os_version: 2019
 
   # In this image, cmake and git are already installed, as well as VS 2017
@@ -21,6 +21,7 @@ win_machine_build_task:
 
   choco_script:
     - cinst -y -r make aria2 7zip #visualstudio2017community cmake git
+    # - cinst -y visualstudio2017-workload-nativedesktop
 
   # nuget_install_script:
   #   - ps: "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12"
@@ -40,8 +41,10 @@ win_machine_build_task:
     - cd lame-3.100
     - ps: ((Get-Content -path .\Makefile.MSVC -Raw) -replace '/machine:I386','/machine:X64') | Set-Content -path .\Makefile.MSVC64 # Setup for x64
     - ps: cp configMS.h config.h -Force
-    - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64'
+    # - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64'
+    - '"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\VsDevCmd.bat" -arch=x64'
     - nmake -f Makefile.MSVC64 comp=msvc asm=yes /D
+    - nmake install
     # - ./configure --disable-decoder --disable-shared --enable-static
     # - make -j4
     # - make install
