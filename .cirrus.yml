@@ -67,18 +67,17 @@ win_machine_build_task:
 
   package_artifacts:
     path: __build
+# publish_task:
+#   container:
+#     image: gcc:latest
 
-publish_task:
-  container:
-    image: gcc:latest
-
-  depends_on:
-    - linux_build
-    - win_build
-  only_if: $CIRRUS_BRANCH == 'master'
-  publish_script:
-    - apt update && apt install python python-pip -y
-    - pip install b2
-    - chmod +x .ci/*.sh
-    - b2 authorize-account $BACKBLAZE_APP_KEY_ID $BACKBLAZE_APP_KEY
-    - .ci/chronicle-b2-upload.sh
+#   depends_on:
+#     - linux_build
+#     - win_build
+#   only_if: $CIRRUS_BRANCH == 'master'
+#   publish_script:
+#     - apt update && apt install python python-pip -y
+#     - pip install b2
+#     - chmod +x .ci/*.sh
+#     - b2 authorize-account $BACKBLAZE_APP_KEY_ID $BACKBLAZE_APP_KEY
+#     - .ci/chronicle-b2-upload.sh
