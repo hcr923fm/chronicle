@@ -21,7 +21,6 @@ win_machine_build_task:
 
   choco_script:
     - cinst -y -r make aria2 7zip #visualstudio2017community cmake git
-    # - cinst -y visualstudio2017-workload-nativedesktop
 
   # nuget_install_script:
   #   - ps: "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12"
