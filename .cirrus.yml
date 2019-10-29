@@ -7,7 +7,7 @@ win_machine_build_task:
     dockerfile: .ci/Dockerfile
     os_version: 2019
 
-  # In this image, cmake and git are already installed, as well as VS 2017
+  # In this image, cmake and git are already installed, as well as VS 2017 and vs2017 nativedesktop workload
 
   vcpkg_script:
     - git clone https://github.com/Microsoft/vcpkg.git
@@ -34,8 +34,6 @@ win_machine_build_task:
     - nmake -f Makefile.MSVC64 comp=msvc asm=yes /D
     - nmake install
     # - ./configure --disable-decoder --disable-shared --enable-static
-    # - make -j4
-    # - make install
 
   rtaudio_download_script:
     - aria2c http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.1.0.tar.gz
