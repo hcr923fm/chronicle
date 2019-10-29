@@ -30,9 +30,7 @@ win_machine_build_task:
     - ps: ((Get-Content -path .\Makefile.MSVC -Raw) -replace '/machine:I386','/machine:X64') | Set-Content -path .\Makefile.MSVC64 # Setup for x64
     - ps: cp configMS.h config.h -Force
     # - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64'
-    - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=x64'
-    - nmake -f Makefile.MSVC64 comp=msvc asm=yes /D
-    - nmake install
+    - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=x64; nmake -f Makefile.MSVC64 comp=msvc asm=yes /D; nmake install'
     # - ./configure --disable-decoder --disable-shared --enable-static
 
   rtaudio_download_script:
