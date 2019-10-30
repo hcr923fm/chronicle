@@ -21,7 +21,7 @@ win_machine_build_task:
 
   deps_script:
     - cd vcpkg
-    - .\vcpkg install libsndfile:windows-$Env:BITNESS libflac:windows-$Env:BITNESS libvorbis:windows-$Env:BITNESS libogg:windows-$Env:BITNESS spdlog:windows-$Env:BITNESS
+    - .\vcpkg install libsndfile:$Env:BITNESS-windows libflac:$Env:BITNESS-windows libvorbis:$Env:BITNESS-windows libogg:$Env:BITNESS-windows spdlog:$Env:BITNESS-windows
 
   lame_download_script:
     - aria2c https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
