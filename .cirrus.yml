@@ -5,8 +5,12 @@ env:
 win_machine_build_task:
   env:
     matrix:
-      - BITNESS: x64
-      - BITNESS: x86
+      setupa:
+        - BITNESS: x64
+        - GENERATOR_STRING: "Visual Studio 15 2017 Win64"
+      setupb:
+        - BITNESS: x86
+        - GENERATOR_STRING: "Visual Studio 15 2017"
   windows_container:
     dockerfile: .ci/Dockerfile
     os_version: 2019
@@ -63,7 +67,7 @@ win_machine_build_task:
   build_script:
     - mkdir -p __build
     - cd __build
-    - IF "%BITNESS%"=="x64" (set GENERATOR_STRING="Visual Studio 15 2017 Win64") ELSE (set GENERATOR_STRING="Visual Studio 15 2017")
+    # - IF "%BITNESS%"=="x64" (set GENERATOR_STRING="Visual Studio 15 2017 Win64") ELSE (set GENERATOR_STRING="Visual Studio 15 2017")
     - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows
     - cmake --build . -v
 
