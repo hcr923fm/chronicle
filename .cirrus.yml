@@ -5,12 +5,8 @@ env:
 win_machine_build_task:
   env:
     matrix:
-      setupa:
-        - BITNESS: x64
-        - GENERATOR_STRING: "Visual Studio 15 2017 Win64"
-      setupb:
-        - BITNESS: x86
-        - GENERATOR_STRING: "Visual Studio 15 2017"
+      - { BITNESS: x64, GENERATOR_STRING: "Visual Studio 15 2017 Win64" }
+      - { BITNESS: x86, GENERATOR_STRING: "Visual Studio 15 2017" }
   windows_container:
     dockerfile: .ci/Dockerfile
     os_version: 2019
