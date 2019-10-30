@@ -35,7 +35,7 @@ win_machine_build_task:
     - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=%BITNESS%'
     - nmake -f Makefile.MSVC%BITNESS% comp=msvc asm=no DLL /D
     # - nmake install
-    - copy output/libmp3lame.dll ../chronicle/
+    - copy .\output\libmp3lame.dll ..\chronicle\
     # - ./configure --disable-decoder --disable-shared --enable-static
 
   rtaudio_download_script:
