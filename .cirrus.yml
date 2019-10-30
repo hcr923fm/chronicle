@@ -54,7 +54,7 @@ win_machine_build_task:
   rtaudio_build_script:
     - cd rtaudio-5.1.0
     - mkdir -p __build && cd __build
-    - cmake .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows
+    - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows
     - cmake --build .
     - cmake --install .
     - cd ..
