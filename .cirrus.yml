@@ -37,7 +37,7 @@ win_machine_build_task:
 
   lame_build_script:
     - cd lame-3.100
-    - set VSCMD_DEBUG=2
+    - set VSCMD_DEBUG=1
     - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=%BITNESS%'
     - nmake -f Makefile.MSVC%BITNESS% comp=msvc asm=no DLL /D
     - dir output
