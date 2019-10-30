@@ -9,8 +9,7 @@ include_directories("$PROJECT_SOURCE_DIR"
 lame
 )
 
-IF (UNIX AND NOT WIN32)
-    include_directories(/usr/include/rtaudio)
+include_directories(/usr/include/rtaudio)
 endif()
 
 if (WIN32)
@@ -24,13 +23,8 @@ add_compile_options(-DSPDLOG_COMPILED_LIB -D_WIN32_WINNT=0x600 -D_ISOC99_SOURCE 
 #add_subdirectory(spdlog)
 find_package(spdlog REQUIRED)
 
-IF (UNIX AND NOT WIN32)
-    find_library(LAME_LIB libmp3lame.a)
-endif()
+find_library(LAME_LIB libmp3lame libmp3lame.a libmp3lame.dll)
 
-IF (WIN32)
-    find_library(LAME_LIB libmp3lame.dll)
-endif()
 if (LAME_LIB OR lame_FOUND)
     message(STATUS "Found LAME")
 else()
