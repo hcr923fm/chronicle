@@ -32,7 +32,7 @@ win_machine_build_task:
     - copy Makefile.MSVC Makefile.MSVCx86
     - copy configMS.h config.h /y
     - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=$Env:BITNESS'
-    - nmake -f Makefile.MSVC$Env:BITNESS comp=msvc asm=no /D
+    - nmake -f Makefile.MSVC$Env:BITNESS comp=msvc asm=no DLL /D
     # - nmake install
     - dir
     - copy lame_enc.dll ../chronicle/
