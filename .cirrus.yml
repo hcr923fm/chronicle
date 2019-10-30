@@ -21,7 +21,7 @@ win_machine_build_task:
 
   deps_script:
     - cd vcpkg
-    - ps: .\vcpkg install libsndfile:$Env:BITNESS-windows libflac:$Env:BITNESS-windows libvorbis:$Env:BITNESS-windows libogg:$Env:BITNESS-windows spdlog:$Env:BITNESS-windows
+    - .\vcpkg install libsndfile:%BITNESS%-windows libflac:%BITNESS%-windows libvorbis:%BITNESS%-windows libogg:%BITNESS%-windows spdlog:%BITNESS%-windows
 
   lame_download_script:
     - aria2c https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
@@ -31,8 +31,9 @@ win_machine_build_task:
     - ps: ((Get-Content -path .\Makefile.MSVC -Raw) -replace '/machine:I386','/machine:X64') | Set-Content -path .\Makefile.MSVCx64 # Setup for x64
     - copy Makefile.MSVC Makefile.MSVCx86
     - copy configMS.h config.h /y
-    - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=$Env:BITNESS'
-    - nmake -f Makefile.MSVC$Env:BITNESS comp=msvc asm=no DLL /D
+    - set VSCMD_DEBUG=2
+    - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=%BITNESS%'
+    - nmake -f Makefile.MSVC%BITNESS% comp=msvc asm=no DLL /D
     # - nmake install
     - dir
     - copy libmp3lame.dll ../chronicle/
