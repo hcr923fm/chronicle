@@ -29,7 +29,7 @@ IF (UNIX AND NOT WIN32)
 endif()
 
 IF (WIN32)
-    find_library(LAME_LIB lame_enc.dll)
+    find_library(LAME_LIB libmp3lame.dll)
 endif()
 if (LAME_LIB OR lame_FOUND)
     message(STATUS "Found LAME")

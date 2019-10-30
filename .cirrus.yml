@@ -35,7 +35,7 @@ win_machine_build_task:
     - nmake -f Makefile.MSVC$Env:BITNESS comp=msvc asm=no DLL /D
     # - nmake install
     - dir
-    - copy lame_enc.dll ../chronicle/
+    - copy libmp3lame.dll ../chronicle/
     # - ./configure --disable-decoder --disable-shared --enable-static
 
   rtaudio_download_script:
