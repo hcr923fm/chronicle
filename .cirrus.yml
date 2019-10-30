@@ -35,8 +35,7 @@ win_machine_build_task:
     - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=%BITNESS%'
     - nmake -f Makefile.MSVC%BITNESS% comp=msvc asm=no DLL /D
     # - nmake install
-    - dir
-    - copy libmp3lame.dll ../chronicle/
+    - copy output/libmp3lame.dll ../chronicle/
     # - ./configure --disable-decoder --disable-shared --enable-static
 
   rtaudio_download_script:
@@ -45,14 +44,14 @@ win_machine_build_task:
     - 7z x rtaudio-5.1.0.tar
     - cd rtaudio-5.1.0
     - mkdir -p __build && cd __build
-    - cmake .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake
+    - cmake .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows
     - cmake --build .
     - cmake --install .
 
   build_script:
     - mkdir -p __build
     - cd __build
-    - cmake .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake
+    - cmake .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows
     - cmake --build . -v
 
   package_artifacts:
