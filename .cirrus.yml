@@ -9,9 +9,6 @@ win_machine_build_task:
 
   # In this image, cmake and git are already installed, as well as VS 2017 and vs2017 nativedesktop workload
 
-  choco_script:
-    - cinst -y -r make aria2 7zip
-
   vcpkg_script:
     - git clone https://github.com/Microsoft/vcpkg.git
     - cd vcpkg
