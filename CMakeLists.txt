@@ -24,7 +24,13 @@ add_compile_options(-DSPDLOG_COMPILED_LIB -D_WIN32_WINNT=0x600 -D_ISOC99_SOURCE 
 #add_subdirectory(spdlog)
 find_package(spdlog REQUIRED)
 
-find_library(LAME_LIB libmp3lame.a)
+IF (UNIX AND NOT WIN32)
+    find_library(LAME_LIB libmp3lame.a)
+endif()
+
+IF (WIN32)
+    find_library(LAME_LIB lame_enc.dll)
+endif()
 if (LAME_LIB OR lame_FOUND)
     message(STATUS "Found LAME")
 else()

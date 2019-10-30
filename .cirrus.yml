@@ -28,9 +28,12 @@ win_machine_build_task:
     - 7z x lame-3.100.tar
     - cd lame-3.100
     - ps: ((Get-Content -path .\Makefile.MSVC -Raw) -replace '/machine:I386','/machine:X64') | Set-Content -path .\Makefile.MSVC64 # Setup for x64
-    - ps: cp configMS.h config.h -Force
+    - copy configMS.h config.h /y
     # - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" amd64'
-    - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=x64; nmake -f Makefile.MSVC64 comp=msvc asm=yes /D; nmake install'
+    - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=x64'
+    - nmake -f Makefile.MSVC64 comp=msvc asm=no /D
+    - nmake install
+    - copy lame_enc.dll ../chronicle/
     # - ./configure --disable-decoder --disable-shared --enable-static
 
   rtaudio_download_script:
