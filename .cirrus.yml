@@ -58,6 +58,8 @@ win_machine_build_task:
     - cmake .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows
     - cmake --build .
     - cmake --install .
+    - cd ..
+    - del __build /S /Q # Remove the generated files, so they aren't cached
 
   build_script:
     - mkdir -p __build
