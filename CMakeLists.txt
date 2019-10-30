@@ -80,38 +80,3 @@ ${SNDFILE_LIB}
 ${RTAUDIO_LIB}
 ${Boost_LIBRARIES}
 ncurses)
-
-# add_custom_command(TARGET chronicle POST_BUILD
-# COMMAND python $<TARGET_FILE_DIR:chronicle>/../.ci/mingw32/list_full_deps.py $<TARGET_FILE:chronicle> OUTPUT_VARIABLE DEP_LIBS
-# VERBATIM
-# )
-
-# set(CPACK_PACKAGE_NAME "chronicle")
-# SET(CPACK_GENERATOR "STGZ;TGZ;TZ;ZIP")
-# set(CPACK_PROJECT_NAME chronicle)
-# SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
-# set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
-# SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENCE.md")
-# SET(CPACK_INCLUDE_TOPLEVEL_DIRECTORY 1)
-# SET(CPACK_PACKAGE_EXECUTABLES chronicle.exe;Chronicle)
-# set(CPACK_PACKAGE_VENDOR "Cal McLean")
-# set(CPACK_PACKAGE_CONTACT "calmcl1@aol.com")
-# set(CPACK_SOURCE_PACKAGE_FILE_NAME "chronicle-src")
-# SET(CPACK_SOURCE_GENERATOR "TGZ;TZ")
-# set (CPACK_SOURCE_IGNORE_FILES \.git/;\.git.*;\.ci/;\.cirrus\.yml;__build;\.vscode)
-# include(CPack)
-
-# list(APPEND DEPS "")
-# IF(WIN32)
-#     #list(APPEND EXTERNAL_LIBS=)
-#     install(TARGETS chronicle COMPONENT RUNTIME DESTINATION .)
-#     # getDeps()
-#     # install(CODE "execute_process(COMMAND ../copydeps.sh ${CPACK_PACKAGE_DIRECTORY})" COMPONENT RUNTIME)
-#     # install(CODE "MESSAGE(STATUS \"CMakePackDirL \${CPACK_PACKAGE_DIRECTORY}\")" COMPONENT RUNTIME)
-#     # install(CODE "set(DIRHERE \"${CMAKE_CURRENT_SOURCE_DIR}\")")
-#     # install(SCRIPT test.cmake COMPONENT RUNTIME)
-#     # install(FILES ${DEPS} DESTINATION . COMPONENT RUNTIME)
-# ENDIF()
-
-
-# #include(InstallRequiredSystemLibraries)
