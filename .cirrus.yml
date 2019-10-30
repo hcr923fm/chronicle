@@ -23,25 +23,36 @@ win_machine_build_task:
     - cd vcpkg
     - .\vcpkg install libsndfile:%BITNESS%-windows libflac:%BITNESS%-windows libvorbis:%BITNESS%-windows libogg:%BITNESS%-windows spdlog:%BITNESS%-windows
 
-  lame_download_script:
-    - aria2c https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
-    - 7z x lame-3.100.tar.gz
-    - 7z x lame-3.100.tar
+  lame_download_cache:
+    folder: lame-3.100
+    fingerprint_script: echo lame-3.100-fingerprint-0
+    populate_script:
+      - aria2c https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
+      - 7z x lame-3.100.tar.gz
+      - 7z x lame-3.100.tar
+      - cd lame-3.100
+      - ps: ((Get-Content -path .\Makefile.MSVC -Raw) -replace '/machine:I386','/machine:X64') | Set-Content -path .\Makefile.MSVCx64 # Setup for x64
+      - copy Makefile.MSVC Makefile.MSVCx86
+      - copy configMS.h config.h /y
+
+  lame_build_script:
     - cd lame-3.100
-    - ps: ((Get-Content -path .\Makefile.MSVC -Raw) -replace '/machine:I386','/machine:X64') | Set-Content -path .\Makefile.MSVCx64 # Setup for x64
-    - copy Makefile.MSVC Makefile.MSVCx86
-    - copy configMS.h config.h /y
     - set VSCMD_DEBUG=2
     - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=%BITNESS%'
     - nmake -f Makefile.MSVC%BITNESS% comp=msvc asm=no DLL /D
-    # - nmake install
-    - copy .\output\libmp3lame.dll ..\chronicle\
-    # - ./configure --disable-decoder --disable-shared --enable-static
+    - dir output
+    - copy output\libmp3lame.dll ..\chronicle\
+    - del output /S /Q # Remove the generated files, so they aren't cached
 
-  rtaudio_download_script:
-    - aria2c http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.1.0.tar.gz
-    - 7z x rtaudio-5.1.0.tar.gz
-    - 7z x rtaudio-5.1.0.tar
+  rtaudio_download_cache:
+    folder: rtaudio-5.1.0
+    fingerprint_script: echo rtaudio-5.1.0-fingerprint-0
+    populate_script:
+      - aria2c http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.1.0.tar.gz
+      - 7z x rtaudio-5.1.0.tar.gz
+      - 7z x rtaudio-5.1.0.tar
+
+  rtaudio_build_script:
     - cd rtaudio-5.1.0
     - mkdir -p __build && cd __build
     - cmake .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows
