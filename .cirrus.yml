@@ -55,9 +55,9 @@ win_machine_build_task:
   rtaudio_build_script:
     - cd rtaudio-5.1.0
     - mkdir -p __build && cd __build
-    - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows
-    - cmake --build .
-    - cmake --install .
+    - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows --debug-output
+    - cmake --build . -v
+    - cmake --install . -v
     - cd ..
     - del __build /S /Q # Remove the generated files, so they aren't cached
 
@@ -65,7 +65,7 @@ win_machine_build_task:
     - mkdir -p __build
     - cd __build
     # - IF "%BITNESS%"=="x64" (set GENERATOR_STRING="Visual Studio 15 2017 Win64") ELSE (set GENERATOR_STRING="Visual Studio 15 2017")
-    - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows
+    - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows --debug-output
     - cmake --build . -v
 
   package_artifacts:
