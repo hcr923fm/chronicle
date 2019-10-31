@@ -4,8 +4,7 @@ RUN choco upgrade -y visualstudio2017community visualstudio2017-workload-vctools
 RUN choco install -y visualstudio2017-workload-nativedesktop
 RUN cinst -y -r make aria2 7zip
 
-WORKDIR C:\\ 
-#try trailing slash+space
+WORKDIR C:/
 
 RUN git clone https://github.com/Microsoft/vcpkg.git
 RUN powershell -Command {cd vcpkg; .\bootstrap-vcpkg.bat; .\vcpkg integrate install}
