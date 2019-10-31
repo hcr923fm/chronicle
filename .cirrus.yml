@@ -21,7 +21,7 @@ win_machine_build_task:
 
   deps_script:
     - cd vcpkg
-    - .\vcpkg install libsndfile:%BITNESS%-windows libflac:%BITNESS%-windows libvorbis:%BITNESS%-windows libogg:%BITNESS%-windows spdlog:%BITNESS%-windows
+    - .\vcpkg install libsndfile:%BITNESS%-windows libflac:%BITNESS%-windows libvorbis:%BITNESS%-windows libogg:%BITNESS%-windows spdlog:%BITNESS%-windows boost-filesystem:%BITNESS%-windows boost-program-options:%BITNESS%-windows
 
   lame_download_cache:
     folder: lame-3.100
