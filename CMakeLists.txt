@@ -9,7 +9,8 @@ include_directories("$PROJECT_SOURCE_DIR"
 lame
 )
 
-include_directories(/usr/include/rtaudio)
+IF (UNIX AND NOT WIN32)
+    include_directories(/usr/include/rtaudio)
 endif()
 
 if (WIN32)
