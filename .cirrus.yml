@@ -13,15 +13,15 @@ win_machine_build_task:
 
   # In this image, cmake and git are already installed, as well as VS 2017 and vs2017 nativedesktop workload
 
-  vcpkg_script:
-    - git clone https://github.com/Microsoft/vcpkg.git
-    - cd vcpkg
-    - ps: .\bootstrap-vcpkg.bat
-    - ps: .\vcpkg integrate install
+  # vcpkg_script:
+  #   - git clone https://github.com/Microsoft/vcpkg.git
+  #   - cd vcpkg
+  #   - ps: .\bootstrap-vcpkg.bat
+  #   - ps: .\vcpkg integrate install
 
-  deps_script:
-    - cd vcpkg
-    - .\vcpkg install libsndfile:%BITNESS%-windows libflac:%BITNESS%-windows libvorbis:%BITNESS%-windows libogg:%BITNESS%-windows spdlog:%BITNESS%-windows boost-filesystem:%BITNESS%-windows boost-program-options:%BITNESS%-windows
+  # deps_script:
+  #   - cd vcpkg
+  #   - .\vcpkg install libsndfile:%BITNESS%-windows libflac:%BITNESS%-windows libvorbis:%BITNESS%-windows libogg:%BITNESS%-windows spdlog:%BITNESS%-windows boost-filesystem:%BITNESS%-windows boost-program-options:%BITNESS%-windows
 
   lame_download_cache:
     folder: lame-3.100
@@ -55,7 +55,7 @@ win_machine_build_task:
   rtaudio_build_script:
     - cd rtaudio-5.1.0
     - mkdir -p __build && cd __build
-    - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows --debug-output
+    - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows --debug-output
     - cmake --build . -v
     - cmake --install .
     - cd ..
@@ -65,7 +65,7 @@ win_machine_build_task:
     - mkdir -p __build
     - cd __build
     # - IF "%BITNESS%"=="x64" (set GENERATOR_STRING="Visual Studio 15 2017 Win64") ELSE (set GENERATOR_STRING="Visual Studio 15 2017")
-    - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=..\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows --debug-output
+    - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows --debug-output
     - cmake --build . -v
 
   package_artifacts:
