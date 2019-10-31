@@ -25,7 +25,7 @@ add_compile_options(-DSPDLOG_COMPILED_LIB -D_WIN32_WINNT=0x600 -D_ISOC99_SOURCE 
 find_package(spdlog REQUIRED)
 
 find_library(LAME_LIB libmp3lame libmp3lame.a libmp3lame-static.lib libmp3lame.lib
-PATHS "$ENV{CMAKE_SOURCE_DIR})
+PATHS "$ENV{CMAKE_SOURCE_DIR}")
 
 if (LAME_LIB OR lame_FOUND)
     message(STATUS "Found LAME")
