@@ -19,10 +19,16 @@ if (WIN32)
     )
 endif()
 
+##########
+# SPDLOG #
+##########
+
 add_compile_options(-DSPDLOG_COMPILED_LIB -D_WIN32_WINNT=0x600 -D_ISOC99_SOURCE -lole32 -lwinmm -ldsound -Wl,--trace,--as-needed)
-#add_subdirectory(rtaudio)
-#add_subdirectory(spdlog)
 find_package(spdlog REQUIRED)
+
+##############
+# LIBMP3LAME #
+##############
 
 find_library(LAME_LIB
 NAMES libmp3lame libmp3lame.a libmp3lame-static.lib libmp3lame.lib
@@ -34,21 +40,35 @@ else()
     message(FATAL_ERROR "Could not find lame! Exiting...")
 endif()
 
-find_library(SNDFILE_LIB sndfile)
-if (SNDFILE_LIB OR sndfile_FOUND)
-    message(STATUS "Found libsndfile")
-else()
-    message(FATAL_ERROR "Could not find libsndfile! Exiting...")
+##############
+# LIBSNDFILE #
+##############
+
+if (UNIX)
+    find_library(SNDFILE_LIB sndfile)
+    if (SNDFILE_LIB OR sndfile_FOUND)
+        message(STATUS "Found libsndfile")
+    else()
+        message(FATAL_ERROR "Could not find libsndfile! Exiting...")
+endif()
+if (WIN32)
+    find_package(LibSndFile CONFIG REQUIRED)
 endif()
 
-#find_package(PkgConfig REQUIRED)
+###########
+# RTAUDIO #
+###########
+
 find_library(RTAUDIO_LIB rtaudio)
-#pkg_check_modules(RtAudio REQUIRED IMPORTED_TARGET rtaudio)
 if (RTAUDIO_LIB OR rtaudio_FOUND)
     message(STATUS "Found RtAudio: ${RTAUDIO_LIB}")
 else()
     message(FATAL_ERROR "Could not find RtAudio! Exiting...")
 endif()
+
+#########
+# BOOST #
+#########
 
 set(Boost_DEBUG ON)
 find_package(Boost REQUIRED filesystem program_options)
@@ -63,6 +83,9 @@ else()
     message(FATAL_ERROR "Could not find the Boost filesystem component! Exiting...")
 endif()
 
+#############
+# CHRONICLE #
+#############
 
 add_executable(chronicle 
 parse_opts.cpp
@@ -70,10 +93,17 @@ screen.cpp
 chronicle.cpp
 )
 
+if (WIN32)
+    target_link_libraries(chronicle PRIVATE sndfile-shared)
+endif()
+
+if(UNIX)
+    target_link_libraries(chronicle PRIVATE ${SNDFILE_LIB})
+endif()
+
 target_link_libraries(chronicle PRIVATE
 spdlog::spdlog
 ${LAME_LIB}
-${SNDFILE_LIB}
 ${RTAUDIO_LIB}
 ${Boost_LIBRARIES}
 ncurses)

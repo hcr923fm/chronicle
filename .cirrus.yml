@@ -3,13 +3,21 @@ env:
   BACKBLAZE_APP_KEY: ENCRYPTED[770e70e48569f43396e50d0692a4c1abe64e4821c1ef816520c792ad6222c61641b7e56132e37896340f740720196604]
 
 win_machine_build_task:
-  env:
-    matrix:
-      - { BITNESS: x64, GENERATOR_STRING: "Visual Studio 15 2017 Win64" }
-      - { BITNESS: x86, GENERATOR_STRING: "Visual Studio 15 2017" }
-  windows_container:
-    dockerfile: .ci/Dockerfile
-    os_version: 2019
+  matrix:
+    - {
+        env: { BITNESS: x64, GENERATOR_STRING: "Visual Studio 15 2017 Win64" },
+        windows_container: { dockerfile: .ci/Dockerfile.x64, os_version: 2019 },
+      }
+    - {
+        env: { BITNESS: x86, GENERATOR_STRING: "Visual Studio 15 2017" },
+        windows_container: { dockerfile: .ci/Dockerfile.x86, os_version: 2019 },
+      }
+    # matrix:
+    #   - {  }
+    #   - { BITNESS: x86, GENERATOR_STRING: "Visual Studio 15 2017" }
+  # windows_container:
+  #   dockerfile: .ci/Dockerfile
+  #   os_version: 2019
 
   # In this image, cmake and git are already installed, as well as VS 2017 and vs2017 nativedesktop workload
 
