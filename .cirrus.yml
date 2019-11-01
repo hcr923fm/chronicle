@@ -48,8 +48,7 @@ win_machine_build_task:
     - set VSCMD_DEBUG=1
     - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=%BITNESS%'
     - nmake -f Makefile.MSVC%BITNESS% comp=msvc asm=no DLL /D
-    - copy output\libmp3lame.dll ..\chronicle
-    - copy output\libmp3lame-static.lib ..\chronicle
+    - cmake -E make_directory ..\chronicle\lib; cmake -E copy output\libmp3lame.dll ..\chronicle\lib; cmake -E copy output\libmp3lame-static.lib ..\chronicle\lib;
     - del output /S /Q # Remove the generated files, so they aren't cached
 
   rtaudio_download_cache:

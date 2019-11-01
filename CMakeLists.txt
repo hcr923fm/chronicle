@@ -32,7 +32,7 @@ find_package(spdlog REQUIRED)
 
 find_library(LAME_LIB
 NAMES libmp3lame libmp3lame.a libmp3lame-static.lib libmp3lame.lib
-HINTS "$PROJECT_SOURCE_DIR")
+HINTS "./lib")
 
 if (LAME_LIB OR lame_FOUND)
     message(STATUS "Found LAME")
