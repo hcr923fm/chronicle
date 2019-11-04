@@ -9,6 +9,14 @@ include_directories("$PROJECT_SOURCE_DIR"
 lame
 )
 
+add_executable(chronicle 
+parse_opts.cpp
+screen.cpp
+chronicle.cpp
+)
+
+target_link_directories(chronicle PRIVATE libs PRIVATE ../libs)
+
 IF (UNIX AND NOT WIN32)
     include_directories(/usr/include/rtaudio)
 endif()
@@ -31,14 +39,14 @@ find_package(spdlog REQUIRED)
 ##############
 
 find_library(LAME_LIB
-NAMES libmp3lame libmp3lame.a libmp3lame-static.lib libmp3lame.lib
-HINTS "./lib")
+NAMES libmp3lame libmp3lame.a libmp3lame-static.lib libmp3lame.dll libmp3lame.lib lame_enc lame_enc.dll lame_enc.lib
+HINTS "./lib/" "../lib/") # For the Windows build - lib files are placed in the SOURCE/lib dir
 
-if (LAME_LIB OR lame_FOUND)
-    message(STATUS "Found LAME")
-else()
-    message(FATAL_ERROR "Could not find lame! Exiting...")
-endif()
+#if (LAME_LIB OR lame_FOUND)
+#    message(STATUS "Found LAME")
+#else()
+#    message(FATAL_ERROR "Could not find lame! Exiting...")
+#endif()
 
 ##############
 # LIBSNDFILE #
@@ -50,6 +58,7 @@ if (UNIX)
         message(STATUS "Found libsndfile")
     else()
         message(FATAL_ERROR "Could not find libsndfile! Exiting...")
+    endif()
 endif()
 if (WIN32)
     find_package(LibSndFile CONFIG REQUIRED)
@@ -86,12 +95,6 @@ endif()
 #############
 # CHRONICLE #
 #############
-
-add_executable(chronicle 
-parse_opts.cpp
-screen.cpp
-chronicle.cpp
-)
 
 if (WIN32)
     target_link_libraries(chronicle PRIVATE sndfile-shared)
