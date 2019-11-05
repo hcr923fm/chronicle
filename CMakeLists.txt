@@ -43,7 +43,7 @@ NAMES libmp3lame libmp3lame.a libmp3lame-static.lib libmp3lame.dll libmp3lame.li
 HINTS "./lib/" "../lib/") # For the Windows build - lib files are placed in the SOURCE/lib dir
 
 #if (LAME_LIB OR lame_FOUND)
-#    message(STATUS "Found LAME")
+#    message(STATUS "Found LAME: ${LAME_LIB}")
 #else()
 #    message(FATAL_ERROR "Could not find lame! Exiting...")
 #endif()
@@ -68,7 +68,7 @@ endif()
 # RTAUDIO #
 ###########
 
-find_library(RTAUDIO_LIB rtaudio)
+find_library(RTAUDIO_LIB rtaudio rtaudio.lib)
 if (RTAUDIO_LIB OR rtaudio_FOUND)
     message(STATUS "Found RtAudio: ${RTAUDIO_LIB}")
 else()
