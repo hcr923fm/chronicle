@@ -77,6 +77,8 @@ win_machine_build_task:
     # - IF "%BITNESS%"=="x64" (set GENERATOR_STRING="Visual Studio 15 2017 Win64") ELSE (set GENERATOR_STRING="Visual Studio 15 2017")
     - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows --debug-output
     - cmake --build . -v --config Release
+  on_failure:
+    - cat "__build/CMakeFiles/CMakeOutput.log"
 
   package_artifacts:
     path: __build
