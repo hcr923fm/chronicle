@@ -68,7 +68,7 @@ endif()
 # RTAUDIO #
 ###########
 
-find_library(RTAUDIO_LIB rtaudio rtaudio.lib)
+find_library(RTAUDIO_LIB NAMES rtaudio rtaudio.lib)
 if (RTAUDIO_LIB OR rtaudio_FOUND)
     message(STATUS "Found RtAudio: ${RTAUDIO_LIB}")
 else()
