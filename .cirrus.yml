@@ -68,7 +68,7 @@ win_machine_build_task:
     - cmake --build . -v --config Release
     - cmake --install .
     - cd ..
-    - - cmake -E copy __build\rtaudio.lib ..\chronicle\lib
+    - - cmake -E copy __build\Release\rtaudio.lib ..\chronicle\lib
     - del __build /S /Q # Remove the generated files, so they aren't cached
 
   build_script:
