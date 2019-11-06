@@ -73,8 +73,8 @@ win_machine_build_task:
     - cd ..
     - cmake -E copy __build\Release\rtaudio.lib C:/lib
     - cmake -E make_directory C:/include
-    - cmake -E copy ./*.cpp C:/include
-    - cmake -E copy ./*.h C:/include
+    - cmake -E copy ./RtAudio.cpp C:/include
+    - cmake -E copy RtAudio.h C:/include
     - del __build /S /Q # Remove the generated files, so they aren't cached
 
   build_script:
