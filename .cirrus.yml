@@ -12,6 +12,9 @@ win_machine_build_task:
         env: { BITNESS: x86, GENERATOR_STRING: "Visual Studio 15 2017" },
         windows_container: { dockerfile: .ci/Dockerfile.x86, os_version: 2019 },
       }
+
+  use_compute_credits:
+    $CIRRUS_USER_COLLABORATOR == 'true'
     # matrix:
     #   - {  }
     #   - { BITNESS: x86, GENERATOR_STRING: "Visual Studio 15 2017" }
