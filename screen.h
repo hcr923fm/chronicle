@@ -4,7 +4,7 @@
 #if (defined(WIN32) || defined(_WIN32) || defined(__WIN32__))
 #include <ncurses/curses.h>
 #else
-#include <nurses.h>
+#include <curses.h>
 #endif
 
 #include <string>
