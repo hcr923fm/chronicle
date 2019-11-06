@@ -15,7 +15,7 @@ screen.cpp
 chronicle.cpp
 )
 
-target_link_directories(chronicle PRIVATE C:/lib/)
+target_link_directories(chronicle PRIVATE "C:/lib/")
 
 IF (UNIX AND NOT WIN32)
     include_directories(/usr/include/rtaudio)
@@ -69,7 +69,7 @@ endif()
 ###########
 
 find_library(RTAUDIO_LIB NAMES rtaudio rtaudio.lib rtaudio.dll
-HINTS "C:/lib/)
+HINTS "C:/lib/")
 if (RTAUDIO_LIB OR rtaudio_FOUND)
     message(STATUS "Found RtAudio: ${RTAUDIO_LIB}")
 else()
@@ -110,4 +110,5 @@ spdlog::spdlog
 ${LAME_LIB}
 ${RTAUDIO_LIB}
 ${Boost_LIBRARIES}
-ncurses)
+ncurses
+)
