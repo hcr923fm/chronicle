@@ -24,6 +24,7 @@ endif()
 if (WIN32)
     include_directories(/usr/$ENV{COMPILER_TRIPLET}/include/boost-1_68
     /usr/$ENV{COMPILER_TRIPLET}/include
+    ../rtaudio-5.1.0
     )
 endif()
 
