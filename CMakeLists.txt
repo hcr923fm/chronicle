@@ -15,7 +15,7 @@ screen.cpp
 chronicle.cpp
 )
 
-target_link_directories(chronicle PRIVATE libs PRIVATE ../libs)
+target_link_directories(chronicle PRIVATE C:/lib)
 
 IF (UNIX AND NOT WIN32)
     include_directories(/usr/include/rtaudio)
@@ -40,7 +40,7 @@ find_package(spdlog REQUIRED)
 
 find_library(LAME_LIB
 NAMES libmp3lame libmp3lame.a libmp3lame-static.lib libmp3lame.dll libmp3lame.lib lame_enc lame_enc.dll lame_enc.lib
-HINTS "./lib/" "../lib/") # For the Windows build - lib files are placed in the SOURCE/lib dir
+HINTS "C:/lib/") # For the Windows build - lib files are placed in the SOURCE/lib dir
 
 if (LAME_LIB OR lame_FOUND)
     message(STATUS "Found LAME: ${LAME_LIB}")
