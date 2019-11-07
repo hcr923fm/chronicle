@@ -466,7 +466,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 	{
 		signal(SIGINT, signalShutdownHandler);
 		signal(SIGABRT, signalShutdownHandler);
-#if !defined(WIN32) || !defined(_WIN32) || !defined(__WIN32__)
+#ifndef _WIN32
 		signal(SIGWINCH, signalWinResizeHandler);
 #endif
 		//signal(SIGBREAK, signalHandler);
