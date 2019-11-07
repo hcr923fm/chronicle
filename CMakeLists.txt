@@ -99,17 +99,15 @@ endif()
 #############
 
 if (WIN32)
-    target_link_libraries(chronicle PRIVATE sndfile-shared)
+    target_link_libraries(chronicle PRIVATE sndfile-shared pdcurses)
 endif()
 
 if(UNIX)
-    target_link_libraries(chronicle PRIVATE ${SNDFILE_LIB})
+    target_link_libraries(chronicle PRIVATE ${SNDFILE_LIB} ncurses)
 endif()
 
 target_link_libraries(chronicle PRIVATE
 spdlog::spdlog
 ${LAME_LIB}
 ${RTAUDIO_LIB}
-${Boost_LIBRARIES}
-ncurses
-)
+${Boost_LIBRARIES})
