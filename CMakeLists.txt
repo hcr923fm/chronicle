@@ -65,6 +65,23 @@ if (WIN32)
     find_package(LibSndFile CONFIG REQUIRED)
 endif()
 
+####################
+# ncurses/pdcurses #
+####################
+
+if (UNIX)
+    find_library(CURSES_LIB ncurses)
+endif()
+if (WIN32)
+    find_library(CURSES_LIB pdcurses.dll)
+endif()
+
+if (CURSES_LIB OR curses_found)
+    message(STATUS "Found curses")
+else()
+    message(FATAL_ERROR "Could not find curses! Exiting...")
+endif()
+
 ###########
 # RTAUDIO #
 ###########
@@ -99,7 +116,7 @@ endif()
 #############
 
 if (WIN32)
-    target_link_libraries(chronicle PRIVATE sndfile-shared pdcurses)
+    target_link_libraries(chronicle PRIVATE sndfile-shared pdcurses.dll)
 endif()
 
 if(UNIX)
@@ -110,4 +127,5 @@ target_link_libraries(chronicle PRIVATE
 spdlog::spdlog
 ${LAME_LIB}
 ${RTAUDIO_LIB}
+${CURSES_LIB}
 ${Boost_LIBRARIES})
