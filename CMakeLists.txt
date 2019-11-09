@@ -15,7 +15,7 @@ screen.cpp
 chronicle.cpp
 )
 
-target_link_directories(chronicle PRIVATE "C:/lib/")
+target_link_directories(chronicle PRIVATE "C:/lib")
 
 IF (UNIX AND NOT WIN32)
     include_directories(/usr/include/rtaudio)
@@ -73,7 +73,7 @@ if (UNIX)
     find_library(CURSES_LIB ncurses)
 endif()
 if (WIN32)
-    find_library(CURSES_LIB NAMES pdcurses pdcurses.dll)
+    find_library(CURSES_LIB NAMES pdcurses pdcurses.lib)
 endif()
 
 if (CURSES_LIB)
