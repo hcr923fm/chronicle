@@ -73,10 +73,10 @@ if (UNIX)
     find_library(CURSES_LIB ncurses)
 endif()
 if (WIN32)
-    find_package(CONFIG REQUIRED pdcurses)
+    find_library(CURSES_LIB NAMES pdcurses pdcurses.dll)
 endif()
 
-if (CURSES_LIB OR curses_found or pdcurses_FOUND)
+if (CURSES_LIB)
     message(STATUS "Found curses")
 else()
     message(FATAL_ERROR "Could not find curses! Exiting...")
@@ -116,11 +116,11 @@ endif()
 #############
 
 if (WIN32)
-    target_link_libraries(chronicle PRIVATE sndfile-shared pdcurses_FOUND)
+    target_link_libraries(chronicle PRIVATE sndfile-shared)
 endif()
 
 if(UNIX)
-    target_link_libraries(chronicle PRIVATE ${SNDFILE_LIB} ncurses)
+    target_link_libraries(chronicle PRIVATE ${SNDFILE_LIB})
 endif()
 
 target_link_libraries(chronicle PRIVATE
