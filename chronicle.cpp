@@ -66,9 +66,9 @@ RtAudio audio;
 	-> I = 0.065535
 	*/
 
-constexpr short maxAudioVal = (pow(2, (sizeof(short) * 8)) / 2) - 1;
+short maxAudioVal = (pow(2, (sizeof(short) * 8)) / 2) - 1;
 constexpr int silenceThresholdDB = -40;
-constexpr float thresholdVal = (pow(10, silenceThresholdDB / 10)) * maxAudioVal;
+float thresholdVal = (pow(10, silenceThresholdDB / 10)) * maxAudioVal;
 
 chrono::seconds audioFileAgeLimit = chrono::seconds(3628800);
 
