@@ -17,7 +17,7 @@ RUN .\vcpkg install libsndfile:x64-windows libflac:x64-windows libvorbis:x64-win
 WORKDIR C:/
 RUN git clone https://github.com/wmcbrine/PDCurses
 WORKDIR C:/PDCurses/wincon
-RUN nmake -f Makefile.vc UTF8=Y WIDE=y
+RUN "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/Common7/Tools/VsDevCmd.bat" -arch=x64; nmake -f Makefile.vc UTF8=Y WIDE=y
 RUN cmake -E copy curses.h C:/include
 RUN cmake -E copy panel.h C:/include
 RUN cmake -E copy curspriv.h C:/include
