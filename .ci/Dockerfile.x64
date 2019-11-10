@@ -1,8 +1,7 @@
 FROM cirrusci/windowsservercore:cmake
 
 RUN choco upgrade -y visualstudio2017community visualstudio2017-workload-vctools
-# RUN choco install -y visualstudio2017-workload-nativedesktop 
-RUN choco install -y aria2 7zip
+RUN choco install -y visualstudio2017-workload-nativedesktop aria2 7zip
 
 WORKDIR C:/
 RUN cmake -E make_directory C:/lib
