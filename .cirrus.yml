@@ -24,9 +24,9 @@ win_machine_build_task:
       - set VSCMD_DEBUG=1
       - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=%BITNESS%'
       - nmake -f Makefile.vc UTF8=Y WIDE=y
-      - cmake -E copy curses.h C:/include
-      - cmake -E copy panel.h C:/include
-      - cmake -E copy curspriv.h C:/include
+      - cmake -E copy ../curses.h C:/include
+      - cmake -E copy ../panel.h C:/include
+      - cmake -E copy ../curspriv.h C:/include
       - cmake -E copy pdcurses.lib C:/lib
       - nmake -f Makefile.vc clean # Remove the generated files, so they aren't cached
 
