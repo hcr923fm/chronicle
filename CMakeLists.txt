@@ -73,7 +73,7 @@ if (UNIX)
     find_library(CURSES_LIB ncurses)
 endif()
 if (WIN32)
-    find_library(CURSES_LIB NAMES pdcurses pdcurses.lib)
+    find_library(CURSES_LIB NAMES pdcurses pdcurses.lib HINTS "C:/lib/")
 endif()
 
 if (CURSES_LIB)
