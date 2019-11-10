@@ -13,26 +13,22 @@ win_machine_build_task:
         windows_container: { dockerfile: .ci/Dockerfile.x86, os_version: 2019 },
       }
 
-  use_compute_credits:
-    $CIRRUS_USER_COLLABORATOR == 'true'
-    # matrix:
-    #   - {  }
-    #   - { BITNESS: x86, GENERATOR_STRING: "Visual Studio 15 2017" }
-  # windows_container:
-  #   dockerfile: .ci/Dockerfile
-  #   os_version: 2019
+  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
 
-  # In this image, cmake and git are already installed, as well as VS 2017 and vs2017 nativedesktop workload
-
-  # vcpkg_script:
-  #   - git clone https://github.com/Microsoft/vcpkg.git
-  #   - cd vcpkg
-  #   - ps: .\bootstrap-vcpkg.bat
-  #   - ps: .\vcpkg integrate install
-
-  # deps_script:
-  #   - cd vcpkg
-  #   - .\vcpkg install libsndfile:%BITNESS%-windows libflac:%BITNESS%-windows libvorbis:%BITNESS%-windows libogg:%BITNESS%-windows spdlog:%BITNESS%-windows boost-filesystem:%BITNESS%-windows boost-program-options:%BITNESS%-windows
+  curses_download_cache:
+    folder: PDCurses/wincon
+    fingerprint_script: echo pdcurses-fingerprint-0
+    populate_script:
+      - git clone https://github.com/wmcbrine/PDCurses
+      - cd PDCurses/wincon
+      - set VSCMD_DEBUG=1
+      - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=%BITNESS%'
+      - nmake -f Makefile.vc UTF8=Y WIDE=y
+      - cmake -E copy curses.h C:/include
+      - cmake -E copy panel.h C:/include
+      - cmake -E copy curspriv.h C:/include
+      - cmake -E copy pdcurses.lib C:/lib
+      - nmake -f Makefile.vc clean # Remove the generated files, so they aren't cached
 
   lame_download_cache:
     folder: lame-3.100
@@ -78,7 +74,6 @@ win_machine_build_task:
   build_script:
     - mkdir -p __build
     - cd __build
-    # - IF "%BITNESS%"=="x64" (set GENERATOR_STRING="Visual Studio 15 2017 Win64") ELSE (set GENERATOR_STRING="Visual Studio 15 2017")
     - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows --debug-output
     - cmake --build . -v --config Release
   on_failure:
