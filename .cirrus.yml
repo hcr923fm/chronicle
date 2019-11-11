@@ -17,7 +17,7 @@ win_machine_build_task:
 
   curses_download_cache:
     folder: PDCurses
-    fingerprint_script: echo pdcurses-fingerprint-1
+    fingerprint_script: echo pdcurses-fingerprint-2
     populate_script:
       - git clone https://github.com/wmcbrine/PDCurses
 
