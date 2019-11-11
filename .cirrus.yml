@@ -16,7 +16,7 @@ win_machine_build_task:
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
 
   curses_download_cache:
-    folder: PDCurses/wincon
+    folder: PDCurses
     fingerprint_script: echo pdcurses-fingerprint-1
     populate_script:
       - git clone https://github.com/wmcbrine/PDCurses
