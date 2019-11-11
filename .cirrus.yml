@@ -39,8 +39,8 @@ win_machine_build_task:
       - 7z x lame-3.100.tar
       - cd lame-3.100
       - ps: ((Get-Content -path .\Makefile.MSVC -Raw) -replace '/machine:I386','/machine:X64') | Set-Content -path .\Makefile.MSVCx64 # Setup for x64
-      - copy Makefile.MSVC Makefile.MSVCx86
-      - copy configMS.h config.h /y
+      - cmake -E copy Makefile.MSVC Makefile.MSVCx86
+      - cmake -E copy configMS.h config.h /y
 
   lame_build_script:
     - cd lame-3.100
@@ -49,7 +49,7 @@ win_machine_build_task:
     - nmake -f Makefile.MSVC%BITNESS% comp=msvc asm=no DLL /D
     - cmake -E copy output\libmp3lame.dll C:/lib
     - cmake -E copy output\libmp3lame-static.lib C:/lib
-    - del output /S /Q # Remove the generated files, so they aren't cached
+    - cmake -E remove_directory output # Remove the generated files, so they aren't cached
 
   rtaudio_download_cache:
     folder: rtaudio-5.1.0
@@ -61,7 +61,7 @@ win_machine_build_task:
 
   rtaudio_build_script:
     - cd rtaudio-5.1.0
-    - mkdir -p __build && cd __build
+    - cmake -E make_directory __build && cd __build
     - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows --debug-output
     - cmake --build . -v --config Release
     - cmake --install .
@@ -69,11 +69,10 @@ win_machine_build_task:
     - cmake -E copy __build\Release\rtaudio.lib C:/lib
     - cmake -E copy ./RtAudio.cpp C:/include
     - cmake -E copy RtAudio.h C:/include
-    - del __build /S /Q # Remove the generated files, so they aren't cached
+    - cmake -E remove_directory __build # Remove the generated files, so they aren't cached
 
   build_script:
-    - mkdir -p __build
-    - cd __build
+    - cmake -E make_directory __build && cd __build
     - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows --debug-output
     - cmake --build . -v --config Release
   on_failure:
