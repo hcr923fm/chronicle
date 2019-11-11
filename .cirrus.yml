@@ -34,7 +34,7 @@ win_machine_build_task:
 
   lame_download_cache:
     folder: lame-3.100
-    fingerprint_script: echo lame-3.100-fingerprint-1
+    fingerprint_script: echo lame-3.100-fingerprint-2
     populate_script:
       - aria2c https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
       - 7z x lame-3.100.tar.gz
@@ -52,7 +52,6 @@ win_machine_build_task:
     - cmake -E copy output\libmp3lame.dll C:/lib
     - cmake -E copy output\libmp3lame-static.lib C:/lib
     - nmake -f Makefile.MSVC%BITNESS% comp=msvc asm=no clean /D
-    - cmake -E remove_directory output # Remove the generated files, so they aren't cached
 
   rtaudio_download_cache:
     folder: rtaudio-5.1.0
