@@ -77,7 +77,7 @@ if (WIN32)
 endif()
 
 if (CURSES_LIB)
-    message(STATUS "Found curses")
+    message(STATUS "Found curses: ${CURSES_LIB}")
 else()
     message(FATAL_ERROR "Could not find curses! Exiting...")
 endif()

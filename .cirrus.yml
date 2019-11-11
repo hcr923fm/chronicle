@@ -81,7 +81,7 @@ win_machine_build_task:
     - cat "__build/CMakeFiles/CMakeOutput.log"
 
   package_artifacts:
-    path: __build/Release
+    path: __build/Release/*
 # publish_task:
 #   container:
 #     image: gcc:latest
