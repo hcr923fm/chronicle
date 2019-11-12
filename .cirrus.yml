@@ -78,13 +78,10 @@ win_machine_build_task:
     - cmake -E make_directory __build && cd __build
     - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows --debug-output
     - cmake --build . -v --config Release
-    # - aria2c https://github.com/lucasg/Dependencies/releases/download/v1.9/Dependencies_x64_Release.zip
-    # - 7z x Dependencies_x64_Release.zip
-    # - ps: ./Dependencies.exe -chain ./Release/chronicle.exe | Select-String -Pattern "\.*.dll" -Exclude "system32" | Select-String -Pattern "WINDOWS" -SimpleMatch -NotMatch
     - cmake -E copy C:/lib/rtaudio.dll Release/
 
   dist_script:
-    - ps: ./__build/Release/chronicle.exe --version > ver.txt
+    - ./__build/Release/chronicle.exe --version > ver.txt
     - set /P CHRONICLE_VER=<ver.txt
     - cmake -E rename __build/Release chronicle-win%BITNESS%-%CHRONICLE_VER%
     - 7z a chronicle-win%BITNESS%-%CHRONICLE_VER%.zip __build/Release chronicle-win%BITNESS%-%CHRONICLE_VER%/*
@@ -94,17 +91,3 @@ win_machine_build_task:
 
   package_artifacts:
     path: __build/chronicle-win*
-# publish_task:
-#   container:
-#     image: gcc:latest
-
-#   depends_on:
-#     - linux_build
-#     - win_build
-#   only_if: $CIRRUS_BRANCH == 'master'
-#   publish_script:
-#     - apt update && apt install python python-pip -y
-#     - pip install b2
-#     - chmod +x .ci/*.sh
-#     - b2 authorize-account $BACKBLAZE_APP_KEY_ID $BACKBLAZE_APP_KEY
-#     - .ci/chronicle-b2-upload.sh
