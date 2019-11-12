@@ -82,11 +82,18 @@ win_machine_build_task:
     # - 7z x Dependencies_x64_Release.zip
     # - ps: ./Dependencies.exe -chain ./Release/chronicle.exe | Select-String -Pattern "\.*.dll" -Exclude "system32" | Select-String -Pattern "WINDOWS" -SimpleMatch -NotMatch
     - cmake -E copy C:/lib/rtaudio.dll Release/
+
+  dist_script:
+    - __build/Release/chronicle.exe --version > ver.txt
+    - set /P CHRONICLE_VER=<ver.txt
+    - cmake -E rename __build/Release chronicle-win%BITNESS%-%CHRONICLE_VER%
+    - 7z a chronicle-win%BITNESS%-%CHRONICLE_VER%.zip __build/Release chronicle-win%BITNESS%-%CHRONICLE_VER%/*
+
   on_failure:
     - cat "__build/CMakeFiles/CMakeOutput.log"
 
   package_artifacts:
-    path: __build/Release/*
+    path: __build/chronicle-win*
 # publish_task:
 #   container:
 #     image: gcc:latest
