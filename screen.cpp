@@ -37,7 +37,9 @@ void initCurses(string windowTitle)
         cbreak();    // To disable the buffering of typed characters by the TTY driver and get a character-at-a-time input
         noecho();    // To suppress the automatic echoing of typed characters
         curs_set(0); // Hide the cursor
-        mainWindow = newwin(LINES, COLS, 0, 0);
+        unsigned int row, col;
+        getmaxyx(stdscr, row, col);
+        mainWindow = newwin(row, col, 0, 0);
         calculateWindowPositions();
 
         /* Add the border and window title */
@@ -64,16 +66,18 @@ void calculateWindowPositions()
     if (NC_UI_IS_ENABLED)
     {
         /* Stuff that goes on the status bar */
-        POS_STATUSBAR_Y = LINES - 2;
+        int lines, cols;
+        getmaxyx(mainWindow, lines, cols);
+        POS_STATUSBAR_Y = lines - 2;
 
         POS_AUDIO_DEVICE_X = 1;
-        POS_CHANNELCOUNT_X = COLS - 14;
+        POS_CHANNELCOUNT_X = cols - 14;
         POS_SAMPLERATE_X = POS_CHANNELCOUNT_X - 14;
 
         /* Recording audio meter */
         POS_AUDIOMETER_X = POS_FNAME_X;
         POS_AUDIOMETER_Y = POS_FNAME_Y + 2;
-        POS_AUDIOMETER_MAXWIDTH = COLS - POS_AUDIOMETER_X - 15;
+        POS_AUDIOMETER_MAXWIDTH = cols - POS_AUDIOMETER_X - 15;
 
         POS_AUDIOMETER_LABEL_X = POS_AUDIOMETER_X + POS_AUDIOMETER_MAXWIDTH + 3;
         POS_AUDIOMETER_LABEL_Y = POS_AUDIOMETER_Y;
@@ -86,16 +90,20 @@ void setWindowTitle(string windowTitle)
 {
     windowTitleCache = windowTitle;
 
+    int cols = getmaxx(mainWindow);
+
     string paddedWindowTitle = " " + windowTitleCache + " ";
-    wmove(mainWindow, 0, (COLS - paddedWindowTitle.length()) / 2);
+    wmove(mainWindow, 0, (cols - paddedWindowTitle.length()) / 2);
     wprintw(mainWindow, paddedWindowTitle.c_str());
 }
 
 void setBorderAndDividers()
 {
+    int lines, cols;
+    getmaxyx(mainWindow, lines, cols);
     wborder(mainWindow, 0, 0, 0, 0, 0, 0, 0, 0);
-    wmove(mainWindow, LINES - 3, 1);
-    whline(mainWindow, ACS_HLINE, COLS - 2);
+    wmove(mainWindow, lines - 3, 1);
+    whline(mainWindow, ACS_HLINE, cols - 2);
     wrefresh(mainWindow);
 }
 
@@ -103,11 +111,14 @@ void updateRecordingToPath(string filePath)
 {
     if (NC_UI_IS_ENABLED)
     {
+        int lines, cols;
+        getmaxyx(mainWindow, lines, cols);
+
         recordingPathCache = filePath;
         string recordingTo = "Recording to: " + filePath;
         wmove(mainWindow, POS_FNAME_Y, POS_FNAME_X);
         wprintw(mainWindow, recordingTo.c_str());
-        wmove(mainWindow, COLS, LINES);
+        wmove(mainWindow, cols, lines);
         wrefresh(mainWindow);
     }
 }
