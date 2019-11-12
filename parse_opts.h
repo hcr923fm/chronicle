@@ -4,6 +4,7 @@
 #include <cstring>
 #include <boost/program_options.hpp>
 #include <boost/filesystem.hpp>
+#include "version.h"
 
 using namespace std;
 
@@ -26,6 +27,7 @@ struct cmdOpts
 };
 
 boost::program_options::variables_map parse_cmd_opts(int argc, char *argv[]);
+void printVersion();
 void printLicence();
 
 #endif //__PARSE_OPTS__H

@@ -13,7 +13,8 @@ po::variables_map parse_cmd_opts(int argc, char *argv[])
         /* Informational switches - print info then quit */
         ("help,h", "Prints this help message")                                                     //
         ("licence", "Prints the licence information for this software and libraries that it uses") //
-        ("list-devices,l", "Lists the available input devices with their IDs");
+        ("list-devices,l", "Lists the available input devices with their IDs")                     //
+        ("version", "Prints the version number of Chronicle");
 
     po::options_description options_filesystem("Filesystem Options");
     options_filesystem.add_options()
@@ -70,6 +71,12 @@ po::variables_map parse_cmd_opts(int argc, char *argv[])
         exit(0);
     }
 
+    if (vm.count("version"))
+    {
+        printVersion();
+        exit(0);
+    }
+
     return vm;
 }
 
@@ -79,6 +86,11 @@ bool is_integer(char *value)
     unsigned int n = strtoul(value, &endptr, 10);
 
     return endptr != value;
+}
+
+void printVersion()
+{
+    printf("%s.%s.%s", SOFTWARE_VERSION_MAJOR, SOFTWARE_VERSION_MINOR, SOFTWARE_VERSION_PATCH);
 }
 
 void printLicence()
