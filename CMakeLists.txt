@@ -86,7 +86,7 @@ endif()
 # RTAUDIO #
 ###########
 
-find_library(RTAUDIO_LIB NAMES rtaudio rtaudio.dll
+find_library(RTAUDIO_LIB NAMES rtaudio
 HINTS "C:/lib/")
 if (RTAUDIO_LIB OR rtaudio_FOUND)
     message(STATUS "Found RtAudio: ${RTAUDIO_LIB}")
