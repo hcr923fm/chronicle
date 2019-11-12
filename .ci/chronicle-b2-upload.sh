@@ -1,7 +1,7 @@
 mkdir -p __build
 cd __build
 CHRONICLE_FILEEXTS=(tar.gz zip)
-CHRONICLE_BUILDS=(linux win32 win64)
+CHRONICLE_BUILDS=(linux winx86 winx64)
 
 CHRONICLE_MAJOR_VERSION=`awk '/MAJOR/ {print $5}' ../version.h | sed 's/[^0-9]//g'`
 CHRONICLE_MINOR_VERSION=`awk '/MINOR/ {print $5}' ../version.h | sed 's/[^0-9]//g'`
