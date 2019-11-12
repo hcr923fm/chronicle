@@ -110,6 +110,16 @@ if(Boost_FILESYSTEM_FOUND)
 else()
     message(FATAL_ERROR "Could not find the Boost filesystem component! Exiting...")
 endif()
+if(Boost_PROGRAM_OPTIONS_FOUND)
+    message(STATUS "Found Boost program_options...")
+    if (Boost_PROGRAM_OPTIONS_LIBRARY)
+        message(STATUS "  Found Boost program_options libraries")
+    else()
+        message(FATAL_ERROR "  Could not found Boost program_options library! Exiting...")
+    endif()
+else()
+    message(FATAL_ERROR "Could not find the Boost program_options component! Exiting...")
+endif()
 
 #############
 # CHRONICLE #
