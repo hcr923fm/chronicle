@@ -79,7 +79,8 @@ win_machine_build_task:
     - cmake --build . -v --config Release
     - aria2c https://github.com/lucasg/Dependencies/releases/download/v1.9/Dependencies_x64_Release.zip
     - 7z x Dependencies_x64_Release.zip
-    - ps: Dependencies_x64_Release/Dependencies.exe -chain ./Release/chronicle.exe | Select-String -Pattern "\.*.dll" -Exclude "system32" | Select-String -Pattern "WINDOWS" -SimpleMatch -NotMatch
+    - ps: Dependencies.exe -chain ./Release/chronicle.exe | Select-String -Pattern "\.*.dll" -Exclude "system32" | Select-String -Pattern "WINDOWS" -SimpleMatch -NotMatch
+    - cmake -E copy C:/lib/rtaudio.dll Release/
   on_failure:
     - cat "__build/CMakeFiles/CMakeOutput.log"
 
