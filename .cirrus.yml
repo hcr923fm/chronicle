@@ -86,9 +86,5 @@ win_machine_build_task:
     - cmake -E rename __build/Release chronicle-win%BITNESS%-%CHRONICLE_VER%
     - 7z a chronicle-win%BITNESS%-%CHRONICLE_VER%.zip __build/Release chronicle-win%BITNESS%-%CHRONICLE_VER%/*
 
-  on_failure:
-    - ps: cat "__build/CMakeFiles/CMakeOutput.log"
-    - ps: cat "__build/Release/logs/chronicle.log"
-
   package_artifacts:
     path: __build/chronicle-win*
