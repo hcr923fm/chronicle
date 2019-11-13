@@ -133,16 +133,14 @@ win_build_task:
     - cmake -E copy C:/lib/rtaudio.dll Release/
 
   dist_script:
-    - __build/Release/chronicle.exe --version > ver.txt
-    - set /P CHRONICLE_VER=<ver.txt
-    - cmake -E rename __build/Release chronicle-win%BITNESS%-%CHRONICLE_VER%
-    - 7z a chronicle-win%BITNESS%-%CHRONICLE_VER%.zip __build/Release chronicle-win%BITNESS%-%CHRONICLE_VER%/*
-
-  on_failure:
-    - cat "__build/CMakeFiles/CMakeOutput.log"
+    - cmake -E copy LICENCE.md __build/Release/
+    - cmake -E copy README.md __build/Release/
+    - cmake -E copy CHANGELOG.md __build/Release/
+    - cd __build/Release/*
+    - 7z a chronicle-win%BITNESS%-%CIRRUS_BUILD_ID%.zip ./*
 
   package_artifacts:
-    path: __build/chronicle-win*
+    path: chronicle-win*
 
 publish_task:
   container:
@@ -155,6 +153,14 @@ publish_task:
   publish_script:
     - apt update && apt install python python-pip -y
     - pip install b2
+    - wget https://api.cirrus-ci.com/v1/artifact/github/hcr923fm/chronicle/win_build/package/chronicle-winx86-${CIRRUS_BUILD_ID}.zip
+    - wget https://api.cirrus-ci.com/v1/artifact/github/hcr923fm/chronicle/win_build/package/chronicle-winx64-${CIRRUS_BUILD_ID}.zip
+    - CHRONICLE_MAJOR_VERSION=`awk '/MAJOR/ {print $5}' ../version.h | sed 's/[^0-9]//g'`
+    - CHRONICLE_MINOR_VERSION=`awk '/MINOR/ {print $5}' ../version.h | sed 's/[^0-9]//g'`
+    - CHRONICLE_PATCH_VERSION=`awk '/PATCH/ {print $5}' ../version.h | sed 's/[^0-9]//g'`
+    - CHRONICLE_VERSION=${CHRONICLE_MAJOR_VERSION}.${CHRONICLE_MINOR_VERSION}.${CHRONICLE_PATCH_VERSION}
+    - mv chronicle-winx86.zip chronicle-${CHRONICLE_VERSION}-win32.zip
+    - mv chronicle-winx64.zip chronicle-${CHRONICLE_VERSION}-win64.zip
     - chmod +x .ci/*.sh
     - b2 authorize-account $BACKBLAZE_APP_KEY_ID $BACKBLAZE_APP_KEY
     - .ci/chronicle-b2-upload.sh
