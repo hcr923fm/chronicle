@@ -80,14 +80,15 @@ win_machine_build_task:
     - cmake --build . -v --config Release
     - cmake -E copy C:/lib/rtaudio.dll Release/
 
-  dist_script:
-    - __build\Release\chronicle.exe --version > ver.txt
-    - set /P CHRONICLE_VER=<ver.txt
-    - cmake -E rename __build/Release chronicle-win%BITNESS%-%CHRONICLE_VER%
-    - 7z a chronicle-win%BITNESS%-%CHRONICLE_VER%.zip __build/Release chronicle-win%BITNESS%-%CHRONICLE_VER%/*
+  # dist_script:
+  #   - __build\Release\chronicle.exe --version > ver.txt
+  #   - set /P CHRONICLE_VER=<ver.txt
+  #   - cmake -E rename __build/Release chronicle-win%BITNESS%-%CHRONICLE_VER%
+  #   - 7z a chronicle-win%BITNESS%-%CHRONICLE_VER%.zip __build/Release chronicle-win%BITNESS%-%CHRONICLE_VER%/*
 
   on_failure:
-    - cat "__build/CMakeFiles/CMakeOutput.log"
+    - ps: cat "__build/CMakeFiles/CMakeOutput.log"
+    - ps: cat "__build/Release/logs/chronicle.log"
 
   package_artifacts:
     path: __build/chronicle-win*
