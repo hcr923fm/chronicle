@@ -107,7 +107,7 @@ win_build_task:
     - 7z a chronicle-win%BITNESS%-%CIRRUS_BUILD_ID%.zip ./*
 
   package_artifacts:
-    path: ./**
+    path: ./__build/Release/*.zip
 
 publish_task:
   container:
