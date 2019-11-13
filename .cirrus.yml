@@ -81,7 +81,7 @@ win_machine_build_task:
     - cmake -E copy C:/lib/rtaudio.dll Release/
 
   dist_script:
-    - 7z a chronicle-win%BITNESS%.zip __build/Release/*
+    - 7z a chronicle-win%BITNESS%-%CIRRUS_BUILD_ID%.zip __build/Release/*
 
   package_artifacts:
     path: chronicle-win*
