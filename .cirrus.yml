@@ -104,8 +104,8 @@ win_build_task:
     - cmake -E copy README.md __build/Release/
     - cmake -E copy CHANGELOG.md __build/Release/
     - cd __build/Release/*
-    - tar..gz a chronicle-win%BITNESS%-%CIRRUS_BUILD_ID%.zip ./*
-    - tar..gz a chronicle-win%BITNESS%-%CIRRUS_BUILD_ID%.tar.gz ./*
+    - 7z a chronicle-win%BITNESS%-%CIRRUS_BUILD_ID%.zip ./*
+    - 7z a chronicle-win%BITNESS%-%CIRRUS_BUILD_ID%.tar.gz ./*
 
   package_artifacts:
     path: ./__build/Release/*.zip
