@@ -9,6 +9,14 @@ include_directories("$PROJECT_SOURCE_DIR"
 lame
 )
 
+add_executable(chronicle 
+parse_opts.cpp
+screen.cpp
+chronicle.cpp
+)
+
+target_link_directories(chronicle PRIVATE "C:/lib")
+
 IF (UNIX AND NOT WIN32)
     include_directories(/usr/include/rtaudio)
 endif()
@@ -16,36 +24,79 @@ endif()
 if (WIN32)
     include_directories(/usr/$ENV{COMPILER_TRIPLET}/include/boost-1_68
     /usr/$ENV{COMPILER_TRIPLET}/include
+    C:/include
     )
 endif()
 
+##########
+# SPDLOG #
+##########
+
 add_compile_options(-DSPDLOG_COMPILED_LIB -D_WIN32_WINNT=0x600 -D_ISOC99_SOURCE -lole32 -lwinmm -ldsound -Wl,--trace,--as-needed)
-#add_subdirectory(rtaudio)
-#add_subdirectory(spdlog)
 find_package(spdlog REQUIRED)
 
-find_library(LAME_LIB libmp3lame.a)
+##############
+# LIBMP3LAME #
+##############
+
+find_library(LAME_LIB
+NAMES libmp3lame libmp3lame.a libmp3lame-static.lib libmp3lame.dll libmp3lame.lib lame_enc lame_enc.dll lame_enc.lib
+HINTS "C:/lib/") # For the Windows build - lib files are placed in the SOURCE/lib dir
+
 if (LAME_LIB OR lame_FOUND)
-    message(STATUS "Found LAME")
+    message(STATUS "Found LAME: ${LAME_LIB}")
 else()
     message(FATAL_ERROR "Could not find lame! Exiting...")
 endif()
 
-find_library(SNDFILE_LIB sndfile)
-if (SNDFILE_LIB OR sndfile_FOUND)
-    message(STATUS "Found libsndfile")
-else()
-    message(FATAL_ERROR "Could not find libsndfile! Exiting...")
+##############
+# LIBSNDFILE #
+##############
+
+if (UNIX)
+    find_library(SNDFILE_LIB sndfile)
+    if (SNDFILE_LIB OR sndfile_FOUND)
+        message(STATUS "Found libsndfile")
+    else()
+        message(FATAL_ERROR "Could not find libsndfile! Exiting...")
+    endif()
+endif()
+if (WIN32)
+    find_package(LibSndFile CONFIG REQUIRED)
 endif()
 
-#find_package(PkgConfig REQUIRED)
-find_library(RTAUDIO_LIB rtaudio)
-#pkg_check_modules(RtAudio REQUIRED IMPORTED_TARGET rtaudio)
+####################
+# ncurses/pdcurses #
+####################
+
+if (UNIX)
+    find_library(CURSES_LIB ncurses)
+endif()
+if (WIN32)
+    find_library(CURSES_LIB NAMES pdcurses pdcurses.lib HINTS "C:/lib/")
+endif()
+
+if (CURSES_LIB)
+    message(STATUS "Found curses: ${CURSES_LIB}")
+else()
+    message(FATAL_ERROR "Could not find curses! Exiting...")
+endif()
+
+###########
+# RTAUDIO #
+###########
+
+find_library(RTAUDIO_LIB NAMES rtaudio
+HINTS "C:/lib/")
 if (RTAUDIO_LIB OR rtaudio_FOUND)
     message(STATUS "Found RtAudio: ${RTAUDIO_LIB}")
 else()
     message(FATAL_ERROR "Could not find RtAudio! Exiting...")
 endif()
+
+#########
+# BOOST #
+#########
 
 set(Boost_DEBUG ON)
 find_package(Boost REQUIRED filesystem program_options)
@@ -59,53 +110,32 @@ if(Boost_FILESYSTEM_FOUND)
 else()
     message(FATAL_ERROR "Could not find the Boost filesystem component! Exiting...")
 endif()
+if(Boost_PROGRAM_OPTIONS_FOUND)
+    message(STATUS "Found Boost program_options...")
+    if (Boost_PROGRAM_OPTIONS_LIBRARY)
+        message(STATUS "  Found Boost program_options libraries")
+    else()
+        message(FATAL_ERROR "  Could not found Boost program_options library! Exiting...")
+    endif()
+else()
+    message(FATAL_ERROR "Could not find the Boost program_options component! Exiting...")
+endif()
 
+#############
+# CHRONICLE #
+#############
 
-add_executable(chronicle 
-parse_opts.cpp
-screen.cpp
-chronicle.cpp
-)
+if (WIN32)
+    target_link_libraries(chronicle PRIVATE sndfile-shared)
+endif()
+
+if(UNIX)
+    target_link_libraries(chronicle PRIVATE ${SNDFILE_LIB})
+endif()
 
 target_link_libraries(chronicle PRIVATE
 spdlog::spdlog
 ${LAME_LIB}
-${SNDFILE_LIB}
 ${RTAUDIO_LIB}
-${Boost_LIBRARIES}
-ncurses)
-
-# add_custom_command(TARGET chronicle POST_BUILD
-# COMMAND python $<TARGET_FILE_DIR:chronicle>/../.ci/mingw32/list_full_deps.py $<TARGET_FILE:chronicle> OUTPUT_VARIABLE DEP_LIBS
-# VERBATIM
-# )
-
-# set(CPACK_PACKAGE_NAME "chronicle")
-# SET(CPACK_GENERATOR "STGZ;TGZ;TZ;ZIP")
-# set(CPACK_PROJECT_NAME chronicle)
-# SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
-# set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
-# SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENCE.md")
-# SET(CPACK_INCLUDE_TOPLEVEL_DIRECTORY 1)
-# SET(CPACK_PACKAGE_EXECUTABLES chronicle.exe;Chronicle)
-# set(CPACK_PACKAGE_VENDOR "Cal McLean")
-# set(CPACK_PACKAGE_CONTACT "calmcl1@aol.com")
-# set(CPACK_SOURCE_PACKAGE_FILE_NAME "chronicle-src")
-# SET(CPACK_SOURCE_GENERATOR "TGZ;TZ")
-# set (CPACK_SOURCE_IGNORE_FILES \.git/;\.git.*;\.ci/;\.cirrus\.yml;__build;\.vscode)
-# include(CPack)
-
-# list(APPEND DEPS "")
-# IF(WIN32)
-#     #list(APPEND EXTERNAL_LIBS=)
-#     install(TARGETS chronicle COMPONENT RUNTIME DESTINATION .)
-#     # getDeps()
-#     # install(CODE "execute_process(COMMAND ../copydeps.sh ${CPACK_PACKAGE_DIRECTORY})" COMPONENT RUNTIME)
-#     # install(CODE "MESSAGE(STATUS \"CMakePackDirL \${CPACK_PACKAGE_DIRECTORY}\")" COMPONENT RUNTIME)
-#     # install(CODE "set(DIRHERE \"${CMAKE_CURRENT_SOURCE_DIR}\")")
-#     # install(SCRIPT test.cmake COMPONENT RUNTIME)
-#     # install(FILES ${DEPS} DESTINATION . COMPONENT RUNTIME)
-# ENDIF()
-
-
-# #include(InstallRequiredSystemLibraries)
+${CURSES_LIB}
+${Boost_LIBRARIES})

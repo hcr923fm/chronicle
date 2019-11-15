@@ -66,9 +66,9 @@ RtAudio audio;
 	-> I = 0.065535
 	*/
 
-const short maxAudioVal = (pow(2, (sizeof(short) * 8)) / 2) - 1;
-const int silenceThresholdDB = -40;
-const float thresholdVal = (pow(10, silenceThresholdDB / 10)) * maxAudioVal;
+short maxAudioVal = (pow(2, (sizeof(short) * 8)) / 2) - 1;
+constexpr int silenceThresholdDB = -40;
+float thresholdVal = (pow(10, silenceThresholdDB / 10)) * maxAudioVal;
 
 chrono::seconds audioFileAgeLimit = chrono::seconds(3628800);
 
@@ -286,7 +286,7 @@ int main(int argc, char *argv[])
 			if (opts.count("input-device"))
 			{
 				RtAudio::DeviceInfo proposedDeviceInfo;
-				int input_device_id = opts["input-device"].as<int>();
+				unsigned int input_device_id = opts["input-device"].as<unsigned int>();
 				logger->debug("Found proposed input device ID: {}", input_device_id);
 
 				/* Does a device exist with the provided ID? */
@@ -311,7 +311,7 @@ int main(int argc, char *argv[])
 
 			if (opts.count("device-first-channel"))
 			{
-				int proposed_first_channel = opts["device-first-channel"].as<int>();
+				unsigned int proposed_first_channel = opts["device-first-channel"].as<unsigned int>();
 				logger->debug("Found proposed device first channel: {}", proposed_first_channel);
 
 				RtAudio::DeviceInfo device_info = audio.getDeviceInfo(inputAudioDeviceId);
@@ -329,7 +329,7 @@ int main(int argc, char *argv[])
 
 			if (opts.count("device-channels"))
 			{
-				int proposed_device_channels = opts["device-channels"].as<int>();
+				unsigned int proposed_device_channels = opts["device-channels"].as<unsigned int>();
 				logger->debug("Found proposed device channel count: {}", proposed_device_channels);
 
 				if (proposed_device_channels < 1)
@@ -351,7 +351,7 @@ int main(int argc, char *argv[])
 				inputAudioDeviceChannelCount = proposed_device_channels;
 			}
 
-			if (opts["device-channels"].as<int>() > 2 && destinationAudioFormat == AudioFormat::MP3)
+			if (opts["device-channels"].as<unsigned int>() > 2 && destinationAudioFormat == AudioFormat::MP3)
 			{
 				printf("Cannot use more than 2 channels when recording MP3!\n");
 				exit(1);
@@ -359,7 +359,7 @@ int main(int argc, char *argv[])
 
 			if (opts.count("sample-rate"))
 			{
-				int proposed_sample_rate = opts["sample-rate"].as<int>();
+				unsigned int proposed_sample_rate = opts["sample-rate"].as<unsigned int>();
 				logger->debug("Found proposed sample rate: {}", proposed_sample_rate);
 
 				RtAudio::DeviceInfo device_info = audio.getDeviceInfo(inputAudioDeviceId);
@@ -466,7 +466,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 	{
 		signal(SIGINT, signalShutdownHandler);
 		signal(SIGABRT, signalShutdownHandler);
-#if !defined(WIN32) || !defined(_WIN32) || !defined(__WIN32__)
+#ifndef _WIN32
 		signal(SIGWINCH, signalWinResizeHandler);
 #endif
 		//signal(SIGBREAK, signalHandler);

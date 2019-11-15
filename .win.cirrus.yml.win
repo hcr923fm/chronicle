@@ -2,34 +2,15 @@ env:
   BACKBLAZE_APP_KEY_ID: ENCRYPTED[95a37d7a31679c7fb32b03d05b33edb065dcf7f0f823e7fe721e3247e5f3668d4063591d5c733ade1fd7a32f5f859c5f]
   BACKBLAZE_APP_KEY: ENCRYPTED[770e70e48569f43396e50d0692a4c1abe64e4821c1ef816520c792ad6222c61641b7e56132e37896340f740720196604]
 
-linux_build_task:
-  container:
-    dockerfile: .ci/Dockerfile.linux
-
-  build_script:
-    - mkdir -p __build
-    - cd __build
-    - cmake ..
-    - cmake --build .
-
-  dist_script:
-    - chmod +x .ci/*.sh
-    - .ci/chronicle-create-dist-archives.sh
-
-  package_artifacts:
-    path: __build/chronicle-*-linux.*
-
-win_build_task:
+win_machine_build_task:
   matrix:
     - {
         env: { BITNESS: x64, GENERATOR_STRING: "Visual Studio 15 2017 Win64" },
-        windows_container:
-          { dockerfile: .ci/Dockerfile.winx64, os_version: 2019 },
+        windows_container: { dockerfile: .ci/Dockerfile.x64, os_version: 2019 },
       }
     - {
         env: { BITNESS: x86, GENERATOR_STRING: "Visual Studio 15 2017" },
-        windows_container:
-          { dockerfile: .ci/Dockerfile.winx86, os_version: 2019 },
+        windows_container: { dockerfile: .ci/Dockerfile.x86, os_version: 2019 },
       }
 
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
@@ -105,34 +86,6 @@ win_build_task:
     - cmake -E copy CHANGELOG.md __build/Release/
     - cd __build/Release/*
     - 7z a chronicle-win%BITNESS%-%CIRRUS_BUILD_ID%.zip ./*
-    - 7z -ttar a dummyfile ./* -so| 7z -si -tgzip a chronicle-win%BITNESS%-%CIRRUS_BUILD_ID%.tar.gz
 
   package_artifacts:
-    path: ./__build/Release/*.zip
-
-publish_task:
-  container:
-    image: gcc:latest
-
-  depends_on:
-    - linux_build
-    - win_build
-  only_if: $CIRRUS_BRANCH == 'master'
-  publish_script:
-    - apt update && apt install python python-pip -y
-    - pip install b2
-    - wget https://api.cirrus-ci.com/v1/artifact/github/hcr923fm/chronicle/win_build/package/__build/Release/chronicle-winx86-${CIRRUS_BUILD_ID}.zip
-    - wget https://api.cirrus-ci.com/v1/artifact/github/hcr923fm/chronicle/win_build/package/__build/Release/chronicle-winx64-${CIRRUS_BUILD_ID}.zip
-    - wget https://api.cirrus-ci.com/v1/artifact/github/hcr923fm/chronicle/win_build/package/__build/Release/chronicle-winx86-${CIRRUS_BUILD_ID}.tar.gz
-    - wget https://api.cirrus-ci.com/v1/artifact/github/hcr923fm/chronicle/win_build/package/__build/Release/chronicle-winx64-${CIRRUS_BUILD_ID}.tar.gz
-    - CHRONICLE_MAJOR_VERSION=`awk '/MAJOR/ {print $5}' ../version.h | sed 's/[^0-9]//g'`
-    - CHRONICLE_MINOR_VERSION=`awk '/MINOR/ {print $5}' ../version.h | sed 's/[^0-9]//g'`
-    - CHRONICLE_PATCH_VERSION=`awk '/PATCH/ {print $5}' ../version.h | sed 's/[^0-9]//g'`
-    - CHRONICLE_VERSION=${CHRONICLE_MAJOR_VERSION}.${CHRONICLE_MINOR_VERSION}.${CHRONICLE_PATCH_VERSION}
-    - mv chronicle-winx86.zip chronicle-${CHRONICLE_VERSION}-win32.zip
-    - mv chronicle-winx64.zip chronicle-${CHRONICLE_VERSION}-win64.zip
-    - mv chronicle-winx86.tar.gz chronicle-${CHRONICLE_VERSION}-win32.tar.gz
-    - mv chronicle-winx64.tar.gz chronicle-${CHRONICLE_VERSION}-win64.tar.gz
-    - chmod +x .ci/*.sh
-    - b2 authorize-account $BACKBLAZE_APP_KEY_ID $BACKBLAZE_APP_KEY
-    - .ci/chronicle-b2-upload.sh
+    path: chronicle-win*

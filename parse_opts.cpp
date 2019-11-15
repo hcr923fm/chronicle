@@ -13,7 +13,8 @@ po::variables_map parse_cmd_opts(int argc, char *argv[])
         /* Informational switches - print info then quit */
         ("help,h", "Prints this help message")                                                     //
         ("licence", "Prints the licence information for this software and libraries that it uses") //
-        ("list-devices,l", "Lists the available input devices with their IDs");
+        ("list-devices,l", "Lists the available input devices with their IDs")                     //
+        ("version", "Prints the version number of Chronicle");
 
     po::options_description options_filesystem("Filesystem Options");
     options_filesystem.add_options()
@@ -35,13 +36,13 @@ po::variables_map parse_cmd_opts(int argc, char *argv[])
                                                                       "  OGG \tOgg Vorbis (.ogg)\n"
                                                                       "WAV \t16-bit PCM WAV (.wav) (default)\n"
                                                                       "MP3 \t 320kbps MP3 (.mp3)\n"
-                                                                      "FLAC \t Free Lossless Audio Codec (.flac)")                                                                 //
-        ("input-device,i", po::value<int>(), "The ID number of the input device to record from. A list of input devices and their ID numbers can be obtained with `chronicle -l`") //
-        ("device-first-channel,t", po::value<int>()->default_value(0), "On multi-channel audio devices, select the first input channel to record from.\n"
-                                                                       "Defaults to 0") //
-        ("device-channels,c", po::value<int>()->default_value(2), "On multi-channel audio devices, select how many channels to record.\n"
-                                                                  "Use with --device-first-channel to use effectively on devices with more audio channels available than you wish to record from") //
-        ("sample-rate,r", po::value<int>()->default_value(44100), "The sample rate (in Hz) that you wish to use with the audio device specified, if supported");
+                                                                      "FLAC \t Free Lossless Audio Codec (.flac)")                                                                          //
+        ("input-device,i", po::value<unsigned int>(), "The ID number of the input device to record from. A list of input devices and their ID numbers can be obtained with `chronicle -l`") //
+        ("device-first-channel,t", po::value<unsigned int>()->default_value(0), "On multi-channel audio devices, select the first input channel to record from.\n"
+                                                                                "Defaults to 0") //
+        ("device-channels,c", po::value<unsigned int>()->default_value(2), "On multi-channel audio devices, select how many channels to record.\n"
+                                                                           "Use with --device-first-channel to use effectively on devices with more audio channels available than you wish to record from") //
+        ("sample-rate,r", po::value<unsigned int>()->default_value(44100), "The sample rate (in Hz) that you wish to use with the audio device specified, if supported");
 
     po::options_description options_extra("Extra Options");
     options_extra.add_options()
@@ -70,6 +71,12 @@ po::variables_map parse_cmd_opts(int argc, char *argv[])
         exit(0);
     }
 
+    if (vm.count("version"))
+    {
+        printVersion();
+        exit(0);
+    }
+
     return vm;
 }
 
@@ -79,6 +86,11 @@ bool is_integer(char *value)
     unsigned int n = strtoul(value, &endptr, 10);
 
     return endptr != value;
+}
+
+void printVersion()
+{
+    printf("%s.%s.%s", SOFTWARE_VERSION_MAJOR, SOFTWARE_VERSION_MINOR, SOFTWARE_VERSION_PATCH);
 }
 
 void printLicence()

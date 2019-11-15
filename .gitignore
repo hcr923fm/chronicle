@@ -48,6 +48,7 @@ build/*
 libsndfile-1*
 chronicle.cpp.orig
 logs/
+libs/
 
 # Autotools stuff
 configure

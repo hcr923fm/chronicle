@@ -1,0 +1,15 @@
+FROM cirrusci/windowsservercore:cmake
+
+RUN choco upgrade -y visualstudio2017community visualstudio2017-workload-vctools
+RUN choco install -y visualstudio2017-workload-nativedesktop aria2 7zip vcredist2017
+
+WORKDIR C:/
+RUN cmake -E make_directory C:/lib
+RUN cmake -E make_directory C:/include
+
+WORKDIR C:/
+RUN git clone https://github.com/Microsoft/vcpkg.git
+WORKDIR vcpkg
+RUN .\bootstrap-vcpkg.bat
+RUN .\vcpkg integrate install
+RUN .\vcpkg install libsndfile:x86-windows libflac:x86-windows libvorbis:x86-windows libogg:x86-windows spdlog:x86-windows boost-filesystem:x86-windows boost-program-options:x86-windows
