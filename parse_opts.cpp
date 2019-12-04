@@ -33,7 +33,7 @@ po::variables_map parse_cmd_opts(int argc, char *argv[])
     options_audio.add_options()
         /* Audio switches - to do with the input device or audio format */
         ("audio-format,s", po::value<string>()->default_value("WAV"), "Sets the audio format to use for the recorded audio files. Acceptable parameters are:\n"
-                                                                      "  OGG \tOgg Vorbis (.ogg)\n"
+                                                                      "OGG \tOgg Vorbis (.ogg)\n"
                                                                       "WAV \t16-bit PCM WAV (.wav) (default)\n"
                                                                       "MP3 \t 320kbps MP3 (.mp3)\n"
                                                                       "FLAC \t Free Lossless Audio Codec (.flac)")                                                                          //
@@ -95,30 +95,32 @@ void printVersion()
 
 void printLicence()
 {
-    const char LICENCE[] =
-        R"(
-Chronicle is distributed under the MIT Licence.
-See LICENCE for details of the licences used.
-Chronicle uses the following libraries internally:
+    cout << "Chronicle is distributed under the MIT Licence." << endl;
+    cout << "See LICENCE for details of the licences used." << endl;
+    cout << "Chronicle uses the following libraries internally:" << endl;
+    cout << endl;
 
-    libsndfile
-        Copyright (C) 1999-2016 Erik de Castro Lopo <erikd@mega-nerd.com>
-        Licenced under the LGPL as a dynamically linked library.
-        The version of libsndfile that is distributed with this software has not
-        been modified from the version available at
-        http://www.mega-nerd.com/libsndfile/
-        
-    RtAudio
-        Copyright (c) Gary P. Scavone, McGill University
-        Licenced under the the RtAudio licence.
-        https://www.music.mcgill.ca/~gary/rtaudio/
+    cout << "\tlibsndfile" << endl;
+    cout << "\t\tCopyright (C) 1999-2016 Erik de Castro Lopo <erikd@mega-nerd.com>" << endl;
+    cout << "\t\tLicenced under the LGPL as a dynamically linked library." << endl;
+    cout << "\t\tThe version of libsndfile that is distributed with this software has not" << endl;
+    cout << "\t\tbeen modified from the version available at" << endl;
+    cout << "\t\thttp://www.mega-nerd.com/libsndfile/" << endl;
+    cout << endl;
 
-	Boost
-		Licenced under the Boost Software Licence.
+    cout << "\tRtAudio" << endl;
+    cout << "\t\tCopyright (c) Gary P. Scavone, McGill University" << endl;
+    cout << "\t\tLicenced under the the RtAudio licence." << endl;
+    cout << "\t\thttps://www.music.mcgill.ca/~gary/rtaudio/" << endl;
+    cout << endl;
 
-	LAME
-		Licenced under the LGPL v2.1. Courtesy of www.mp3dev.org
-)";
+    cout << "\tBoost" << endl;
+    cout << "\t\tLicenced under the Boost Software Licence." << endl;
+    cout << endl;
 
-    cout << LICENCE << endl;
+    cout << "\tLAME" << endl;
+    cout << "\t\tLicenced under the LGPL v2.1. Courtesy of www.mp3dev.org" << endl;
+
+    cout << "\tspdlog" << endl;
+    cout << "\t\tLicenced under the MIT Licence. See LICENCE for details." << endl;
 }
