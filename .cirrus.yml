@@ -12,12 +12,12 @@ pipe:
         - cmake ../..
         - cmake --build .
     - dockerfile: .ci/Dockerfile.winx64
-      matrix:
-        - {
-            env:
-              { BITNESS: x64, GENERATOR_STRING: "Visual Studio 15 2017 Win64" },
-          }
-        - { env: { BITNESS: x86, GENERATOR_STRING: "Visual Studio 15 2017" } }
+      # matrix:
+      #   - {
+      #       env:
+      #         { BITNESS: x64, GENERATOR_STRING: "Visual Studio 15 2017 Win64" },
+      #     }
+      #   - { env: { BITNESS: x86, GENERATOR_STRING: "Visual Studio 15 2017" } }
       curses_download_cache:
       folder: PDCurses
       fingerprint_script: echo pdcurses-fingerprint-2
