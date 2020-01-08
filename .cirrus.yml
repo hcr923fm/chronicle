@@ -105,8 +105,9 @@ pipe:
         - zip -rq9 ${CHRONICLE_TRIPLET}.zip ../${CHRONICLE_TRIPLET}
 
     - image: gcc:latest
-      only_if: $CIRRUS_BRANCH == 'master'
+      # only_if: $CIRRUS_BRANCH == 'master'
       publish_script:
+        - if [ $CIRRUS_BRANCH -eq 'master'] do; exit 0; done;
         - apt update && apt install python python-pip -y
         - pip install b2
         - CHRONICLE_MAJOR_VERSION=`awk '/MAJOR/ {print $5}' ../version.h | sed 's/[^0-9]//g'`
