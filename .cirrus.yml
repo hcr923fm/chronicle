@@ -19,10 +19,10 @@ pipe:
       #     }
       #   - { env: { BITNESS: x86, GENERATOR_STRING: "Visual Studio 15 2017" } }
       curses_download_cache:
-      folder: PDCurses
-      fingerprint_script: echo pdcurses-fingerprint-2
-      populate_script:
-        - git clone https://github.com/wmcbrine/PDCurses
+        folder: PDCurses
+        fingerprint_script: echo pdcurses-fingerprint-2
+        populate_script:
+          - git clone https://github.com/wmcbrine/PDCurses
 
       curses_build_script:
         - cd PDCurses/wincon
