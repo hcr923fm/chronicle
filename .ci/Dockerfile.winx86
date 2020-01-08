@@ -15,7 +15,7 @@ RUN .\vcpkg integrate install
 RUN .\vcpkg install libsndfile:x86-windows libflac:x86-windows libvorbis:x86-windows libogg:x86-windows spdlog:x86-windows boost-filesystem:x86-windows boost-program-options:x86-windows
 
 WORKDIR C:/
-RUN aria2c https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
+ADD https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz C:/
 RUN 7z x lame-3.100.tar.gz
 RUN 7z x lame-3.100.tar
 WORKDIR lame-3.100
@@ -23,8 +23,8 @@ WORKDIR lame-3.100
 RUN cmake -E copy Makefile.MSVC Makefile.MSVCx86
 RUN cmake -E copy configMS.h config.h
 ENV VSCMD_DEBUG=1
-RUN "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=x86
-nmake -f Makefile.MSVCx86 comp=msvc asm=no DLL /D
-cmake -E copy output\libmp3lame.dll C:/lib
-cmake -E copy output\libmp3lame-static.lib C:/lib
-nmake -f Makefile.MSVCx86 comp=msvc asm=no clean /D
+RUN "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=X86
+RUN nmake -f Makefile.MSVCx86 comp=msvc asm=no DLL /D
+RUN cmake -E copy output\libmp3lame.dll C:/lib
+RUN cmake -E copy output\libmp3lame-static.lib C:/lib
+RUN nmake -f Makefile.MSVCx86 comp=msvc asm=no clean /D
