@@ -5,13 +5,13 @@ env:
 pipe:
   name: Build chronicle and deploy
   steps:
-    - dockerfile: .ci/Dockerfile.linux
+    - image: .ci/Dockerfile.linux
       build_script:
         - mkdir -p __build/linux
         - cd __build/linux
         - cmake ../..
         - cmake --build .
-    - dockerfile: .ci/Dockerfile.winx64
+    - image: .ci/Dockerfile.winx64
       # matrix:
       #   - {
       #       env:
