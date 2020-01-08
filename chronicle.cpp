@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 	catch (const spdlog::spdlog_ex &ex)
 	{
 		cout << "Cannot init logging: " << ex.what() << endl;
-		exit(1);
+		std::exit(1);
 	}
 
 	auto logger = spdlog::get("chronicle_log");
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
 				if (devices < 1)
 				{
 					cout << "No devices found! Exiting..." << endl;
-					exit(0);
+					std::exit(0);
 				}
 
 				for (unsigned int i = 0; i < devices; i++)
@@ -157,14 +157,14 @@ int main(int argc, char *argv[])
 				cout << endl
 					 << "Default device: " << deviceInfo.name << endl;
 
-				exit(0);
+				std::exit(0);
 			}
 
 			/* Check for conflicting options */
 			if (opts.count("no-delete") & opts.count("max-age") & !opts["max-age"].defaulted())
 			{
 				printf("Cannot supply --no-delete and --max-age together; they are incompatible\n");
-				exit(1);
+				std::exit(1);
 			}
 
 			/* Validate and set recording options */
@@ -202,14 +202,14 @@ int main(int argc, char *argv[])
 				catch (invalid_argument e)
 				{
 					printf("Cannot identify a valid duration for --max-age (supplied value: %s )\n. See chronicle --help for more details.\n", max_age_string.c_str());
-					exit(1);
+					std::exit(1);
 				}
 
 				int unit_str_idx = max_age_string.find_first_of("smhdSMHD");
 				if (unit_str_idx == string::npos)
 				{
 					printf("Cannot identify a valid duration for --max-age (supplied value: %s )\n. See chronicle --help for more details.\n", max_age_string.c_str());
-					exit(1);
+					std::exit(1);
 				}
 
 				max_age_unit = max_age_string.substr(unit_str_idx, 1);
@@ -239,7 +239,7 @@ int main(int argc, char *argv[])
 				{
 					cout << "The specified file age limit must be greater than 1 second:";
 					cout << max_age_val << endl;
-					exit(1);
+					std::exit(1);
 				}
 
 				audioFileAgeLimit = age_seconds;
@@ -277,7 +277,7 @@ int main(int argc, char *argv[])
 				{
 					printf("Supplied audio file format not supported: %s\n", audio_format_string.c_str());
 					printf("Supported formats are: [ OGG | WAV | MP3 | FLAC ]\n");
-					exit(1);
+					std::exit(1);
 				}
 				logger->info("\tUsing audio format: {}", audio_format_string);
 			}
@@ -294,7 +294,7 @@ int main(int argc, char *argv[])
 				{
 					printf("No audio device found with ID %ul\n", input_device_id);
 					printf("Use chronicle --list-devices to find a list of available device IDs.\n");
-					exit(1);
+					std::exit(1);
 				}
 
 				/* Is the device an input device? */
@@ -303,7 +303,7 @@ int main(int argc, char *argv[])
 				if (proposedDeviceInfo.inputChannels == 0)
 				{
 					printf("The specified audio device is not an input device: %ul : %s\n", input_device_id, proposedDeviceInfo.name.c_str());
-					exit(1);
+					std::exit(1);
 				}
 
 				inputAudioDeviceId = input_device_id;
@@ -321,7 +321,7 @@ int main(int argc, char *argv[])
 				{
 					printf("Option device-first-channel has been specified as %i, but device %i (%s) only has %i input channels\n",
 						   proposed_first_channel, inputAudioDeviceId, device_info.name.c_str(), device_info.inputChannels);
-					exit(1);
+					std::exit(1);
 				}
 
 				inputAudioDeviceFirstChannel = proposed_first_channel;
@@ -335,7 +335,7 @@ int main(int argc, char *argv[])
 				if (proposed_device_channels < 1)
 				{
 					printf("Invalid device channel count: %i", proposed_device_channels);
-					exit(1);
+					std::exit(1);
 				}
 
 				RtAudio::DeviceInfo device_info = audio.getDeviceInfo(inputAudioDeviceId);
@@ -345,7 +345,7 @@ int main(int argc, char *argv[])
 				{
 					printf("Option device-channels has been specified as %i, but device %i (%s) only has %i input channels (first channel: %i)\n",
 						   proposed_device_channels, inputAudioDeviceId, device_info.name.c_str(), device_info.inputChannels, inputAudioDeviceFirstChannel);
-					exit(1);
+					std::exit(1);
 				}
 
 				inputAudioDeviceChannelCount = proposed_device_channels;
@@ -354,7 +354,7 @@ int main(int argc, char *argv[])
 			if (opts["device-channels"].as<unsigned int>() > 2 && destinationAudioFormat == AudioFormat::MP3)
 			{
 				printf("Cannot use more than 2 channels when recording MP3!\n");
-				exit(1);
+				std::exit(1);
 			}
 
 			if (opts.count("sample-rate"))
@@ -379,7 +379,7 @@ int main(int argc, char *argv[])
 				{
 					printf("Device %i (%s) does not support specified sample rate: %i\n", inputAudioDeviceId,
 						   device_info.name.c_str(), proposed_sample_rate);
-					exit(1);
+					std::exit(1);
 				}
 
 				inputAudioDeviceSampleRate = matching_rate;
@@ -399,7 +399,7 @@ int main(int argc, char *argv[])
 	if (audio.getDeviceCount() < 1)
 	{
 		logger->critical("No audio devices available! Exiting...");
-		exit(0);
+		std::exit(0);
 	}
 
 	logger->debug("Output directory: " + output_directory.string());
@@ -437,7 +437,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		if (sf_format_check(&sfInfo) == 0)
 		{
 			logger->critical("Destination format invalid, exiting...");
-			exit(0);
+			std::exit(0);
 		}
 
 		sf_command(mySnd, SFC_SET_SCALE_FLOAT_INT_READ, NULL, SF_TRUE);
@@ -515,7 +515,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		{
 			printf("%s", e.what());
 			logger->critical("Could not create directory: {}", e.what());
-			exit(1);
+			std::exit(1);
 		}
 		catch (exception &e)
 		{
@@ -547,7 +547,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 			{
 				// Can't open the file. Exit.
 				logger->critical("Could not start recording: {}", sf_strerror(mySnd));
-				exit(1);
+				std::exit(1);
 			}
 		}
 		else
@@ -557,7 +557,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 			{
 				// Can't open the file. Exit.
 				logger->critical("Couldn't open the destination file. Error: {}", strerror(errno));
-				exit(1);
+				std::exit(1);
 			}
 		}
 
@@ -573,7 +573,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		catch (RtAudioError &e)
 		{
 			logger->critical("Could not open stream: {} ( {} )", e.getMessage(), e.getType());
-			exit(0);
+			std::exit(0);
 		}
 
 		catch (exception &e)
@@ -789,7 +789,7 @@ void signalShutdownHandler(int sigNum)
 	logger->info("Received signal {}; shutting down...", sigNum);
 	stopRecord();
 	closeCurses();
-	exit(sigNum);
+	std::exit(sigNum);
 }
 
 void onRtAudioError(RtAudioError::Type type, const string &errorText)
