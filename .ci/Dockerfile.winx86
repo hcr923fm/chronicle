@@ -1,5 +1,6 @@
 FROM cirrusci/windowsservercore:cmake
 
+RUN choco update all -y
 RUN choco upgrade -y visualstudio2017community visualstudio2017-workload-vctools
 RUN choco install -y visualstudio2017-workload-nativedesktop aria2 7zip vcredist2017
 
