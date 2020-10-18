@@ -22,11 +22,11 @@ Windows users (both 32 and 64 bit) can simply download the latest compiled binar
 ### Linux
 #### With binaries
 Linux users can also [download the binaries](https://github.com/hcr923fm/chronicle/releases/latest). However, you will need to manually install the pre-requisites:
-* RtAudio, (`librtaudio-dev`) @5.0.0
+* RtAudio, (`librtaudio-dev`) >= 5.0.0
 * libsndfile, which is in most package managers (`libsndfile1-dev`)
-* Boost, which is in most package managers (`libboost-all-dev`) @1.68.0+
-* ncurses, which is available in most package managers (`libncurses6-dev`) @6.0+
-* LAME encoding library, which is in most package managers (`libmp3lame-dev`) @1.3.0+
+* Boost, which is in most package managers (`libboost-all-dev`) >= 1.68.0
+* ncurses, which is available in most package managers (`libncurses6-dev`) >= 6.0
+* LAME encoding library, which is in most package managers (`libmp3lame-dev`) >= 1.3.0+
 
 #### Compiling from scratch
 Or, you can compile chronicle from scratch.
