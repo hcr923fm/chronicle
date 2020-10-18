@@ -29,6 +29,7 @@ int sampleRateCache;
 int channelCountCache;
 
 bool NC_UI_IS_ENABLED;
+
 void initCurses(string windowTitle)
 {
     if (NC_UI_IS_ENABLED)
@@ -84,19 +85,25 @@ void calculateWindowPositions()
 
 void setWindowTitle(string windowTitle)
 {
-    windowTitleCache = windowTitle;
+    if (NC_UI_IS_ENABLED)
+    {
+        windowTitleCache = windowTitle;
 
-    string paddedWindowTitle = " " + windowTitleCache + " ";
-    wmove(mainWindow, 0, (COLS - paddedWindowTitle.length()) / 2);
-    wprintw(mainWindow, paddedWindowTitle.c_str());
+        string paddedWindowTitle = " " + windowTitleCache + " ";
+        wmove(mainWindow, 0, (COLS - paddedWindowTitle.length()) / 2);
+        wprintw(mainWindow, paddedWindowTitle.c_str());
+    }
 }
 
 void setBorderAndDividers()
 {
-    wborder(mainWindow, 0, 0, 0, 0, 0, 0, 0, 0);
-    wmove(mainWindow, LINES - 3, 1);
-    whline(mainWindow, ACS_HLINE, COLS - 2);
-    wrefresh(mainWindow);
+    if (NC_UI_IS_ENABLED)
+    {
+        wborder(mainWindow, 0, 0, 0, 0, 0, 0, 0, 0);
+        wmove(mainWindow, LINES - 3, 1);
+        whline(mainWindow, ACS_HLINE, COLS - 2);
+        wrefresh(mainWindow);
+    }
 }
 
 void updateRecordingToPath(string filePath)
