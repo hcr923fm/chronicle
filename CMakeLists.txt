@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.11)
 project (chronicle CXX)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -15,7 +15,7 @@ screen.cpp
 chronicle.cpp
 )
 
-target_link_directories(chronicle PRIVATE "C:/lib")
+#target_link_directories(chronicle PRIVATE "C:/lib")
 
 IF (UNIX AND NOT WIN32)
     include_directories(/usr/include/rtaudio)
@@ -23,8 +23,8 @@ endif()
 
 if (WIN32)
     include_directories(/usr/$ENV{COMPILER_TRIPLET}/include/boost-1_68
-    /usr/$ENV{COMPILER_TRIPLET}/include
     C:/include
+    /usr/$ENV{COMPILER_TRIPLET}/include
     )
 endif()
 
@@ -33,7 +33,7 @@ endif()
 ##########
 
 add_compile_options(-DSPDLOG_COMPILED_LIB -D_WIN32_WINNT=0x600 -D_ISOC99_SOURCE -lole32 -lwinmm -ldsound -Wl,--trace,--as-needed)
-find_package(spdlog REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
 
 ##############
 # LIBMP3LAME #
@@ -62,7 +62,7 @@ if (UNIX)
     endif()
 endif()
 if (WIN32)
-    find_package(LibSndFile CONFIG REQUIRED)
+    find_package(SndFile CONFIG REQUIRED)
 endif()
 
 ####################
@@ -73,7 +73,7 @@ if (UNIX)
     find_library(CURSES_LIB ncurses)
 endif()
 if (WIN32)
-    find_library(CURSES_LIB NAMES pdcurses pdcurses.lib HINTS "C:/lib/")
+    find_library(CURSES_LIB NAMES pdcurses pdcurses.dll pdcurses.lib HINTS "C:/lib/")
 endif()
 
 if (CURSES_LIB)
@@ -98,7 +98,7 @@ endif()
 # BOOST #
 #########
 
-set(Boost_DEBUG ON)
+# set(Boost_DEBUG ON)
 find_package(Boost REQUIRED filesystem program_options)
 if(Boost_FILESYSTEM_FOUND)
     message(STATUS "Found Boost filesystem...")
@@ -126,7 +126,7 @@ endif()
 #############
 
 if (WIN32)
-    target_link_libraries(chronicle PRIVATE sndfile-shared)
+    target_link_libraries(chronicle PRIVATE SndFile::sndfile)
 endif()
 
 if(UNIX)
