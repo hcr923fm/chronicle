@@ -22,12 +22,12 @@ linux_build_task:
 win_build_task:
   matrix:
     - {
-        env: { BITNESS: x64, GENERATOR_STRING: "Visual Studio 15 2017 Win64" },
+        env: { BITNESS: x64, GENERATOR_STRING: "Visual Studio 16 2019" },
         windows_container:
           { dockerfile: .ci/Dockerfile.winx64, os_version: 2019 },
       }
     - {
-        env: { BITNESS: x86, GENERATOR_STRING: "Visual Studio 15 2017" },
+        env: { BITNESS: x86, GENERATOR_STRING: "Visual Studio 16 2019" },
         windows_container:
           { dockerfile: .ci/Dockerfile.winx86, os_version: 2019 },
       }
@@ -83,7 +83,7 @@ win_build_task:
   rtaudio_build_script:
     - cd rtaudio-5.1.0
     - cmake -E make_directory __build && cd __build
-    - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows --debug-output
+    - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows -A %BITNESS%  --debug-output
     - cmake --build . -v --config Release
     - cmake --install .
     - cd ..
@@ -95,7 +95,7 @@ win_build_task:
 
   build_script:
     - cmake -E make_directory __build && cd __build
-    - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows --debug-output
+    - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows -A %BITNESS% --debug-output
     - cmake --build . -v --config Release
     - cmake -E copy C:/lib/rtaudio.dll Release/
 
