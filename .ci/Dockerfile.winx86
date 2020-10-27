@@ -3,7 +3,8 @@ FROM cirrusci/windowsservercore:cmake
 RUN choco upgrade all -y
 #RUN choco upgrade -y visualstudio2017community visualstudio2017-workload-vctools
 #RUN choco install -y visualstudio2019-workload-nativedesktop aria2 7zip vcredist2017
-RUN choco install -y visualstudio2019community visualstudio2019-workload-vctools vcredist2017 aria2 --ignoredetectedreboot -d
+RUN choco install -y visualstudio2019community vcredist2017 --ignoredetectedreboot -d
+RUN choco install -y aria2 --version 1.32.0.1
 #vcredist2017
 
 WORKDIR C:/
