@@ -2,7 +2,7 @@ FROM cirrusci/windowsservercore:cmake
 
 RUN choco upgrade all -y
 #RUN choco upgrade -y visualstudio2017community visualstudio2017-workload-vctools
-RUN choco install -y aria2 vcredist2017 --ignoredetectedreboot -d
+RUN choco install -y visualstudio2019community visualstudio2019-workload-vctools vcredist2017 aria2 --ignoredetectedreboot -d
 
 WORKDIR C:/
 RUN cmake -E make_directory C:/lib
