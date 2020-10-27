@@ -4,7 +4,7 @@ RUN choco upgrade all -y
 #RUN choco upgrade -y visualstudio2017community visualstudio2017-workload-vctools
 #RUN choco install -y visualstudio2019-workload-nativedesktop aria2 7zip vcredist2017
 RUN choco install -y visualstudio2019community vcredist2017 --ignoredetectedreboot -d
-RUN choco install -y aria2 --version 1.32.0.1
+#RUN choco install -y aria2 --version 1.32.0.1
 #vcredist2017
 
 WORKDIR C:/
@@ -16,19 +16,19 @@ RUN git clone https://github.com/Microsoft/vcpkg.git
 WORKDIR vcpkg
 RUN .\bootstrap-vcpkg.bat
 RUN .\vcpkg integrate install
-RUN .\vcpkg install libsndfile:x86-windows libflac:x86-windows libvorbis:x86-windows libogg:x86-windows spdlog:x86-windows boost-filesystem:x86-windows boost-program-options:x86-windows
+RUN .\vcpkg install libsndfile:x86-windows libflac:x86-windows libvorbis:x86-windows libogg:x86-windows spdlog:x86-windows boost-filesystem:x86-windows boost-program-options:x86-windows pdcurses:x86-windows mp3lame:x86-windows
 
-WORKDIR C:/
-ADD https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz C:/
-RUN 7z x lame-3.100.tar.gz
-RUN 7z x lame-3.100.tar
-WORKDIR lame-3.100
-#RUN powershell.exe -Command "& ((Get-Content -path .\Makefile.MSVC -Raw) -replace '/machine:I386','/machine:X64') | Set-Content -path .\Makefile.MSVCx64" # Setup for x64
-RUN cmake -E copy Makefile.MSVC Makefile.MSVCx86
-RUN cmake -E copy configMS.h config.h
-ENV VSCMD_DEBUG=1
-RUN "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=X86
-RUN nmake -f Makefile.MSVCx86 comp=msvc asm=no DLL /D
-RUN cmake -E copy output\libmp3lame.dll C:/lib
-RUN cmake -E copy output\libmp3lame-static.lib C:/lib
-RUN nmake -f Makefile.MSVCx86 comp=msvc asm=no clean /D
+# WORKDIR C:/
+# ADD https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz C:/
+# RUN 7z x lame-3.100.tar.gz
+# RUN 7z x lame-3.100.tar
+# WORKDIR lame-3.100
+# #RUN powershell.exe -Command "& ((Get-Content -path .\Makefile.MSVC -Raw) -replace '/machine:I386','/machine:X64') | Set-Content -path .\Makefile.MSVCx64" # Setup for x64
+# RUN cmake -E copy Makefile.MSVC Makefile.MSVCx86
+# RUN cmake -E copy configMS.h config.h
+# ENV VSCMD_DEBUG=1
+# RUN "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=X86
+# RUN nmake -f Makefile.MSVCx86 comp=msvc asm=no DLL /D
+# RUN cmake -E copy output\libmp3lame.dll C:/lib
+# RUN cmake -E copy output\libmp3lame-static.lib C:/lib
+# RUN nmake -f Makefile.MSVCx86 comp=msvc asm=no clean /D

@@ -34,49 +34,50 @@ win_build_task:
 
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
 
-  curses_download_cache:
-    folder: PDCurses
-    fingerprint_script: echo pdcurses-fingerprint-2
-    populate_script:
-      - git clone https://github.com/wmcbrine/PDCurses
+  # curses_download_cache:
+  #   folder: PDCurses
+  #   fingerprint_script: echo pdcurses-fingerprint-2
+  #   populate_script:
+  #     - git clone https://github.com/wmcbrine/PDCurses
 
-  curses_build_script:
-    - cd PDCurses/wincon
-    - set VSCMD_DEBUG=1
-    - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=%BITNESS%'
-    - nmake -f Makefile.vc UTF8=Y WIDE=y
-    - cmake -E copy ../curses.h C:/include
-    - cmake -E copy ../panel.h C:/include
-    - cmake -E copy ../curspriv.h C:/include
-    - cmake -E copy pdcurses.lib C:/lib
-    - nmake -f Makefile.vc clean # Remove the generated files, so they aren't cached
+  # curses_build_script:
+  #   - cd PDCurses/wincon
+  #   - set VSCMD_DEBUG=1
+  #   - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=%BITNESS%'
+  #   - nmake -f Makefile.vc UTF8=Y WIDE=y
+  #   - cmake -E copy ../curses.h C:/include
+  #   - cmake -E copy ../panel.h C:/include
+  #   - cmake -E copy ../curspriv.h C:/include
+  #   - cmake -E copy pdcurses.lib C:/lib
+  #   - nmake -f Makefile.vc clean # Remove the generated files, so they aren't cached
 
-  lame_download_cache:
-    folder: lame-3.100
-    fingerprint_script: echo lame-3.100-fingerprint-2
-    populate_script:
-      - aria2c https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
-      - 7z x lame-3.100.tar.gz
-      - 7z x lame-3.100.tar
-      - cd lame-3.100
-      - ps: ((Get-Content -path .\Makefile.MSVC -Raw) -replace '/machine:I386','/machine:X64') | Set-Content -path .\Makefile.MSVCx64 # Setup for x64
-      - cmake -E copy Makefile.MSVC Makefile.MSVCx86
-      - cmake -E copy configMS.h config.h
+  # lame_download_cache:
+  #   folder: lame-3.100
+  #   fingerprint_script: echo lame-3.100-fingerprint-2
+  #   populate_script:
+  #     - aria2c https://netix.dl.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
+  #     - 7z x lame-3.100.tar.gz
+  #     - 7z x lame-3.100.tar
+  #     - cd lame-3.100
+  #     - ps: ((Get-Content -path .\Makefile.MSVC -Raw) -replace '/machine:I386','/machine:X64') | Set-Content -path .\Makefile.MSVCx64 # Setup for x64
+  #     - cmake -E copy Makefile.MSVC Makefile.MSVCx86
+  #     - cmake -E copy configMS.h config.h
 
-  lame_build_script:
-    - cd lame-3.100
-    - set VSCMD_DEBUG=1
-    - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=%BITNESS%'
-    - nmake -f Makefile.MSVC%BITNESS% comp=msvc asm=no DLL /D
-    - cmake -E copy output\libmp3lame.dll C:/lib
-    - cmake -E copy output\libmp3lame-static.lib C:/lib
-    - nmake -f Makefile.MSVC%BITNESS% comp=msvc asm=no clean /D
+  # lame_build_script:
+  #   - cd lame-3.100
+  #   - set VSCMD_DEBUG=1
+  #   - '"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat" -arch=%BITNESS%'
+  #   - nmake -f Makefile.MSVC%BITNESS% comp=msvc asm=no DLL /D
+  #   - cmake -E copy output\libmp3lame.dll C:/lib
+  #   - cmake -E copy output\libmp3lame-static.lib C:/lib
+  #   - nmake -f Makefile.MSVC%BITNESS% comp=msvc asm=no clean /D
 
   rtaudio_download_cache:
     folder: rtaudio-5.1.0
     fingerprint_script: echo rtaudio-5.1.0-fingerprint-0
     populate_script:
-      - aria2c http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.1.0.tar.gz
+      #- aria2c http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.1.0.tar.gz
+      - curl http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.1.0.tar.gz --output rtaudio-5.1.0.tar.gz
       - 7z x rtaudio-5.1.0.tar.gz
       - 7z x rtaudio-5.1.0.tar
 
