@@ -152,7 +152,6 @@ install(FILES
     ${CMAKE_SOURCE_DIR}/CHANGELOG.md
     DESTINATION .
 )
-#include(InstallRequiredSystemLibraries)
 
 if(WIN32)
     install(CODE [[
@@ -175,7 +174,6 @@ if(WIN32)
             )
         endforeach()
     ]])
-    
 endif()
 
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "An hourly broadcast radio logger")
