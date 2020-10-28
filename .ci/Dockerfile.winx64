@@ -6,7 +6,7 @@ RUN choco install -y cmake --ignoredetectedreboot
 RUN choco install -y visualstudio2019community vcredist2017 --ignoredetectedreboot
 #RUN choco install -y aria2 --version 1.32.0.1 --ignoredetectedreboot -d
 
-WORKDIR C:\Program Files\CMake\bin\
+WORKDIR C:\Program Files\CMake\bin
 RUN .\cmake -E make_directory C:/lib
 RUN .\cmake -E make_directory C:/include
 
