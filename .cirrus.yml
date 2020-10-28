@@ -74,7 +74,7 @@ win_build_task:
 
   vcpkg_script:
     - git clone https://github.com/Microsoft/vcpkg.git C:\vcpkg
-    - cd vcpkg
+    - cd C:\vcpkg
     - .\bootstrap-vcpkg.bat
     - .\vcpkg install libsndfile:x64-windows libflac:x64-windows libvorbis:x64-windows libogg:x64-windows spdlog:x64-windows boost-filesystem:x64-windows boost-program-options:x64-windows pdcurses:x64-windows mp3lame:x64-windows
 
