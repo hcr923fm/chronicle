@@ -9,8 +9,8 @@ RUN tar xf cmake-3.15.2-Linux-x86_64.tar.gz
 RUN cp -r cmake-3.15.2-Linux-x86_64/* /
 
 WORKDIR ~
-RUN git clone https://github.com/Microsoft/vcpkg.git
-WORKDIR vcpkg
+RUN git clone https://github.com/Microsoft/vcpkg.git /usr/local/vcpkg
+WORKDIR /usr/local/vcpkg
 RUN ./bootstrap-vcpkg.sh
 RUN chmod +x vcpkg
 RUN ./vcpkg install boost-filesystem boost-program-options spdlog
