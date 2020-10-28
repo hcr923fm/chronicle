@@ -20,14 +20,17 @@ linux_build_task:
     path: __build/chronicle-*-linux.*
 
 win_build_task:
+  env:
+    VSPATH: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community"
+    GENERATOR_STRING: "Visual Studio 16 2019"
   matrix:
     - {
-        env: { BITNESS: x64, GENERATOR_STRING: "Visual Studio 16 2019" },
+        env: { BITNESS: x64 },
         windows_container:
           { dockerfile: .ci/Dockerfile.winx64, os_version: 2019 },
       }
     - {
-        env: { BITNESS: x86, GENERATOR_STRING: "Visual Studio 16 2019" },
+        env: { BITNESS: x86 },
         windows_container:
           { dockerfile: .ci/Dockerfile.winx86, os_version: 2019 },
       }
@@ -76,7 +79,7 @@ win_build_task:
     #-  # ; cat C:\ProgramData\chocolatey\logs\chocolatey.log
     - git clone https://github.com/Microsoft/vcpkg.git C:\vcpkg
     - cd C:\vcpkg
-    - .\bootstrap-vcpkg.bat
+    - .\bootstrap-vcpkg.bat -withVSPath ${VSPATH}
     - .\vcpkg install libsndfile:x64-windows libflac:x64-windows libvorbis:x64-windows libogg:x64-windows spdlog:x64-windows boost-filesystem:x64-windows boost-program-options:x64-windows pdcurses:x64-windows mp3lame:x64-windows
 
   rtaudio_download_cache:
