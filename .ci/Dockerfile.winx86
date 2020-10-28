@@ -3,14 +3,14 @@ FROM cirrusci/windowsservercore:cmake
 RUN choco upgrade all -y
 #RUN choco upgrade -y visualstudio2017community visualstudio2017-workload-vctools
 #RUN choco install -y visualstudio2019-workload-nativedesktop aria2 7zip vcredist2017
-RUN choco install -y cmake -d
-RUN choco install -y visualstudio2019community vcredist2017  --ignoredetectedreboot
+RUN choco install -y cmake --ignoredetectedreboot
+RUN choco install -y visualstudio2019community vcredist2017 --ignoredetectedreboot
 #RUN choco install -y aria2 --version 1.32.0.1
 #vcredist2017
 
-WORKDIR C:/
-RUN cmake -E make_directory C:/lib
-RUN cmake -E make_directory C:/include
+WORKDIR C:\Program Files\CMake\bin\
+RUN .\cmake -E make_directory C:/lib
+RUN .\cmake -E make_directory C:/include
 
 WORKDIR C:/
 RUN git clone https://github.com/Microsoft/vcpkg.git
