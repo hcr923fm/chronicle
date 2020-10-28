@@ -1,10 +1,10 @@
-FROM cirrusci/windowsservercore:cmake
+FROM cirrusci/windowsservercore:2019
 
-RUN choco upgrade all -y
+#RUN choco upgrade all -y
 #RUN choco upgrade -y visualstudio2017community visualstudio2017-workload-vctools
 RUN choco install -y cmake --ignoredetectedreboot
 RUN choco install -y visualstudio2019community vcredist2017 --ignoredetectedreboot
-RUN choco install visualstudio2019-workload-nativedesktop visualstudio2019-workload-vctools --ignoredetectedreboot -y --package-parameters "--no-includeRecommended"
+RUN choco install visualstudio2019-workload-nativedesktop visualstudio2019-workload-vctools --ignoredetectedreboot -y --package-parameters "--no-includeRecommended --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
 #RUN choco install -y aria2 --version 1.32.0.1 --ignoredetectedreboot -d
 
 WORKDIR C:/Program\ Files/CMake/bin
