@@ -73,7 +73,7 @@ win_build_task:
   #   - nmake -f Makefile.MSVC%BITNESS% comp=msvc asm=no clean /D
 
   vcpkg_script:
-    - choco install visualstudio2019-workload-nativedesktop -d --ignoredetectedreboot -y; cat C:\ProgramData\chocolatey\logs\chocolatey.log
+    - choco install visualstudio2019-workload-nativedesktop -d --ignoredetectedreboot -y ; cat C:\ProgramData\chocolatey\logs\chocolatey.log
     - git clone https://github.com/Microsoft/vcpkg.git C:\vcpkg
     - cd C:\vcpkg
     - .\bootstrap-vcpkg.bat
