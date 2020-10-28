@@ -32,7 +32,7 @@ win_build_task:
           { dockerfile: .ci/Dockerfile.winx86, os_version: 2019 },
       }
 
-  use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
+  #use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
 
   # curses_download_cache:
   #   folder: PDCurses
