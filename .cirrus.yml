@@ -79,7 +79,7 @@ win_build_task:
     #-  # ; cat C:\ProgramData\chocolatey\logs\chocolatey.log
     - git clone https://github.com/Microsoft/vcpkg.git C:\vcpkg
     - cd C:\vcpkg
-    - .\bootstrap-vcpkg.bat -withVSPath %VSPATH%
+    - .\bootstrap-vcpkg.bat -withVSPath '"%VSPATH%"'
     - .\vcpkg install libsndfile:x64-windows libflac:x64-windows libvorbis:x64-windows libogg:x64-windows spdlog:x64-windows boost-filesystem:x64-windows boost-program-options:x64-windows pdcurses:x64-windows mp3lame:x64-windows
 
   rtaudio_download_cache:
