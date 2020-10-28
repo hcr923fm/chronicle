@@ -103,20 +103,23 @@ win_build_task:
 
   build_script:
     - cmake -E make_directory __build && cd __build
-    - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows -A %BITNESS% --debug-output
+    - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows -DCMAKE_INSTALL_PREFIX ./chronicle-install -A %BITNESS% --debug-output
     - cmake --build . -v --config Release
-    - cmake -E copy C:/lib/rtaudio.dll Release/
+    - cmake --install .
+    #- cmake -E copy C:/lib/rtaudio.dll Release/
 
   dist_script:
-    - cmake -E copy LICENCE.md __build/Release/
-    - cmake -E copy README.md __build/Release/
-    - cmake -E copy CHANGELOG.md __build/Release/
-    - cd __build/Release/*
+    #- cmake -E copy LICENCE.md __build/Release/
+    #- cmake -E copy README.md __build/Release/
+    #- cmake -E copy CHANGELOG.md __build/Release/
+    #- cd __build/Release/*
+    - cd __build/chronicle-install/
     - 7z a chronicle-win%BITNESS%-%CIRRUS_BUILD_ID%.zip ./*
     - 7z -ttar a dummyfile ./* -so| 7z -si -tgzip a chronicle-win%BITNESS%-%CIRRUS_BUILD_ID%.tar.gz
 
   package_artifacts:
-    path: ./__build/Release/*.zip
+    #path: ./__build/Release/*.zip
+    path: ./__build/chronicle-install
 
 publish_task:
   container:

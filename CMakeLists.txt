@@ -1,13 +1,16 @@
 cmake_minimum_required(VERSION 3.11)
-project (chronicle CXX)
+project (chronicle
+    VERSION 1.1.0
+    HOMEPAGE_URL https://github.com/hcr923fm/chronicle
+    DESCRIPTION "An hourly broadcast radio logger"
+    LANGUAGES CXX
+)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-include_directories("$PROJECT_SOURCE_DIR"
-lame
-)
+include_directories("$PROJECT_SOURCE_DIR")
 
 add_executable(chronicle 
 parse_opts.cpp
@@ -15,17 +18,12 @@ screen.cpp
 chronicle.cpp
 )
 
-#target_link_directories(chronicle PRIVATE "C:/lib")
-
 IF (UNIX AND NOT WIN32)
     include_directories(/usr/include/rtaudio)
 endif()
 
 if (WIN32)
-    include_directories(/usr/$ENV{COMPILER_TRIPLET}/include/boost-1_68
-    C:/include
-    /usr/$ENV{COMPILER_TRIPLET}/include
-    )
+    include_directories("C:/include")
 endif()
 
 ##########
@@ -41,9 +39,6 @@ target_link_libraries(chronicle PRIVATE spdlog::spdlog)
 ##############
 # LIBMP3LAME #
 ##############
-
-#find_library(LAME_LIB
-#NAMES libmp3lame libmp3lame.a libmp3lame-static.lib libmp3lame.dll libmp3lame.lib lame_enc lame_enc.dll lame_enc.lib) # For the Windows build - lib files are placed in the SOURCE/lib dir
 if(UNIX)
     find_library(LAME_LIB NAMES libmp3lame libmp3lame.a libmp3lame-static.lib libmp3lame.dll libmp3lame.lib lame_enc lame_enc.dll lame_enc.lib)
     if (LAME_LIB OR lame_FOUND)
@@ -146,12 +141,61 @@ endif()
 
 target_link_libraries(chronicle PRIVATE ${Boost_LIBRARIES})
 
-install(TARGETS chronicle DESTINATION chronicle)
+############################
+# INSTALLATION / PACKAGING #
+############################
 
-set(CPACK_GENERATOR "ZIP")
-#set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Cal McLean") # required
+install(TARGETS chronicle)
+install(FILES
+    ${CMAKE_SOURCE_DIR}/README.md
+    ${CMAKE_SOURCE_DIR}/LICENCE.md
+    ${CMAKE_SOURCE_DIR}/CHANGELOG.md
+    DESTINATION .
+)
+#include(InstallRequiredSystemLibraries)
+
+if(WIN32)
+    install(CODE [[
+        message(STATUS "Finding deps for: $<TARGET_FILE:chronicle>")
+        file(GET_RUNTIME_DEPENDENCIES
+            RESOLVED_DEPENDENCIES_VAR RESOLVED_DEPS
+            UNRESOLVED_DEPENDENCIES_VAR UNRESOLVED_DEPS
+            EXECUTABLES "${CMAKE_BINARY_DIR}/Release/chronicle.exe"
+            DIRECTORIES C:/lib
+            POST_EXCLUDE_REGEXES ".*system32.*"
+        )
+
+        #message(STATUS "Got resolved deps: ${RESOLVED_DEPS}")
+        #message(STATUS "Got unresolved deps: ${UNRESOLVED_DEPS}")
+        foreach(_file ${RESOLVED_DEPS})
+            file(INSTALL "${_file}"
+                DESTINATION "${CMAKE_INSTALL_PREFIX}/bin"
+                TYPE STATIC_LIBRARY 
+                FOLLOW_SYMLINK_CHAIN
+            )
+        endforeach()
+    ]])
+    
+endif()
+
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "An hourly broadcast radio logger")
+set(CPACK_PACKAGE_DESCRIPTION "Chronicle is an audio logger, designed for radio station compliance use.")
+set(CPACK_PACKAGE_VENDOR "Cal McLean")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENCE.md")
+
+if(UNIX AND NOT WIN32)
+    set(CPACK_GENERATOR "DEB")
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Cal McLean <calmcl1@aol.com>") # required
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "librtaudio6 (>=5), libsndfile1, libboost-program-options1.71.0, libboost-filesystem1.71.0, libncurses6 (>=6.0), libmp3lame-dev (>= 1.3.0)")
+    set(CPACK_DEBIAN_PACKAGE_SECTION "Sound")
+    set(CPACK_DEBIAN_PACKAGE_VERSION "1.1.0")
+    set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
+else()
+    set(CPACK_GENERATOR "ZIP;TGZ")
+endif()
+
 set(CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE 1)
 set(CPACK_MONOLITHIC_INSTALL 1)
-
 
 include(CPack)
