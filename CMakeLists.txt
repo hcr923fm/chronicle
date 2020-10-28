@@ -138,10 +138,20 @@ if(Boost_PROGRAM_OPTIONS_FOUND)
     if (Boost_PROGRAM_OPTIONS_LIBRARY)
         message(STATUS "  Found Boost program_options libraries")
     else()
-        message(FATAL_ERROR "  Could not found Boost program_options library! Exiting...")
+        message(FATAL_ERROR "  Could not find Boost program_options library! Exiting...")
     endif()
 else()
     message(FATAL_ERROR "Could not find the Boost program_options component! Exiting...")
 endif()
 
 target_link_libraries(chronicle PRIVATE ${Boost_LIBRARIES})
+
+install(TARGETS chronicle DESTINATION chronicle)
+
+set(CPACK_GENERATOR "ZIP")
+#set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Cal McLean") # required
+set(CPACK_COMPONENTS_ALL_IN_ONE_PACKAGE 1)
+set(CPACK_MONOLITHIC_INSTALL 1)
+
+
+include(CPack)
