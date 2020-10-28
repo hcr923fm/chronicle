@@ -72,6 +72,12 @@ win_build_task:
   #   - cmake -E copy output\libmp3lame-static.lib C:/lib
   #   - nmake -f Makefile.MSVC%BITNESS% comp=msvc asm=no clean /D
 
+  vcpkg_script:
+    - git clone https://github.com/Microsoft/vcpkg.git C:\vcpkg
+    - cd vcpkg
+    - .\bootstrap-vcpkg.bat
+    - .\vcpkg install libsndfile:x64-windows libflac:x64-windows libvorbis:x64-windows libogg:x64-windows spdlog:x64-windows boost-filesystem:x64-windows boost-program-options:x64-windows pdcurses:x64-windows mp3lame:x64-windows
+
   rtaudio_download_cache:
     folder: rtaudio-5.1.0
     fingerprint_script: echo rtaudio-5.1.0-fingerprint-0
