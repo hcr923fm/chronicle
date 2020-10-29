@@ -155,7 +155,7 @@ install(FILES
 
 if(WIN32)
     install(CODE [[
-        message(STATUS "Finding deps for: $<TARGET_FILE:chronicle>")
+        #message(STATUS "Finding deps for: $<TARGET_FILE:chronicle>")
         file(GET_RUNTIME_DEPENDENCIES
             RESOLVED_DEPENDENCIES_VAR RESOLVED_DEPS
             UNRESOLVED_DEPENDENCIES_VAR UNRESOLVED_DEPS
