@@ -91,6 +91,7 @@ win_build_task:
     - dir "%VSPATH%"\VC\Tools
     - git clone https://github.com/Microsoft/vcpkg.git C:\vcpkg
     - cd C:\vcpkg
+    - ps: (gc .\scripts\bootstrap.ps1) -replace '-prerelease -legacy', '-prerelease -legacy -all' | Out-File .\scripts\bootstrap.ps1 -encoding ASCII
     - .\bootstrap-vcpkg.bat -withVSPath '"%VSPATH%"'
     - .\vcpkg install libsndfile:x64-windows libflac:x64-windows libvorbis:x64-windows libogg:x64-windows spdlog:x64-windows boost-filesystem:x64-windows boost-program-options:x64-windows pdcurses:x64-windows mp3lame:x64-windows
 
