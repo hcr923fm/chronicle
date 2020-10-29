@@ -32,7 +32,7 @@ do
 done
 
 CHRONICLE_FILE_NAME="chronicle-${CHRONICLE_VERSION}.deb"
-CHRONICLE_URL="https://api.cirrus-ci.com/v1/artifact/github/hcr923fm/chronicle/linux_build/package/__build/${CHRONICLE_FILE_NAME}"
+CHRONICLE_URL="https://api.cirrus-ci.com/v1/artifact/github/hcr923fm/chronicle/linux_build/deb/__build/${CHRONICLE_FILE_NAME}"
 echo Downloading ${CHRONICLE_URL}
 wget ${CHRONICLE_URL} -O ${CHRONICLE_FILE_NAME}
 b2 upload_file chronicle-releases ${CHRONICLE_FILE_NAME} ${CHRONICLE_FILE_NAME}
