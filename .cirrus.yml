@@ -19,11 +19,14 @@ linux_build_task:
     - cmake --install .
     - cpack .
     - cd chronicle-install
-    - tar czf chronicle-linux-${CIRRUS_BUILD_ID}.tar.gz ./*
-    - zip -rq9 chronicle-linux-${CIRRUS_BUILD_ID} ./*
+    - tar czf ../chronicle-linux-${CIRRUS_BUILD_ID}.tar.gz ./*
+    - zip -rq9 ../chronicle-linux-${CIRRUS_BUILD_ID} ./* -x *.gz -x *.tar
 
   package_artifacts:
     path: __build/chronicle-install/chronicle-linux*
+
+  source_artifacts:
+    path: __build/source/*
 
   deb_artifacts:
     path: __build/*.deb
