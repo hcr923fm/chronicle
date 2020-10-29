@@ -9,15 +9,24 @@ linux_build_task:
   build_script:
     - mkdir -p __build
     - cd __build
-    - cmake .. -DCMAKE_TOOLCHAIN_FILE=/usr/local/vcpkg/scripts/buildsystems/vcpkg.cmake
+    - cmake .. -DCMAKE_TOOLCHAIN_FILE=/usr/local/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_INSTALL_PREFIX ./chronicle-install
     - cmake --build .
 
   dist_script:
-    - chmod +x .ci/*.sh
-    - .ci/chronicle-create-dist-archives.sh
+    # - chmod +x .ci/*.sh
+    # - .ci/chronicle-create-dist-archives.sh
+    - cd __build
+    - cmake --install .
+    - cpack .
+    - cd chronicle-install
+    - tar czf chronicle-linux-%CIRRUS_BUILD_ID%.tar.gz ./*
+    - zip -rq9 chronicle-linux-%CIRRUS_BUILD_ID% ./*
 
   package_artifacts:
-    path: __build/chronicle-*-linux.*
+    path: __build/chronicle-install/chronicle-linux*
+
+  deb_artifacts:
+    path: __build/*.deb
 
 win_build_task:
   env:
@@ -78,6 +87,8 @@ win_build_task:
   vcpkg_script:
     #-  # ; cat C:\ProgramData\chocolatey\logs\chocolatey.log
     - dir "%VSPATH%"
+    - dir "%VSPATH%"\VC
+    - dir "%VSPATH%"\VC\Tools
     - git clone https://github.com/Microsoft/vcpkg.git C:\vcpkg
     - cd C:\vcpkg
     - .\bootstrap-vcpkg.bat -withVSPath '"%VSPATH%"'
@@ -109,7 +120,6 @@ win_build_task:
     - cmake -E make_directory __build && cd __build
     - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows -DCMAKE_INSTALL_PREFIX ./chronicle-install -A %BITNESS% --debug-output
     - cmake --build . -v --config Release
-    - cmake --install .
     #- cmake -E copy C:/lib/rtaudio.dll Release/
 
   dist_script:
@@ -118,12 +128,14 @@ win_build_task:
     #- cmake -E copy CHANGELOG.md __build/Release/
     #- cd __build/Release/*
     - cd __build/chronicle-install/
+    - cmake --install .
+    - cd chronicle-install
     - 7z a chronicle-win%BITNESS%-%CIRRUS_BUILD_ID%.zip ./*
     - 7z -ttar a dummyfile ./* -so| 7z -si -tgzip a chronicle-win%BITNESS%-%CIRRUS_BUILD_ID%.tar.gz
 
   package_artifacts:
     #path: ./__build/Release/*.zip
-    path: ./__build/chronicle-install
+    path: ./__build/chronicle-install/*
 
 publish_task:
   container:
@@ -138,16 +150,20 @@ publish_task:
     - pip install b2
     - wget https://api.cirrus-ci.com/v1/artifact/github/hcr923fm/chronicle/win_build/package/__build/Release/chronicle-winx86-${CIRRUS_BUILD_ID}.zip
     - wget https://api.cirrus-ci.com/v1/artifact/github/hcr923fm/chronicle/win_build/package/__build/Release/chronicle-winx64-${CIRRUS_BUILD_ID}.zip
+    - wget https://api.cirrus-ci.com/v1/artifact/github/hcr923fm/chronicle/linux_build/package/__build/Release/chronicle-linux-${CIRRUS_BUILD_ID}.zip
     - wget https://api.cirrus-ci.com/v1/artifact/github/hcr923fm/chronicle/win_build/package/__build/Release/chronicle-winx86-${CIRRUS_BUILD_ID}.tar.gz
     - wget https://api.cirrus-ci.com/v1/artifact/github/hcr923fm/chronicle/win_build/package/__build/Release/chronicle-winx64-${CIRRUS_BUILD_ID}.tar.gz
+    - wget https://api.cirrus-ci.com/v1/artifact/github/hcr923fm/chronicle/linux_build/package/__build/Release/chronicle-linux-${CIRRUS_BUILD_ID}.tar.gz
     - CHRONICLE_MAJOR_VERSION=`awk '/MAJOR/ {print $5}' ../version.h | sed 's/[^0-9]//g'`
     - CHRONICLE_MINOR_VERSION=`awk '/MINOR/ {print $5}' ../version.h | sed 's/[^0-9]//g'`
     - CHRONICLE_PATCH_VERSION=`awk '/PATCH/ {print $5}' ../version.h | sed 's/[^0-9]//g'`
     - CHRONICLE_VERSION=${CHRONICLE_MAJOR_VERSION}.${CHRONICLE_MINOR_VERSION}.${CHRONICLE_PATCH_VERSION}
-    - mv chronicle-winx86.zip chronicle-${CHRONICLE_VERSION}-win32.zip
-    - mv chronicle-winx64.zip chronicle-${CHRONICLE_VERSION}-win64.zip
-    - mv chronicle-winx86.tar.gz chronicle-${CHRONICLE_VERSION}-win32.tar.gz
-    - mv chronicle-winx64.tar.gz chronicle-${CHRONICLE_VERSION}-win64.tar.gz
+    - mv chronicle-winx86-${CIRRUS_BUILD_ID}.zip chronicle-${CHRONICLE_VERSION}-win32.zip
+    - mv chronicle-winx64-${CIRRUS_BUILD_ID}.zip chronicle-${CHRONICLE_VERSION}-win64.zip
+    - mv chronicle-winx86-${CIRRUS_BUILD_ID}.tar.gz chronicle-${CHRONICLE_VERSION}-win32.tar.gz
+    - mv chronicle-winx64-${CIRRUS_BUILD_ID}.tar.gz chronicle-${CHRONICLE_VERSION}-win64.tar.gz
+    - mv chronicle-linux-${CIRRUS_BUILD_ID}.tar.gz chronicle-${CHRONICLE_VERSION}-linux.tar.gz
+    - mv chronicle-linux-${CIRRUS_BUILD_ID}.zip chronicle-${CHRONICLE_VERSION}-linux.zip
     - chmod +x .ci/*.sh
     - b2 authorize-account $BACKBLAZE_APP_KEY_ID $BACKBLAZE_APP_KEY
     - .ci/chronicle-b2-upload.sh
