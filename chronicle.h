@@ -10,7 +10,7 @@ typedef int64_t __int64;
 #include <RtAudio.h>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/rotating_file_sink.h>
-#include "lame/lame.h"
+#include <lame/lame.h>
 
 extern "C"
 {
