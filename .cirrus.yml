@@ -31,18 +31,16 @@ linux_build_task:
 
 win_build_task:
   env:
-    VSPATH: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community"
-    GENERATOR_STRING: "Visual Studio 16 2019"
+  #VSPATH: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community"
+  #GENERATOR_STRING: "Visual Studio 16 2019"
   matrix:
     - {
         env: { BITNESS: x64 },
-        windows_container:
-          { image: calmcl1/hcr-chronicle-build:winx64, os_version: 2019 },
+        container: { image: calmcl1/hcr-chronicle-build:mingw-x64 },
       }
     - {
         env: { BITNESS: x86 },
-        windows_container:
-          { dockerfile: calmcl1/hcr-chronicle-build:winx86, os_version: 2019 },
+        container: { image: calmcl1/hcr-chronicle-build:mingw-x86 },
       }
 
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
@@ -85,16 +83,16 @@ win_build_task:
   #   - cmake -E copy output\libmp3lame-static.lib C:/lib
   #   - nmake -f Makefile.MSVC%BITNESS% comp=msvc asm=no clean /D
 
-  vcpkg_script:
-    #-  # ; cat C:\ProgramData\chocolatey\logs\chocolatey.log
-    - dir "%VSPATH%"
-    - dir "%VSPATH%"\VC
-    - dir "%VSPATH%"\VC\Tools
-    - git clone https://github.com/Microsoft/vcpkg.git C:\vcpkg
-    - cd C:\vcpkg
-    - ps: (gc .\scripts\bootstrap.ps1) -replace '-prerelease -legacy', '-prerelease -legacy -all' | Out-File .\scripts\bootstrap.ps1 -encoding ASCII
-    - .\bootstrap-vcpkg.bat -withVSPath '"%VSPATH%"'
-    - .\vcpkg install libsndfile libflac libvorbis libogg spdlog boost-filesystem boost-program-options pdcurses mp3lame --triplet %BITNESS%-windows
+  # vcpkg_script:
+  #   #-  # ; cat C:\ProgramData\chocolatey\logs\chocolatey.log
+  #   - dir "%VSPATH%"
+  #   - dir "%VSPATH%"\VC
+  #   - dir "%VSPATH%"\VC\Tools
+  #   - git clone https://github.com/Microsoft/vcpkg.git C:\vcpkg
+  #   - cd C:\vcpkg
+  #   - ps: (gc .\scripts\bootstrap.ps1) -replace '-prerelease -legacy', '-prerelease -legacy -all' | Out-File .\scripts\bootstrap.ps1 -encoding ASCII
+  #   - .\bootstrap-vcpkg.bat -withVSPath '"%VSPATH%"'
+  #   - .\vcpkg install libsndfile libflac libvorbis libogg spdlog boost-filesystem boost-program-options pdcurses mp3lame --triplet %BITNESS%-windows
 
   rtaudio_download_cache:
     folder: rtaudio-5.1.0
@@ -108,7 +106,8 @@ win_build_task:
   rtaudio_build_script:
     - cd rtaudio-5.1.0
     - cmake -E make_directory __build && cd __build
-    - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows -A %BITNESS%  --debug-output
+    #- cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows -A %BITNESS%  --debug-output
+    - cmake .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-mingw-static --debug-output
     - cmake --build . -v --config Release
     - cmake --install .
     - cd ..
