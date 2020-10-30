@@ -30,7 +30,7 @@ linux_build_task:
     path: __build/*.deb
 
 win_build_task:
-  env:
+  #env:
   #VSPATH: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community"
   #GENERATOR_STRING: "Visual Studio 16 2019"
   matrix:
