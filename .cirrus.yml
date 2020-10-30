@@ -4,7 +4,7 @@ env:
 
 linux_build_task:
   container:
-    dockerfile: .ci/Dockerfile.linux
+    image: calmcl1/hcr-chronicle-build:linux
 
   build_script:
     - mkdir -p __build
@@ -37,12 +37,12 @@ win_build_task:
     - {
         env: { BITNESS: x64 },
         windows_container:
-          { dockerfile: .ci/Dockerfile.winx64, os_version: 2019 },
+          { image: calmcl1/hcr-chronicle-build:winx64, os_version: 2019 },
       }
     - {
         env: { BITNESS: x86 },
         windows_container:
-          { dockerfile: .ci/Dockerfile.winx86, os_version: 2019 },
+          { dockerfile: calmcl1/hcr-chronicle-build:winx86, os_version: 2019 },
       }
 
   use_compute_credits: $CIRRUS_USER_COLLABORATOR == 'true'
@@ -94,7 +94,7 @@ win_build_task:
     - cd C:\vcpkg
     - ps: (gc .\scripts\bootstrap.ps1) -replace '-prerelease -legacy', '-prerelease -legacy -all' | Out-File .\scripts\bootstrap.ps1 -encoding ASCII
     - .\bootstrap-vcpkg.bat -withVSPath '"%VSPATH%"'
-    - .\vcpkg install libsndfile:x64-windows libflac:x64-windows libvorbis:x64-windows libogg:x64-windows spdlog:x64-windows boost-filesystem:x64-windows boost-program-options:x64-windows pdcurses:x64-windows mp3lame:x64-windows
+    - .\vcpkg install libsndfile libflac libvorbis libogg spdlog boost-filesystem boost-program-options pdcurses mp3lame --triplet %BITNESS%-windows
 
   rtaudio_download_cache:
     folder: rtaudio-5.1.0
