@@ -101,11 +101,13 @@ endif()
 # RTAUDIO #
 ###########
 
-find_library(RTAUDIO_LIB NAMES rtaudio
-HINTS "C:/lib/")
-if (RTAUDIO_LIB OR rtaudio_FOUND)
-    message(STATUS "Found RtAudio: ${RTAUDIO_LIB}")
-    target_link_libraries(chronicle PRIVATE ${RTAUDIO_LIB})
+find_package(RtAudio CONFIG REQUIRED)
+
+#find_library(RTAUDIO_LIB NAMES rtaudio
+#HINTS "C:/lib/")
+if (RtAudio_DIR OR rtaudio_FOUND)
+    message(STATUS "Found RtAudio: ${RtAudio_DIR}")
+    target_link_libraries(chronicle PRIVATE RtAudio::rtaudio)
 
 else()
     message(FATAL_ERROR "Could not find RtAudio! Exiting...")
