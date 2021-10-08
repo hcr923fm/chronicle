@@ -94,29 +94,7 @@ win_build_task:
     - cd C:\vcpkg
     - ps: (gc .\scripts\bootstrap.ps1) -replace '-prerelease -legacy', '-prerelease -legacy -all' | Out-File .\scripts\bootstrap.ps1 -encoding ASCII
     - .\bootstrap-vcpkg.bat -withVSPath '"%VSPATH%"'
-    - .\vcpkg install libsndfile:x64-windows libflac:x64-windows libvorbis:x64-windows libogg:x64-windows spdlog:x64-windows boost-filesystem:x64-windows boost-program-options:x64-windows pdcurses:x64-windows mp3lame:x64-windows
-
-  rtaudio_download_cache:
-    folder: rtaudio-5.1.0
-    fingerprint_script: echo rtaudio-5.1.0-fingerprint-0
-    populate_script:
-      #- aria2c http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.1.0.tar.gz
-      - curl http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-5.1.0.tar.gz --output rtaudio-5.1.0.tar.gz
-      - 7z x rtaudio-5.1.0.tar.gz
-      - 7z x rtaudio-5.1.0.tar
-
-  rtaudio_build_script:
-    - cd rtaudio-5.1.0
-    - cmake -E make_directory __build && cd __build
-    - cmake -G "%GENERATOR_STRING%" .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=%BITNESS%-windows -A %BITNESS%  --debug-output
-    - cmake --build . -v --config Release
-    - cmake --install .
-    - cd ..
-    - cmake -E copy __build\Release\rtaudio.lib C:/lib
-    - cmake -E copy __build\Release\rtaudio.dll C:/lib
-    - cmake -E copy ./RtAudio.cpp C:/include
-    - cmake -E copy RtAudio.h C:/include
-    - cmake -E remove_directory __build # Remove the generated files, so they aren't cached
+    - .\vcpkg install libsndfile libflac libvorbis:x64-windows libogg spdlog boost-filesystem boost-program-options pdcurses mp3lame rtaudio --triplet=x64-windows
 
   build_script:
     - cmake -E make_directory __build && cd __build
