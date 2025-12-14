@@ -572,7 +572,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		}
 		catch (RtAudioError &e)
 		{
-			logger->critical("Could not open stream: {} ( {} )", e.getMessage(), e.getType());
+			logger->critical("Could not open stream: {}", e.getMessage());
 			std::exit(0);
 		}
 
@@ -795,6 +795,6 @@ void signalShutdownHandler(int sigNum)
 void onRtAudioError(RtAudioError::Type type, const string &errorText)
 {
 	auto logger = spdlog::get("chronicle_log");
-	logger->error("Got RtAudio error of type {}: {}", type, errorText);
+	logger->error("Got RtAudio error: {}", errorText);
 	signalShutdownHandler(1);
 }
