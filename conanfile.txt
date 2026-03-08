@@ -11,3 +11,6 @@ CMakeToolchain
 
 [layout]
 cmake_layout
+
+[options]
+libmp3lame/*:shared=True
