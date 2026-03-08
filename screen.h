@@ -11,17 +11,15 @@
 #include <cstring>
 #include <algorithm>
 
-using namespace std;
-
-void initCurses(string windowTitle);
+void initCurses(std::string windowTitle);
 void closeCurses();
 void calculateWindowPositions();
 
-void setWindowTitle(string windowTitle);
+void setWindowTitle(std::string windowTitle);
 void setBorderAndDividers();
-void updateRecordingToPath(string filePath);
-void updateAudioDevice(string audioDevice, int sampleRate, int channelCount);
-void updateAudioMeter(int channelNum, float maxVal, float currentVal, string volumeLabel);
+void updateRecordingToPath(std::string filePath);
+void updateAudioDevice(std::string audioDevice, int sampleRate, int channelCount);
+void updateAudioMeter(int channelNum, float maxVal, float currentVal, std::string volumeLabel);
 void updateHardDriveSpace(long spaceAvailBeforeGB, long fileSizeMB);
 void onWindowResize();
 

@@ -19,24 +19,24 @@ po::variables_map parse_cmd_opts(int argc, char *argv[])
     po::options_description options_filesystem("Filesystem Options");
     options_filesystem.add_options()
         /* Filesystem switches - to do with the directory name or filename */
-        ("directory,d", po::value<string>()->default_value(boost::filesystem::current_path().string()), "Sets the directory to save the logged audio to. A trailing slash is not required, but may be added. On Windows, if using a trailing slash, use a trailing double-slash.\n"
-                                                                                                        "Defaults to current directory") //
-        ("format,f", po::value<string>()->default_value("\%F \%H\%M\%S"), "strftime-compatible format to use when naming the audio files.\n"
-                                                                          "Defaults to %F %H%M%S") //
+        ("directory,d", po::value<std::string>()->default_value(boost::filesystem::current_path().string()), "Sets the directory to save the logged audio to. A trailing slash is not required, but may be added. On Windows, if using a trailing slash, use a trailing double-slash.\n"
+                                                                                                             "Defaults to current directory") //
+        ("format,f", po::value<std::string>()->default_value("\%F \%H\%M\%S"), "strftime-compatible format to use when naming the audio files.\n"
+                                                                               "Defaults to %F %H%M%S") //
         ("no-delete", "If passed, Chronicle will not delete old audio files, so they can be manually managed.\n"
                       "Incompatible with --max-age") //
-        ("max-age,a", po::value<string>()->default_value("1000h"), "Sets the maximum age before audio files will be automatically deleted.\n"
-                                                                   "Use the format <length><unit>, where unit is < s| m | h | d > for seconds, minutes, hours and days, respectively.\n"
-                                                                   "Defaults to 1000 hours (OfCom minimum required storage for radio stations");
+        ("max-age,a", po::value<std::string>()->default_value("1000h"), "Sets the maximum age before audio files will be automatically deleted.\n"
+                                                                        "Use the format <length><unit>, where unit is < s| m | h | d > for seconds, minutes, hours and days, respectively.\n"
+                                                                        "Defaults to 1000 hours (OfCom minimum required storage for radio stations");
 
     po::options_description options_audio("Audio Options");
     options_audio.add_options()
         /* Audio switches - to do with the input device or audio format */
-        ("audio-format,s", po::value<string>()->default_value("WAV"), "Sets the audio format to use for the recorded audio files. Acceptable parameters are:\n"
-                                                                      "OGG \tOgg Vorbis (.ogg)\n"
-                                                                      "WAV \t16-bit PCM WAV (.wav) (default)\n"
-                                                                      "MP3 \t 320kbps MP3 (.mp3)\n"
-                                                                      "FLAC \t Free Lossless Audio Codec (.flac)")                                                                          //
+        ("audio-format,s", po::value<std::string>()->default_value("WAV"), "Sets the audio format to use for the recorded audio files. Acceptable parameters are:\n"
+                                                                           "OGG \tOgg Vorbis (.ogg)\n"
+                                                                           "WAV \t16-bit PCM WAV (.wav) (default)\n"
+                                                                           "MP3 \t 320kbps MP3 (.mp3)\n"
+                                                                           "FLAC \t Free Lossless Audio Codec (.flac)")                                                                     //
         ("input-device,i", po::value<unsigned int>(), "The ID number of the input device to record from. A list of input devices and their ID numbers can be obtained with `chronicle -l`") //
         ("device-first-channel,t", po::value<unsigned int>()->default_value(0), "On multi-channel audio devices, select the first input channel to record from.\n"
                                                                                 "Defaults to 0") //
@@ -59,10 +59,10 @@ po::variables_map parse_cmd_opts(int argc, char *argv[])
 
     if (vm.count("help"))
     {
-        cout << options_info << endl
-             << options_audio << endl
-             << options_filesystem << endl
-             << options_extra << endl;
+        std::cout << options_info << std::endl
+                  << options_audio << std::endl
+                  << options_filesystem << std::endl
+                  << options_extra << std::endl;
         exit(0);
     }
 
@@ -96,32 +96,32 @@ void printVersion()
 
 void printLicence()
 {
-    cout << "Chronicle is distributed under the MIT Licence." << endl;
-    cout << "See LICENCE for details of the licences used." << endl;
-    cout << "Chronicle uses the following libraries internally:" << endl;
-    cout << endl;
+    std::cout << "Chronicle is distributed under the MIT Licence." << std::endl;
+    std::cout << "See LICENCE for details of the licences used." << std::endl;
+    std::cout << "Chronicle uses the following libraries internally:" << std::endl;
+    std::cout << std::endl;
 
-    cout << "\tlibsndfile" << endl;
-    cout << "\t\tCopyright (C) 1999-2016 Erik de Castro Lopo <erikd@mega-nerd.com>" << endl;
-    cout << "\t\tLicenced under the LGPL as a dynamically linked library." << endl;
-    cout << "\t\tThe version of libsndfile that is distributed with this software has not" << endl;
-    cout << "\t\tbeen modified from the version available at" << endl;
-    cout << "\t\thttp://www.mega-nerd.com/libsndfile/" << endl;
-    cout << endl;
+    std::cout << "\tlibsndfile" << std::endl;
+    std::cout << "\t\tCopyright (C) 1999-2016 Erik de Castro Lopo <erikd@mega-nerd.com>" << std::endl;
+    std::cout << "\t\tLicenced under the LGPL as a dynamically linked library." << std::endl;
+    std::cout << "\t\tThe version of libsndfile that is distributed with this software has not" << std::endl;
+    std::cout << "\t\tbeen modified from the version available at" << std::endl;
+    std::cout << "\t\thttp://www.mega-nerd.com/libsndfile/" << std::endl;
+    std::cout << std::endl;
 
-    cout << "\tRtAudio" << endl;
-    cout << "\t\tCopyright (c) Gary P. Scavone, McGill University" << endl;
-    cout << "\t\tLicenced under the the RtAudio licence." << endl;
-    cout << "\t\thttps://www.music.mcgill.ca/~gary/rtaudio/" << endl;
-    cout << endl;
+    std::cout << "\tRtAudio" << std::endl;
+    std::cout << "\t\tCopyright (c) Gary P. Scavone, McGill University" << std::endl;
+    std::cout << "\t\tLicenced under the the RtAudio licence." << std::endl;
+    std::cout << "\t\thttps://www.music.mcgill.ca/~gary/rtaudio/" << std::endl;
+    std::cout << std::endl;
 
-    cout << "\tBoost" << endl;
-    cout << "\t\tLicenced under the Boost Software Licence." << endl;
-    cout << endl;
+    std::cout << "\tBoost" << std::endl;
+    std::cout << "\t\tLicenced under the Boost Software Licence." << std::endl;
+    std::cout << std::endl;
 
-    cout << "\tLAME" << endl;
-    cout << "\t\tLicenced under the LGPL v2.1. Courtesy of www.mp3dev.org" << endl;
+    std::cout << "\tLAME" << std::endl;
+    std::cout << "\t\tLicenced under the LGPL v2.1. Courtesy of www.mp3dev.org" << std::endl;
 
-    cout << "\tspdlog" << endl;
-    cout << "\t\tLicenced under the MIT Licence. See LICENCE for details." << endl;
+    std::cout << "\tspdlog" << std::endl;
+    std::cout << "\t\tLicenced under the MIT Licence. See LICENCE for details." << std::endl;
 }

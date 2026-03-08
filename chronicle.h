@@ -30,8 +30,6 @@ extern "C"
 #include <csignal>
 #include <cstring>
 
-using namespace std;
-
 // So, you've decided to make some logger software...
 
 struct recordingParameters
@@ -43,20 +41,20 @@ struct recordingParameters
 };
 
 int main(int argc, char *argv[]);
-void doRecord(boost::filesystem::path directory, string fileNameFormat);
+void doRecord(boost::filesystem::path directory, std::string fileNameFormat);
 
-float calculateHardDriveUsage(chrono::seconds duration, recordingParameters rp);
+float calculateHardDriveUsage(std::chrono::seconds duration, recordingParameters rp);
 
 recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice);
 
-chrono::time_point<chrono::system_clock> calculateRecordEndTimeFromNow();
+std::chrono::time_point<std::chrono::system_clock> calculateRecordEndTimeFromNow();
 
 int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, double me, RtAudioStreamStatus status, void *userData);
 void stopRecord();
 void signalShutdownHandler(int sigNum);
 void signalWinResizeHandler(int sigNum);
-void onRtAudioError(RtAudioError::Type type, const string &errorText);
+void onRtAudioError(RtAudioError::Type type, const std::string &errorText);
 
-void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory);
+void removeOldAudioFiles(std::chrono::seconds age, boost::filesystem::path directory);
 
 // void printHelp();

@@ -1,7 +1,5 @@
 #include "screen.h"
 
-using namespace std;
-
 WINDOW *mainWindow;
 
 int POS_FNAME_X = 2;
@@ -20,9 +18,9 @@ int POS_AUDIOMETER_LABEL_Y;
 
 int POS_HDSPACE_X;
 
-string windowTitleCache;
-string audioDeviceCache;
-string recordingPathCache;
+std::string windowTitleCache;
+std::string audioDeviceCache;
+std::string recordingPathCache;
 long HDSpaceAvailableCache;
 long fileSizeCache;
 int sampleRateCache;
@@ -30,7 +28,8 @@ int channelCountCache;
 
 bool NC_UI_IS_ENABLED;
 
-void initCurses(string windowTitle)
+
+void initCurses(std::string windowTitle)
 {
     if (!NC_UI_IS_ENABLED) { return; }
     initscr();
@@ -79,12 +78,12 @@ void calculateWindowPositions()
     
 }
 
-void setWindowTitle(string windowTitle)
+void setWindowTitle(std::string windowTitle)
 {
     if (!NC_UI_IS_ENABLED) { return; }
     windowTitleCache = windowTitle;
 
-    string paddedWindowTitle = " " + windowTitleCache + " ";
+    std::string paddedWindowTitle = " " + windowTitleCache + " ";
     wmove(mainWindow, 0, (COLS - paddedWindowTitle.length()) / 2);
     wprintw(mainWindow, paddedWindowTitle.c_str());
 }
@@ -98,12 +97,12 @@ void setBorderAndDividers()
     wrefresh(mainWindow);
 }
 
-void updateRecordingToPath(string filePath)
+void updateRecordingToPath(std::string filePath)
 {
     if (!NC_UI_IS_ENABLED) { return; }
  
     recordingPathCache = filePath;
-    string recordingTo = "Recording to: " + filePath;
+    std::string recordingTo = "Recording to: " + filePath;
     wmove(mainWindow, POS_FNAME_Y, POS_FNAME_X);
     wprintw(mainWindow, recordingTo.c_str());
     wmove(mainWindow, COLS, LINES);
@@ -111,7 +110,7 @@ void updateRecordingToPath(string filePath)
     
 }
 
-void updateAudioDevice(string audioDevice, int sampleRate, int channelCount)
+void updateAudioDevice(std::string audioDevice, int sampleRate, int channelCount)
 {
     if (!NC_UI_IS_ENABLED) { return; }
     
@@ -124,14 +123,14 @@ void updateAudioDevice(string audioDevice, int sampleRate, int channelCount)
     /* Draw sample rate */
     wmove(mainWindow, POS_STATUSBAR_Y, POS_SAMPLERATE_X);
     sampleRateCache = sampleRate;
-    string sampleRateStr = sampleRateCache + " Hz";
+    std::string sampleRateStr = sampleRateCache + " Hz";
 
     wprintw(mainWindow, sampleRateStr.c_str());
 
     /* Draw channel count */
     wmove(mainWindow, POS_STATUSBAR_Y, POS_CHANNELCOUNT_X);
     channelCountCache = channelCount;
-    string channelCountStr = to_string(channelCountCache) + " Channels";
+    std::string channelCountStr = std::to_string(channelCountCache) + " Channels";
     wprintw(mainWindow, channelCountStr.c_str());
 
     /* Draw channel meter start and end bars */
@@ -144,15 +143,14 @@ void updateAudioDevice(string audioDevice, int sampleRate, int channelCount)
     }
 
     wrefresh(mainWindow);
-    
 }
 
-void updateAudioMeter(int channelNum, float maxVal, float currentVal, string volumeLabel)
+void updateAudioMeter(int channelNum, float maxVal, float currentVal, std::string volumeLabel)
 {
     if (!NC_UI_IS_ENABLED) { return; }
     
     int potentialBarWidth = (POS_AUDIOMETER_MAXWIDTH - 3) * (currentVal / maxVal);
-    int clippedBarWidth = min(POS_AUDIOMETER_MAXWIDTH - 3, max(2, potentialBarWidth));
+    int clippedBarWidth = std::min(POS_AUDIOMETER_MAXWIDTH - 3, std::max(2, potentialBarWidth));
 
     mvwhline(mainWindow, POS_AUDIOMETER_Y + channelNum, POS_AUDIOMETER_X + 1, '=', clippedBarWidth);
     mvwhline(mainWindow, POS_AUDIOMETER_Y + channelNum, POS_AUDIO_DEVICE_X + clippedBarWidth, ' ', POS_AUDIOMETER_MAXWIDTH - clippedBarWidth - 3);
@@ -161,7 +159,6 @@ void updateAudioMeter(int channelNum, float maxVal, float currentVal, string vol
     wprintw(mainWindow, volumeLabel.c_str());
 
     wrefresh(mainWindow);
-    
 }
 
 void updateHardDriveSpace(long spaceAvailBeforeGB, long fileSizeMB)
@@ -171,7 +168,7 @@ void updateHardDriveSpace(long spaceAvailBeforeGB, long fileSizeMB)
 
     HDSpaceAvailableCache = spaceAvailBeforeGB;
     fileSizeCache = fileSizeMB;
-    string spaceStr = "Space available: " + to_string(HDSpaceAvailableCache) + " GB; Audio file size: " + to_string(fileSizeCache) + " MB";
+    std::string spaceStr = "Space available: " + std::to_string(HDSpaceAvailableCache) + " GB; Audio file size: " + std::to_string(fileSizeCache) + " MB";
     wprintw(mainWindow, spaceStr.c_str());
     wrefresh(mainWindow);
 }

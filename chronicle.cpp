@@ -24,7 +24,6 @@ SOFTWARE.
 */
 
 #include "chronicle.h"
-using namespace std;
 
 enum AudioFormat
 {
@@ -44,7 +43,7 @@ FILE *lameOutFile;
 
 // The rest
 AudioFormat destinationAudioFormat = AudioFormat::WAV;
-string audioFileExtension = ".wav";
+std::string audioFileExtension = ".wav";
 int sfSoundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 RtAudio audio;
 
@@ -70,7 +69,7 @@ short maxAudioVal = (pow(2, (sizeof(short) * 8)) / 2) - 1;
 constexpr int silenceThresholdDB = -40;
 float thresholdVal = (pow(10, silenceThresholdDB / 10)) * maxAudioVal;
 
-chrono::seconds audioFileAgeLimit = chrono::seconds(3628800);
+std::chrono::seconds audioFileAgeLimit = std::chrono::seconds(3628800);
 
 unsigned int inputAudioDeviceId = audio.getDefaultInputDevice();
 unsigned int inputAudioDeviceFirstChannel = 0;
@@ -83,12 +82,12 @@ bool silent_flag = 0;
 
 int main(int argc, char *argv[])
 {
-	cout << SOFTWARE_NAME << " v" << SOFTWARE_VERSION_MAJOR << "." << SOFTWARE_VERSION_MINOR << "." << SOFTWARE_VERSION_PATCH << " Copyright (c) 2016-2019 Callum McLean" << endl
-		 << endl;
+	std::cout << SOFTWARE_NAME << " v" << SOFTWARE_VERSION_MAJOR << "." << SOFTWARE_VERSION_MINOR << "." << SOFTWARE_VERSION_PATCH << " Copyright (c) 2016-2019 Callum McLean" << std::endl
+			  << std::endl;
 
 	boost::filesystem::path output_directory;
 
-	string fileNameFormat = "%Y-%m-%d %H%M%S"; // Default strftime format for audio files. MinGW doesn't like %F...
+	std::string fileNameFormat = "%Y-%m-%d %H%M%S"; // Default strftime format for audio files. MinGW doesn't like %F...
 
 	/* Init logging */
 	try
@@ -101,7 +100,7 @@ int main(int argc, char *argv[])
 	}
 	catch (const spdlog::spdlog_ex &ex)
 	{
-		cout << "Cannot init logging: " << ex.what() << endl;
+		std::cout << "Cannot init logging: " << ex.what() << std::endl;
 		std::exit(1);
 	}
 
@@ -135,7 +134,7 @@ int main(int argc, char *argv[])
 
 				if (devices < 1)
 				{
-					cout << "No devices found! Exiting..." << endl;
+					std::cout << "No devices found! Exiting..." << std::endl;
 					std::exit(0);
 				}
 
@@ -144,19 +143,19 @@ int main(int argc, char *argv[])
 					deviceInfo = audio.getDeviceInfo(i);
 					if (deviceInfo.probed == true && deviceInfo.inputChannels != 0)
 					{
-						cout << "#" << i << ": " << deviceInfo.name;
+						std::cout << "#" << i << ": " << deviceInfo.name;
 						if (deviceInfo.isDefaultInput)
 						{
-							cout << " (default)";
+							std::cout << " (default)";
 						}
-						cout << endl;
-						cout << "    Channel count: " << deviceInfo.inputChannels << endl;
+						std::cout << std::endl;
+						std::cout << "    Channel count: " << deviceInfo.inputChannels << std::endl;
 					}
 				}
 
 				deviceInfo = audio.getDeviceInfo(audio.getDefaultInputDevice());
-				cout << endl
-					 << "Default device: " << deviceInfo.name << endl;
+				std::cout << std::endl
+						  << "Default device: " << deviceInfo.name << std::endl;
 
 				std::exit(0);
 			}
@@ -171,19 +170,19 @@ int main(int argc, char *argv[])
 			/* Validate and set recording options */
 			if (opts.count("directory"))
 			{
-				boost::filesystem::path proposedDir = opts["directory"].as<string>();
+				boost::filesystem::path proposedDir = opts["directory"].as<std::string>();
 
 				output_directory = proposedDir;
 			}
 
 			if (opts.count("format"))
 			{
-				fileNameFormat = opts["format"].as<string>();
+				fileNameFormat = opts["format"].as<std::string>();
 
 				/* strftime seems to not produce anything when passed %F on MinGW-compiled versions,
 			Fixes #26 */
 				size_t found = fileNameFormat.find("%F");
-				while (found != string::npos)
+				while (found != std::string::npos)
 				{
 					fileNameFormat.replace(found, 2, "%Y-%m-%d");
 					found = fileNameFormat.find("%F");
@@ -192,22 +191,22 @@ int main(int argc, char *argv[])
 
 			if (opts.count("max-age"))
 			{
-				string max_age_string = opts["max-age"].as<string>();
+				std::string max_age_string = opts["max-age"].as<std::string>();
 				int max_age_val;
-				string max_age_unit;
+				std::string max_age_unit;
 				try
 				{
 					max_age_val = stoi(max_age_string);
 					logger->debug("Found max age value: {}", max_age_val);
 				}
-				catch (invalid_argument e)
+				catch (std::invalid_argument e)
 				{
 					printf("Cannot identify a valid duration for --max-age (supplied value: %s )\n. See chronicle --help for more details.\n", max_age_string.c_str());
 					std::exit(1);
 				}
 
 				int unit_str_idx = max_age_string.find_first_of("smhdSMHD");
-				if (unit_str_idx == string::npos)
+				if (unit_str_idx == std::string::npos)
 				{
 					printf("Cannot identify a valid duration for --max-age (supplied value: %s )\n. See chronicle --help for more details.\n", max_age_string.c_str());
 					std::exit(1);
@@ -218,28 +217,28 @@ int main(int argc, char *argv[])
 
 				/* Allow the user to specify age limit in units other than seconds,
 			Fixes #12 */
-				chrono::seconds age_seconds;
+				std::chrono::seconds age_seconds;
 				if (max_age_unit == "s" || max_age_unit == "S")
 				{
-					age_seconds = chrono::seconds(max_age_val);
+					age_seconds = std::chrono::seconds(max_age_val);
 				}
 				if (max_age_unit == "m" || max_age_unit == "M")
 				{
-					age_seconds = chrono::minutes(max_age_val);
+					age_seconds = std::chrono::minutes(max_age_val);
 				}
 				if (max_age_unit == "h" || max_age_unit == "H")
 				{
-					age_seconds = chrono::hours(max_age_val);
+					age_seconds = std::chrono::hours(max_age_val);
 				}
 				if (max_age_unit == "d" || max_age_unit == "D")
 				{
-					age_seconds = chrono::hours(max_age_val * 24);
+					age_seconds = std::chrono::hours(max_age_val * 24);
 				}
 
 				if (max_age_val == 1 && (max_age_unit == "s" || max_age_unit == "S"))
 				{
-					cout << "The specified file age limit must be greater than 1 second:";
-					cout << max_age_val << endl;
+					std::cout << "The specified file age limit must be greater than 1 second:";
+					std::cout << max_age_val << std::endl;
 					std::exit(1);
 				}
 
@@ -248,7 +247,7 @@ int main(int argc, char *argv[])
 
 			if (opts.count("audio-format"))
 			{
-				string audio_format_string = opts["audio-format"].as<string>();
+				std::string audio_format_string = opts["audio-format"].as<std::string>();
 				logger->debug("Found proposed audio format: {}", audio_format_string);
 				// if (opts.audio_format == "OGG" || opts.audio_format == "ogg")
 				if (audio_format_string == "OGG" || audio_format_string == "ogg")
@@ -414,7 +413,7 @@ int main(int argc, char *argv[])
 
 	logger->debug("Output directory: " + output_directory.string());
 
-	string windowTitle = "Chronicle v" + SOFTWARE_VERSION_MAJOR + "." + SOFTWARE_VERSION_MINOR + "." + SOFTWARE_VERSION_PATCH;
+	std::string windowTitle = "Chronicle v" + SOFTWARE_VERSION_MAJOR + "." + SOFTWARE_VERSION_MINOR + "." + SOFTWARE_VERSION_PATCH;
 
 	if (NC_UI_IS_ENABLED)
 	{
@@ -430,7 +429,7 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-void doRecord(boost::filesystem::path directory, string fileNameFormat)
+void doRecord(boost::filesystem::path directory, std::string fileNameFormat)
 {
 
 	RtAudio::StreamParameters params;
@@ -499,10 +498,10 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 	So, we'll add an hour to the current time, and then remove any minutes and
 	seconds from that time.
 	*/
-		chrono::time_point<chrono::system_clock> endTime = calculateRecordEndTimeFromNow();
+		std::chrono::time_point<std::chrono::system_clock> endTime = calculateRecordEndTimeFromNow();
 
 		char audioFileName[81];
-		time_t now_tt = chrono::system_clock::to_time_t(chrono::system_clock::now());
+		time_t now_tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 		struct tm now_tm;
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 		localtime_s(&now_tm, &now_tt); // Use localtime_s on windows
@@ -533,14 +532,14 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 			logger->critical("Could not create directory: {}", e.what());
 			std::exit(1);
 		}
-		catch (exception &e)
+		catch (std::exception &e)
 		{
 			logger->critical("Could not create directory: {}", e.what());
 		}
 
 		/* Calculate the file size - fixes #22 */
-		chrono::time_point<chrono::system_clock> tpNow = chrono::system_clock::now();
-		chrono::seconds recordDuration = chrono::duration_cast<chrono::seconds>(endTime - tpNow);
+		std::chrono::time_point<std::chrono::system_clock> tpNow = std::chrono::system_clock::now();
+		std::chrono::seconds recordDuration = std::chrono::duration_cast<std::chrono::seconds>(endTime - tpNow);
 		long fileSizeMB = calculateHardDriveUsage(recordDuration, rp);
 
 		boost::filesystem::space_info diskSpace = boost::filesystem::space(directory);
@@ -592,7 +591,7 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 			std::exit(0);
 		}
 
-		catch (exception &e)
+		catch (std::exception &e)
 		{
 			logger->critical("Could not begin recording: {}", e.what());
 		}
@@ -638,7 +637,7 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 		for (int i = ch; i < nFrames * channelCount; i += channelCount)
 		{
 			short val = abs(*(data + i));
-			framesPeak = max(val, framesPeak);
+			framesPeak = std::max(val, framesPeak);
 		};
 
 		// I_db = 10*log10(I/I_0)
@@ -690,7 +689,7 @@ void stopRecord()
 	}
 }
 
-float calculateHardDriveUsage(chrono::seconds duration, recordingParameters rp)
+float calculateHardDriveUsage(std::chrono::seconds duration, recordingParameters rp)
 {
 	/* Let's assume WAV, for now, because that's what we're recording... 
 	OGG/MP3/etc. will change this.
@@ -739,15 +738,15 @@ recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice)
 	return rp;
 }
 
-chrono::time_point<chrono::system_clock> calculateRecordEndTimeFromNow()
+std::chrono::time_point<std::chrono::system_clock> calculateRecordEndTimeFromNow()
 {
 
-	chrono::time_point<chrono::system_clock> nowChrono, endChronoInaccurate, endChronoAccurate;
-	nowChrono = chrono::system_clock::now();
+	std::chrono::time_point<std::chrono::system_clock> nowChrono, endChronoInaccurate, endChronoAccurate;
+	nowChrono = std::chrono::system_clock::now();
 
-	endChronoInaccurate = nowChrono + chrono::seconds(3600);
+	endChronoInaccurate = nowChrono + std::chrono::seconds(3600);
 	// Convert the end-time into a form than we can manipulate
-	time_t end_tt = chrono::system_clock::to_time_t(endChronoInaccurate);
+	time_t end_tt = std::chrono::system_clock::to_time_t(endChronoInaccurate);
 	struct tm *end_tm = localtime(&end_tt);
 	// And remove any extraneous hours/minutes so the time is at the top of hour
 	end_tm->tm_min = 0;
@@ -755,12 +754,12 @@ chrono::time_point<chrono::system_clock> calculateRecordEndTimeFromNow()
 
 	// Now convert back to a chrono
 	end_tt = mktime(end_tm);
-	endChronoAccurate = chrono::system_clock::from_time_t(end_tt);
+	endChronoAccurate = std::chrono::system_clock::from_time_t(end_tt);
 
 	return endChronoAccurate;
 }
 
-void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory)
+void removeOldAudioFiles(std::chrono::seconds age, boost::filesystem::path directory)
 {
 	/* Iterate over the files in a directory (presumably the output directory) and delete
 	audio files older than a certain age
@@ -768,8 +767,8 @@ void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory)
 
 	auto logger = spdlog::get("chronicle_log");
 	logger->debug("Removing old audio files (max age is {} seconds)", audioFileAgeLimit.count());
-	chrono::system_clock::time_point nowChrono, oldestTimeChrono, fileMTime;
-	nowChrono = chrono::system_clock::now();
+	std::chrono::system_clock::time_point nowChrono, oldestTimeChrono, fileMTime;
+	nowChrono = std::chrono::system_clock::now();
 	oldestTimeChrono = nowChrono - age;
 
 	boost::filesystem::directory_iterator dirIterEnd = boost::filesystem::directory_iterator();
@@ -780,11 +779,11 @@ void removeOldAudioFiles(chrono::seconds age, boost::filesystem::path directory)
 		boost::filesystem::directory_entry dirEntry;
 		dirEntry = *dirIter;
 
-		chrono::system_clock::time_point fileMTime = chrono::system_clock::from_time_t(boost::filesystem::last_write_time(dirEntry.path()));
+		std::chrono::system_clock::time_point fileMTime = std::chrono::system_clock::from_time_t(boost::filesystem::last_write_time(dirEntry.path()));
 
 		if ((fileMTime < oldestTimeChrono) & (dirEntry.path().extension() == audioFileExtension))
 		{
-			logger->debug("\tDeleting file older than max age (age is {}s): {}", chrono::duration_cast<chrono::seconds>(nowChrono - fileMTime).count(), dirEntry.path().string());
+			logger->debug("\tDeleting file older than max age (age is {}s): {}", std::chrono::duration_cast<std::chrono::seconds>(nowChrono - fileMTime).count(), dirEntry.path().string());
 			boost::filesystem::remove(dirEntry.path());
 		}
 
@@ -808,7 +807,7 @@ void signalShutdownHandler(int sigNum)
 	std::exit(sigNum);
 }
 
-void onRtAudioError(RtAudioError::Type type, const string &errorText)
+void onRtAudioError(RtAudioError::Type type, const std::string &errorText)
 {
 	auto logger = spdlog::get("chronicle_log");
 	logger->error("Got RtAudio error: {}", errorText);

@@ -6,19 +6,17 @@
 #include <boost/filesystem.hpp>
 #include "version.h"
 
-using namespace std;
-
 struct cmdOpts
 {
     bool licence = false;
     bool help = false;
     bool list_devices = false;
-    string directory = "";
-    string format = "";
+    std::string directory = "";
+    std::string format = "";
     bool no_delete = false;
     unsigned int max_age_value = 0;
-    string max_age_unit = "";
-    string audio_format = "";
+    std::string max_age_unit = "";
+    std::string audio_format = "";
     int input_device = -1;
     bool no_term = false;
     bool is_debug = false;
