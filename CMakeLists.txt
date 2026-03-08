@@ -74,6 +74,13 @@ if (UNIX)
     endif()
 elseif (WIN32)
     find_package(pdcurses CONFIG REQUIRED)
+        if (pdcurses_INCLUDE_DIR)
+        message(STATUS "Found pdcurses: ${pdcurses_INCLUDE_DIR}")
+        target_include_directories(chronicle PRIVATE ${pdcurses_INCLUDE_DIR})
+        target_link_libraries(chronicle PRIVATE ${pdcurses_LIBRARIES})
+    else()
+        message(FATAL_ERROR "Could not find pdcurses! Exiting...")
+    endif()
     target_link_libraries(chronicle PRIVATE pdcurses::pdcurses)
 endif()
 
@@ -90,12 +97,17 @@ endif()
 add_subdirectory(rtaudio)
 target_link_libraries(chronicle PRIVATE rtaudio)
 target_include_directories(chronicle PRIVATE ${RtAudio_SOURCE_DIR})
+add_custom_command(TARGET chronicle POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:rtaudio>" "$<TARGET_FILE_DIR:chronicle>"
+    VERBATIM
+)
 
 #########
 # BOOST #
 #########
 find_package(Boost REQUIRED filesystem program_options)
 target_link_libraries(chronicle PRIVATE Boost::program_options Boost::filesystem)
+target_include_directories(chronicle PRIVATE ${Boost_INCLUDE_DIR})
 
 
 ############################
