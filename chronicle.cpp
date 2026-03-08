@@ -604,7 +604,6 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 	int *pChannelCount = (int *)userData;
 	int channelCount = *pChannelCount;
 	short *data = (short *)inputBuffer;
-	unsigned char MP3Buffer[8192];
 
 	if (destinationAudioFormat == WAV || destinationAudioFormat == OGG || destinationAudioFormat == FLAC)
 	{
@@ -612,6 +611,7 @@ int cb_record(void *outputBuffer, void *inputBuffer, unsigned int nFrames, doubl
 	}
 	else if (destinationAudioFormat == MP3)
 	{
+		unsigned char MP3Buffer[8192];
 		int enc_data_size = lame_encode_buffer_interleaved(lame_enc, data, nFrames, MP3Buffer, 8192);
 		fwrite(MP3Buffer, enc_data_size, 1, lameOutFile);
 	}
