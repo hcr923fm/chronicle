@@ -42,7 +42,8 @@ po::variables_map parse_cmd_opts(int argc, char *argv[])
                                                                                 "Defaults to 0") //
         ("device-channels,c", po::value<unsigned int>()->default_value(2), "On multi-channel audio devices, select how many channels to record.\n"
                                                                            "Use with --device-first-channel to use effectively on devices with more audio channels available than you wish to record from") //
-        ("sample-rate,r", po::value<unsigned int>()->default_value(44100), "The sample rate (in Hz) that you wish to use with the audio device specified, if supported");
+        ("sample-rate,r", po::value<unsigned int>()->default_value(44100), "The sample rate (in Hz) that you wish to use with the audio device specified, if supported")
+        ("bitrate,b", po::value<unsigned int>()->default_value(320), "For MP3, the sample rate to use for ABR recordings, in kbps. Defaults to 320. Ignored for other formats.");
 
     po::options_description options_extra("Extra Options");
     options_extra.add_options()
