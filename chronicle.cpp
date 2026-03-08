@@ -76,6 +76,7 @@ unsigned int inputAudioDeviceId = audio.getDefaultInputDevice();
 unsigned int inputAudioDeviceFirstChannel = 0;
 unsigned int inputAudioDeviceChannelCount = 2;
 unsigned int inputAudioDeviceSampleRate = 44100;
+unsigned int outputStreamBitRate = 320;
 
 boost::program_options::variables_map opts;
 bool silent_flag = 0;
@@ -351,9 +352,9 @@ int main(int argc, char *argv[])
 				inputAudioDeviceChannelCount = proposed_device_channels;
 			}
 
-			if (opts["device-channels"].as<unsigned int>() > 2 && destinationAudioFormat == AudioFormat::MP3)
+			if (opts["device-channels"].as<unsigned int>() != 2 && destinationAudioFormat == AudioFormat::MP3)
 			{
-				printf("Cannot use more than 2 channels when recording MP3!\n");
+				printf("MP3 recording format only supports using 2 channels.\n");
 				std::exit(1);
 			}
 
@@ -385,6 +386,15 @@ int main(int argc, char *argv[])
 				inputAudioDeviceSampleRate = matching_rate;
 			}
 
+			if (opts.count("bitrate"))
+			{
+				if (destinationAudioFormat != AudioFormat::MP3)
+				{
+					printf("Audio format is not MP3, bitrate option will be ignored.");
+				}
+
+				outputStreamBitRate = opts["bitrate"].as<unsigned int>();
+			}
 			if (opts.count("no-term"))
 			{
 				NC_UI_IS_ENABLED = false;
@@ -449,9 +459,8 @@ void doRecord(boost::filesystem::path directory, string fileNameFormat)
 		lame_enc = lame_init();
 		lame_set_in_samplerate(lame_enc, rp.sampleRate);
 		lame_set_out_samplerate(lame_enc, rp.sampleRate);
-		lame_set_brate(lame_enc, 320);
-		lame_set_VBR(lame_enc, vbr_off);
-		//lame_set_VBR_quality(lame_enc, 3);
+		lame_set_VBR(lame_enc, vbr_abr);
+		lame_set_VBR_mean_bitrate_kbps(lame_enc, outputStreamBitRate);
 		lame_set_num_channels(lame_enc, rp.channelCount);
 		int ret = lame_init_params(lame_enc);
 		if (ret < 0)
