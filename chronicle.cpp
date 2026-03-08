@@ -816,6 +816,15 @@ void signalShutdownHandler(int sigNum)
 void onRtAudioError(RtAudioError::Type type, const std::string &errorText)
 {
 	auto logger = spdlog::get("chronicle_log");
-	logger->error("Got RtAudio error: {}", errorText);
-	signalShutdownHandler(1);
+	switch (type)
+	{
+	case RtAudioError::Type::DEBUG_WARNING:
+	case RtAudioError::Type::WARNING:
+		logger->warn("Got RtAudio warning: {}", errorText);
+		break;
+	default:
+		logger->error("Got RtAudio error: {}", errorText);
+		signalShutdownHandler(1);
+		break;
+	}
 }
