@@ -415,11 +415,18 @@ int main(int argc, char *argv[])
 	logger->debug("Output directory: " + output_directory.string());
 
 	string windowTitle = "Chronicle v" + SOFTWARE_VERSION_MAJOR + "." + SOFTWARE_VERSION_MINOR + "." + SOFTWARE_VERSION_PATCH;
-	initCurses(windowTitle);
+
+	if (NC_UI_IS_ENABLED)
+	{
+		initCurses(windowTitle);
+	}
 
 	doRecord(output_directory, fileNameFormat);
 
-	closeCurses();
+	if (NC_UI_IS_ENABLED)
+	{
+		closeCurses();
+	}
 	return 0;
 }
 
