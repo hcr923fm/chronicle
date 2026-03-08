@@ -236,7 +236,7 @@ int main(int argc, char *argv[])
 					age_seconds = chrono::hours(max_age_val * 24);
 				}
 
-				if (max_age_val == 1 & (max_age_unit == "s" || max_age_unit == "S"))
+				if (max_age_val == 1 && (max_age_unit == "s" || max_age_unit == "S"))
 				{
 					cout << "The specified file age limit must be greater than 1 second:";
 					cout << max_age_val << endl;
