@@ -721,7 +721,7 @@ recordingParameters getRecordingParameters(RtAudio::DeviceInfo recordingDevice)
 
 	// (recordingDevice.inputChannels == 1) ? rp.channelCount = 1 : rp.channelCount = 2;
 	rp.channelCount = inputAudioDeviceChannelCount;
-	rp.firstChannel = inputAudioDeviceChannelCount;
+	rp.firstChannel = inputAudioDeviceFirstChannel;
 	logger->debug("Input device has {} channels, using {}", recordingDevice.inputChannels, rp.channelCount);
 
 	rp.sampleRate = inputAudioDeviceSampleRate;
