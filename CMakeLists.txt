@@ -37,18 +37,8 @@ target_link_libraries(chronicle PRIVATE libmp3lame::libmp3lame)
 # LIBSNDFILE #
 ##############
 
-if (UNIX)
-    find_library(SNDFILE_LIB sndfile)
-    if (SNDFILE_LIB OR sndfile_FOUND)
-        message(STATUS "Found libsndfile")
-        target_link_libraries(chronicle PRIVATE ${SNDFILE_LIB})
-    else()
-        message(FATAL_ERROR "Could not find libsndfile! Exiting...")
-    endif()
-elseif (WIN32)
-    find_package(SndFile CONFIG REQUIRED)
-    target_link_libraries(chronicle PRIVATE SndFile::sndfile)
-endif()
+find_package(SndFile CONFIG REQUIRED)
+target_link_libraries(chronicle PRIVATE SndFile::sndfile)
 
 ####################
 # ncurses/pdcurses #
