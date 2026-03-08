@@ -46,6 +46,7 @@ AudioFormat destinationAudioFormat = AudioFormat::WAV;
 std::string audioFileExtension = ".wav";
 int sfSoundFormat = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
 RtAudio audio;
+bool do_record = false;
 
 /* The data is cast to a short. sizeof(short) = 2 (bytes) = 16 bits.
 	Max value in a short is therefore 2^16 -1 = 65535.
@@ -418,8 +419,10 @@ int main(int argc, char *argv[])
 	if (NC_UI_IS_ENABLED)
 	{
 		initCurses(windowTitle);
+		setSigIntCallback(signalShutdownHandler);
 	}
 
+	do_record = true;
 	doRecord(output_directory, fileNameFormat);
 
 	if (NC_UI_IS_ENABLED)
@@ -489,7 +492,7 @@ void doRecord(boost::filesystem::path directory, std::string fileNameFormat)
 
 	// Main record loop begins
 
-	while (true)
+	while (do_record)
 	{
 
 		/* The time to finish recording is at the end of the hour.
@@ -596,7 +599,11 @@ void doRecord(boost::filesystem::path directory, std::string fileNameFormat)
 			logger->critical("Could not begin recording: {}", e.what());
 		}
 
-		this_thread::sleep_until(endTime);
+		while (do_record && std::chrono::system_clock::now() <= endTime)
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(500));
+		}
+
 		logger->info("Recording completed");
 
 		stopRecord();
@@ -802,6 +809,9 @@ void signalShutdownHandler(int sigNum)
 {
 	auto logger = spdlog::get("chronicle_log");
 	logger->info("Received signal {}; shutting down...", sigNum);
+
+	do_record = false;
+
 	stopRecord();
 	closeCurses();
 	std::exit(sigNum);

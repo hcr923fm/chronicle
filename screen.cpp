@@ -28,6 +28,7 @@ int channelCountCache;
 
 bool NC_UI_IS_ENABLED;
 
+std::function<void(int)> onSigIntCallback;
 
 void initCurses(std::string windowTitle)
 {
@@ -36,7 +37,9 @@ void initCurses(std::string windowTitle)
     cbreak();    // To disable the buffering of typed characters by the TTY driver and get a character-at-a-time input
     noecho();    // To suppress the automatic echoing of typed characters
     curs_set(0); // Hide the cursor
+    noraw();     // Let INTR generate a signal, though this doesn't work on Windows
     mainWindow = newwin(LINES, COLS, 0, 0);
+    nodelay(mainWindow, true);
     calculateWindowPositions();
 
     /* Add the border and window title */
@@ -159,6 +162,11 @@ void updateAudioMeter(int channelNum, float maxVal, float currentVal, std::strin
     wprintw(mainWindow, volumeLabel.c_str());
 
     wrefresh(mainWindow);
+    int ch = wgetch(mainWindow);
+    if (ch == 3 && onSigIntCallback != NULL)
+    {
+        onSigIntCallback(ch);
+    }
 }
 
 void updateHardDriveSpace(long spaceAvailBeforeGB, long fileSizeMB)
@@ -191,6 +199,8 @@ void onWindowResize()
     initscr();
     cbreak();    // To disable the buffering of typed characters by the TTY driver and get a character-at-a-time input
     noecho();    // To suppress the automatic echoing of typed characters
+    noraw();     // Let INTR generate a signal, though this doesn't work on Windows
+    nodelay(mainWindow, true);
     curs_set(0); // Hide the cursor
 
     calculateWindowPositions();
@@ -199,4 +209,9 @@ void onWindowResize()
     updateAudioDevice(audioDeviceCache, sampleRateCache, channelCountCache);
     updateHardDriveSpace(HDSpaceAvailableCache, fileSizeCache);
     updateRecordingToPath(recordingPathCache);
+}
+
+void setSigIntCallback(std::function<void(int)> cb)
+{
+    onSigIntCallback = cb;
 }
