@@ -698,10 +698,6 @@ void stopRecord()
 
 float calculateHardDriveUsage(std::chrono::seconds duration, recordingParameters rp)
 {
-	/* Let's assume WAV, for now, because that's what we're recording... 
-	OGG/MP3/etc. will change this.
-	*/
-
 	/* WAV file size:
 	sz_in_mb = (bit_depth * sample_rate * channels * dur_in_secs) / 8 / 1000000
 	*/
@@ -717,8 +713,8 @@ float calculateHardDriveUsage(std::chrono::seconds duration, recordingParameters
 	}
 	else if (destinationAudioFormat == MP3)
 	{
-		// Our MP3 encoding uses CBR, at 320kbps
-		return (320 * duration.count() / 8 / 1024);
+		// Our MP3 encoding uses VBR, at 320kbps
+		return (outputStreamBitRate * duration.count() / 8 / 1024);
 	}
 	else
 	{
