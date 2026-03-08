@@ -30,18 +30,8 @@ target_link_libraries(chronicle PRIVATE spdlog::spdlog)
 ##############
 # LIBMP3LAME #
 ##############
-if(UNIX)
-    find_library(LAME_LIB NAMES libmp3lame libmp3lame.a libmp3lame-static.lib libmp3lame.dll libmp3lame.lib lame_enc lame_enc.dll lame_enc.lib)
-    if (LAME_LIB OR lame_FOUND)
-        message(STATUS "Found LAME: ${LAME_LIB}")
-        target_link_libraries(chronicle PRIVATE ${LAME_LIB})
-    else()
-        message(FATAL_ERROR "Could not find lame! Exiting...")
-    endif()
-elseif(WIN32)
-    find_package(libmp3lame CONFIG REQUIRED)
-    target_link_libraries(chronicle PRIVATE libmp3lame::libmp3lame)
-endif()
+find_package(libmp3lame CONFIG REQUIRED)
+target_link_libraries(chronicle PRIVATE libmp3lame::libmp3lame)
 
 ##############
 # LIBSNDFILE #
@@ -64,25 +54,15 @@ endif()
 # ncurses/pdcurses #
 ####################
 
-if (UNIX)
-    find_library(CURSES_LIB ncurses)
-    if (CURSES_LIB)
-        message(STATUS "Found curses: ${CURSES_LIB}")
-        target_link_libraries(chronicle PRIVATE ${CURSES_LIB})
-    else()
-        message(FATAL_ERROR "Could not find curses! Exiting...")
-    endif()
-elseif (WIN32)
-    find_package(pdcurses CONFIG REQUIRED)
-        if (pdcurses_INCLUDE_DIR)
-        message(STATUS "Found pdcurses: ${pdcurses_INCLUDE_DIR}")
-        target_include_directories(chronicle PRIVATE ${pdcurses_INCLUDE_DIR})
-        target_link_libraries(chronicle PRIVATE ${pdcurses_LIBRARIES})
-    else()
-        message(FATAL_ERROR "Could not find pdcurses! Exiting...")
-    endif()
-    target_link_libraries(chronicle PRIVATE pdcurses::pdcurses)
+find_package(pdcurses CONFIG REQUIRED)
+if (pdcurses_INCLUDE_DIR)
+    message(STATUS "Found pdcurses: ${pdcurses_INCLUDE_DIR}")
+    target_include_directories(chronicle PRIVATE ${pdcurses_INCLUDE_DIR})
+    target_link_libraries(chronicle PRIVATE ${pdcurses_LIBRARIES})
+else()
+    message(FATAL_ERROR "Could not find pdcurses! Exiting...")
 endif()
+target_link_libraries(chronicle PRIVATE pdcurses::pdcurses)
 
 
 ###########
@@ -92,6 +72,9 @@ endif()
 if(WIN32)
     add_definitions(-DAUDIO_WINDOWS_WASAPI=ON)
     add_definitions(-DAUDIO_WINDOWS_ASIO=ON)
+elseif(UNIX)
+    add_definitions(-DAUDIO_LINUX_ALSA=ON)
+    add_definitions(-DAUDIO_LINUX_PULSE=ON)
 endif()
 
 add_subdirectory(rtaudio)

@@ -1,11 +1,7 @@
 #ifndef __SCREEN_H__
 #define __SCREEN_H__
 
-#ifdef _WIN32
 #include <curses.h>
-#else
-#include <ncurses.h>
-#endif
 
 #include <string>
 #include <cstring>

@@ -188,11 +188,7 @@ void onWindowResize()
     int y;
 
     getmaxyx(mainWindow, y, x);
-#ifndef _WIN32
-    resizeterm(x, y);
-#else
     resize_term(x, y);
-#endif
     endwin();
     wrefresh(mainWindow);
 
