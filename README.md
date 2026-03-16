@@ -59,7 +59,6 @@ sudo make install
 `.deb`s will happen soon!
 
 ## Known Issues:
-* MP3 audio is recorded at 320kbps CBR, and OGG is VBR. This is due to change in the future, but is currently the case.
 * All audio is resampled to 16bit for conversion to PCM Wave. Although theoretically an issue, this is not likely to affect the vast majority of users.
 * Due to the type sizes used in the underlying audio libraries, the audio monitoring graph on the 32-bit version is less reliable at very low levels. This does not affect the quality of the recorded output.
 
